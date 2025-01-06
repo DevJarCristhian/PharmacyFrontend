@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, onUpdated, ref } from 'vue'
-import { Store, Permissions } from '@/services/interfaces/access/roles.interfaces';
-import rolesServices from '@/services/access/roles.services'
+import { Store, Permissions } from '../../../../services/interfaces/access/roles.interfaces';
+import rolesServices from '../../../../services/access/roles.services'
 import { useMessage, type FormInst, type FormRules } from 'naive-ui'
 
 const props = defineProps({

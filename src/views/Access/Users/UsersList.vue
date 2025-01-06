@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { defineAsyncComponent, h, onMounted, ref } from 'vue';
-import usersServices from '@/services/access/users.services'
-import { Get, Params, Store } from '@/services/interfaces/access/users.interfaces';
+import usersServices from '../../../services/access/users.services'
+import { Get, Params, Store } from './../../../services/interfaces/access/users.interfaces';
 import { NButton, NTag } from 'naive-ui';
 import dayjs from 'dayjs';
-import JIcon from '@/components/JIcon.vue';
+import JIcon from '../../../components/JIcon.vue';
 // import 'dayjs/locale/es' 
 // dayjs.locale('es')
 
-const add = defineAsyncComponent(() => import('@/views/Access/Users/modals/addUser.vue'))
+const add = defineAsyncComponent(() => import('../../../views/Access/Users/modals/addUser.vue'))
 
-const ddd = dayjs()
+// const ddd = dayjs()
 // console.log(ddd.format('dddd D  MMMM')) // jueves 2 de enero
 
 
-const props = defineProps<{
-    path: string;
-}>();
+// const props = defineProps<{
+//     path: string;
+// }>();
 
 // const actions = await useSectionStores.getActionsForSection(
 //     props.section ?? ""
@@ -111,7 +111,7 @@ const columns = ref([
         key: 'index',
         width: 50,
         align: 'center',
-        render(row: any, index: number) {
+        render(_, index: number) {
             return index + 1
         }
     },

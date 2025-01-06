@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import authServices from "@/services/auth.services";
+import authServices from "./../services/auth.services";
 
 export interface User {
     id: number;

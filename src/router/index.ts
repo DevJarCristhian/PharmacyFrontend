@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, RouteRecordRaw  } from "vue-router";
 import Login from "../pages/Login.vue";
 import index from "../pages/index.vue";
 import PageNotFound from "../pages/PageNotFound.vue";

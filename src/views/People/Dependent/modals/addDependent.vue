@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, onUpdated, ref } from 'vue'
-import { Store, Get } from '@/services/interfaces/people/dependent.interfaces';
-import rolesServices from '@/services/people/dependent.services'
+import { Store } from '../../../../services/interfaces/people/dependent.interfaces';
+import rolesServices from '../../../../services/people/dependent.services'
 import { useMessage, type FormInst, type FormRules } from 'naive-ui'
 
 const props = defineProps({
@@ -15,7 +15,7 @@ const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const loading = ref<boolean>(false)
 const formData = ref<Store>(props.items as Store)
-const permissions = ref<Get[]>([])
+// const permissions = ref<Get[]>([])
 
 const rules: FormRules = {
     description: [
@@ -24,7 +24,7 @@ const rules: FormRules = {
 }
 
 onMounted(() => {
-    // getPermissions()
+    // // getPermissions()
 })
 
 onUpdated(() => {
@@ -33,13 +33,13 @@ onUpdated(() => {
     }
 })
 
-// const getPermissions = async () => {
-//     const response = await rolesServices.getPermissions()
+// // const getPermissions = async () => {
+// //     const response = await rolesServices.getPermissions()
 //     const newData = response.data.map((item: any) => ({
 //         ...item, children: JSON.parse(item.children)
 //     }))
 //     // console.log(newData);
-//     permissions.value = newData
+// //     permissions.value = newData
 // }
 
 const handleSubmit = async () => {

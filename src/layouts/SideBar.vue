@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { globalActions } from '../store/actions';
 import { RouterLink, useRoute } from "vue-router";
-import navigations from '@/router/navigations';
+import navigations from '../router/navigations';
 import { h, ref, toRefs } from 'vue';
-import JIcon from '@/components/JIcon.vue';
-import { authStores } from '@/store/auth';
+import JIcon from '../components/JIcon.vue';
+// import { authStores } from '../store/auth';
 
 const route = useRoute();
 const store = globalActions();
-const { user } = toRefs(authStores())
+// const { user } = toRefs(authStores())
 const { collapsed } = toRefs(store);
 
 const activeKey: string = (route.name as string) || "";

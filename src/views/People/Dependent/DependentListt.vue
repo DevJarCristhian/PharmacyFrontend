@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { defineAsyncComponent, h, onMounted, ref } from 'vue';
-import dependentServices from '@/services/people/dependent.services'
-import { Get, Params, Store } from '@/services/interfaces/people/dependent.interfaces';
+import dependentServices from '../../../services/people/dependent.services'
+import { Get, Params, Store } from './../../../services/interfaces/people/dependent.interfaces';
 import { NButton, NTag } from 'naive-ui';
-import dayjs from 'dayjs';
-import JIcon from '@/components/JIcon.vue';
+// import dayjs from 'dayjs';
+import JIcon from '../../../components/JIcon.vue';
 
-const add = defineAsyncComponent(() => import('@/views/People/Dependent/modals/addDependent.vue'))
+const add = defineAsyncComponent(() => import('../../../views/People/Dependent/modals/addDependent.vue'))
 
-const props = defineProps<{
-    path: string;
-}>();
+// const props = defineProps<{
+//     path: string;
+// }>();
 
 // const actions = await useSectionStores.getActionsForSection(
 //     props.section ?? ""
@@ -76,10 +76,10 @@ const setItems = (item: Get) => {
     // showModal.value = true
 }
 
-const formatDate = (date: string) => {
-    if (!date || !dayjs(date).isValid()) { return '-'; }
-    return dayjs(date).format('YYYY-MM-DD')
-}
+// const formatDate = (date: string) => {
+//     if (!date || !dayjs(date).isValid()) { return '-'; }
+//     return dayjs(date).format('YYYY-MM-DD')
+// }
 
 const columns = ref([
     {
@@ -87,7 +87,7 @@ const columns = ref([
         key: 'index',
         width: 50,
         align: 'center',
-        render(row: any, index: number) {
+        render(_, index: number) {
             return index + 1
         }
     },

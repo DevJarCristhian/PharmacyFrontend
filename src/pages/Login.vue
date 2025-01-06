@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import authServices from '@/services/auth.services';
-import { authStores } from '@/store/auth';
+import authServices from '../services/auth.services';
+import { authStores } from '../store/auth';
 import { FormInst, useMessage } from 'naive-ui';
 import { ref } from 'vue';
 

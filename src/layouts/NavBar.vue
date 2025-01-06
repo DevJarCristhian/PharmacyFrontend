@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import JIcon from '@/components/JIcon.vue';
+import JIcon from '../components/JIcon.vue';
 import { useDarkMode } from '../utils/DarkMode';
-import { globalActions } from '@/store/actions';
+import { globalActions } from '../store/actions';
 import { h, ref, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
-import authServices from '@/services/auth.services';
-import { authStores } from '@/store/auth';
+import authServices from '../services/auth.services';
+import { authStores } from '../store/auth';
 
 const { toggleDarkMode, theme } = useDarkMode();
 const { user } = toRefs(authStores())

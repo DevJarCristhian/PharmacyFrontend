@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { defineAsyncComponent, h, onMounted, ref } from 'vue';
-import rolesServices from '@/services/access/roles.services'
-import { Get, Params, Store } from '@/services/interfaces/access/roles.interfaces';
-import { NButton, NTag } from 'naive-ui';
+import rolesServices from '../../../services/access/roles.services'
+import { Get, Params, Store } from './../../../services/interfaces/access/roles.interfaces';
+import { NButton } from 'naive-ui';
 import dayjs from 'dayjs';
-import JIcon from '@/components/JIcon.vue';
+import JIcon from '../../../components/JIcon.vue';
 
-const add = defineAsyncComponent(() => import('@/views/Access/Roles/modals/addRole.vue'))
+const add = defineAsyncComponent(() => import('../../../views/Access/Roles/modals/addRole.vue'))
 
-const props = defineProps<{
-    path: string;
-}>();
+// const props = defineProps<{
+//     path: string;
+// }>();
 
 // const actions = await useSectionStores.getActionsForSection(
 //     props.section ?? ""
@@ -88,7 +88,7 @@ const columns = ref([
         key: 'index',
         width: 50,
         align: 'center',
-        render(row: any, index: number) {
+        render(_, index: number) {
             return index + 1
         }
     },
