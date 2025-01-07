@@ -4,7 +4,7 @@ const apiBaseUrl = "https://pharmacybackend-production.up.railway.app/api/";
 
 const api = axios.create({
   baseURL: apiBaseUrl,
-  withCredentials: true,
+  withCredentials: false,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
