@@ -20,7 +20,7 @@ const login = async (e: MouseEvent) => {
       try {
         loading.value = true
         const response = await authServices.login(form.value)
-        // console.log("here", response);
+        console.log("here", response);
         if (response.data.token) {
           localStorage.setItem('token', response.data.token)
           localStorage.removeItem("tokenRemoved");
@@ -32,6 +32,7 @@ const login = async (e: MouseEvent) => {
           }, 600)
         }
       } catch (error) {
+        console.log(error);
         message.error("Usuario o contraseña incorrectos.")
       } finally {
         setTimeout(() => {
@@ -58,6 +59,11 @@ const rules = {
   ],
 
 };
+
+const test =async ()=>{
+  const response = await authServices.getTest()
+  console.log(response);
+}
 </script>
 
 <template>
@@ -95,8 +101,12 @@ const rules = {
             </n-form-item-gi>
           </n-grid>
           <n-form-item>
-            <n-button type="primary" :loading="loading" class="w-full -mt-5" @click="login">Iniciar
-              Sesion</n-button>
+            <div class="grid gap-10">
+              <n-button type="primary" :loading="loading" class="w-full -mt-5" @click="login">Iniciar
+                Sesion</n-button>
+                <n-button type="success"  class="w-full -mt-5" @click="test">Iniciar
+                  Test</n-button>
+                </div>
           </n-form-item>
         </n-form>
       </div>
