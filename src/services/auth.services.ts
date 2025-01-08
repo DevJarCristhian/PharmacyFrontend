@@ -20,11 +20,6 @@ class authServices {
   async logout() {
     await api.post(`${prefix}/logout`);
   }
-
-  async getTest() {
-    const { data } = await api.get(`test`);
-    return data;
-  }
 }
 
 export default new authServices();

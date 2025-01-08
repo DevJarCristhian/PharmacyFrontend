@@ -9,7 +9,6 @@ import { light, dark } from './utils/Config';
 import { authStores } from './store/auth';
 
 const router = useRouter();
-const isAuthenticated = ref(true);
 const store = authStores();
 const { theme } = useDarkMode();
 const setTheme = ref(theme.value ? light : dark);
@@ -19,7 +18,7 @@ watch(theme, () => {
 });
 
 onMounted(() => {
-    if (isAuthenticated.value) {
+    if (localStorage.getItem("token")) {
         store.getUser();
         mainRouter.getRoutes().forEach(route => { router.addRoute(route); });
     } else {

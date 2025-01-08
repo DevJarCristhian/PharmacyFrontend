@@ -59,11 +59,6 @@ const rules = {
   ],
 
 };
-
-const test =async ()=>{
-  const response = await authServices.getTest()
-  console.log(response);
-}
 </script>
 
 <template>
@@ -101,12 +96,8 @@ const test =async ()=>{
             </n-form-item-gi>
           </n-grid>
           <n-form-item>
-            <div class="grid gap-10">
-              <n-button type="primary" :loading="loading" class="w-full -mt-5" @click="login">Iniciar
+              <n-button type="primary" :loading="loading" class="w-full -mt-5 h-10" @click="login">Iniciar
                 Sesion</n-button>
-                <n-button type="success"  class="w-full -mt-5" @click="test">Iniciar
-                  Test</n-button>
-                </div>
           </n-form-item>
         </n-form>
       </div>
@@ -120,4 +111,3 @@ const test =async ()=>{
 </template>
 
 <style scoped></style>
-<!-- bg-zinc-50 dark:bg-[#141D2C] -->
