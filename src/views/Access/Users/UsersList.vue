@@ -45,8 +45,9 @@ const pagination = ref({
     pageCount: 1,
     pageSize: 25,
     total: 0,
+    pageSlot: 4,
     prefix() {
-        return `Total ${pagination.value.total} Items de ${pagination.value.pageCount} paginas`
+        return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`
     },
     onUpdatePage(page: any) {
         params.value.page = page
@@ -95,12 +96,12 @@ const formatDate = (date: string) => {
 
 const options = ref([
     {
-        label: 'Estado',
-        key: 'state'
+        label: 'Activo',
+        key: 'active'
     },
     {
-        label: 'Rol',
-        key: 'role'
+        label: 'Inactivo',
+        key: 'inactive'
     },
 ]);
 
@@ -196,8 +197,8 @@ const columns = ref([
     <div>
         <add :show="showModal" :items="userData" @close="showModal = !showModal"
             @refresh="pagination.onUpdatePage(1)" />
-        <div class="bg-white dark:bg-[#1E2838] shadow h-12 rounded mb-4 font-semibold p-2 px-3">
-            <div class="flex justify-between items-center">
+        <div class="bg-white dark:bg-[#1E2838] shadow min-h-12 rounded mb-4 font-semibold p-2 px-3">
+            <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">
                     <span class="text-lg -mt-1">Usuarios</span>
                     <n-dropdown trigger="click" :options="options">
@@ -208,7 +209,7 @@ const columns = ref([
                         </div>
                     </n-dropdown>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <n-button size="small" type="primary" @click="userReset">
                         <j-icon w="w-[14px]" name="add" />
                         Nuevo

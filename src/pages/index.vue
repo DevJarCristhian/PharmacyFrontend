@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import { computed, ref } from 'vue';
 import NavBar from '../layouts/NavBar.vue';
 import SideBar from '../layouts/SideBar.vue';
 
@@ -10,13 +9,13 @@ import SideBar from '../layouts/SideBar.vue';
         <NavBar />
         <div class="flex flex-1 overflow-hidden bg-zinc-50 dark:bg-[#141D2C]">
             <SideBar />
-            <div class="flex-1 overflow-y-auto p-4">
+            <n-scrollbar class="flex-1 overflow-y-auto p-4">
                 <router-view v-slot="{ Component }">
                     <transition name="fade-slide" mode="out-in">
                         <component :is="Component" />
                     </transition>
                 </router-view>
-            </div>
+            </n-scrollbar>
         </div>
     </div>
 </template>

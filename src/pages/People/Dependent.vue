@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from "vue";
 import { useRoute } from "vue-router";
-import List from '../../views/People/Dependent/DependentListt.vue';
-// const Print = defineAsyncComponent(() => import("./modals/ModalPrint.vue"));
-
+const List = defineAsyncComponent(() => import("../../views/People/Dependent/DependentList.vue"));
 
 const route = useRoute();
 const name: string = (route.name as string) || "";

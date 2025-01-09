@@ -2,17 +2,21 @@
 import { globalActions } from '../store/actions';
 import { RouterLink, useRoute } from "vue-router";
 import navigations from '../router/navigations';
-import { h, ref, toRefs } from 'vue';
+import { h, onMounted, ref, toRefs } from 'vue';
 import JIcon from '../components/JIcon.vue';
-// import { authStores } from '../store/auth';
 
 const route = useRoute();
 const store = globalActions();
-// const { user } = toRefs(authStores())
 const { collapsed } = toRefs(store);
 
 const activeKey: string = (route.name as string) || "";
 const selectedKeys = ref<string>(activeKey);
+const isMobile = ref<boolean>(window.innerWidth < 768);
+
+const updateMobileStatus = () => { isMobile.value = window.innerWidth < 768; };
+onMounted(() => {
+    window.addEventListener('resize', updateMobileStatus);
+});
 
 const renderMenuIcon = (option: any) => {
     if (!!option.i) {
@@ -32,11 +36,9 @@ const renderMenuLabel = (option: any) => {
 
 const changePath = (key: string) => {
     if (key === 'home') {
-        // window.location.reload();
         window.location.href = '/';
     }
 };
-
 </script>
 
 <template>
@@ -46,6 +48,17 @@ const changePath = (key: string) => {
             :collapsed-width="64" :collapsed-icon-size="22" :options="navigations" accordion
             v-model:value="selectedKeys" @update:value="changePath" />
     </div>
+
+    <n-drawer v-if="isMobile" v-model:show="collapsed" width="12rem" placement="left">
+        <div class="fixed inset-y-0 left-0 w-48 bg-white dark:bg-gray-900 dark:border-r dark:border-gray-800/80 drop-shadow py-4"
+            @click.stop>
+            <span class="flex items-center justify-center my-2">
+                <img width="120px" src="../assets/logo.webp" alt="">
+            </span>
+            <n-menu :render-label="renderMenuLabel" :render-icon="renderMenuIcon" :collapsed="false" :width="64"
+                :options="navigations" accordion v-model:value="selectedKeys" @update:value="changePath" />
+        </div>
+    </n-drawer>
 </template>
 
 <style scoped></style>

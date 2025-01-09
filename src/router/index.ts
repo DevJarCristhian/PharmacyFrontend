@@ -17,7 +17,7 @@ const routes: Array<RouteRecordRaw> = [
       { name: "users", path: "/users", component: Users },
       { name: "roles", path: "/roles", component: Roles },
       { name: "dependent", path: "/dependent", component: Dependent },
-      { name: "doctors", path: "/doctors", component: Users },
+      { name: "doctors", path: "/doctors", component: Dashboard },
       { name: "settings", path: "/settings", component: Dashboard },
     ],
   },
