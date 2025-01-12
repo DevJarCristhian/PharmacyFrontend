@@ -8,7 +8,7 @@ import JIcon from '../../../components/JIcon.vue';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('./modals/AddRole.vue'))
+const add = defineAsyncComponent(() => import('./modals/AddRoles.vue'))
 
 const props = defineProps<{
     path: string;
