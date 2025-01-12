@@ -8,7 +8,7 @@ import JIcon from '../../../components/JIcon.vue';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('./modals/AddUser.vue'))
+const add = defineAsyncComponent(() => import('../../../views/Access/Users/modals/AddUser.vue'))
 
 // import 'dayjs/locale/es' 
 // dayjs.locale('es')

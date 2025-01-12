@@ -9,7 +9,7 @@ import { renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('./modals/AddPharmacy.vue'))
+const add = defineAsyncComponent(() => import('../../../views/Data/Pharmacy/modals/AddPharmacy.vue'))
 
 const props = defineProps<{
     path: string;
