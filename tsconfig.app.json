@@ -11,10 +11,5 @@
     "noUncheckedSideEffectImports": true,
     "verbatimModuleSyntax": false
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "shims-vue.d.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
