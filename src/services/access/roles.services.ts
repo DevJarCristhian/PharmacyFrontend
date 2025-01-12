@@ -1,6 +1,6 @@
 import api from "../../config/axios";
 import type { Params, Store } from "../interfaces/access/roles.interfaces";
-const prefix = "roles/";
+const prefix = "access/roles/";
 
 class rolesServices {
   async get(params: Params) {

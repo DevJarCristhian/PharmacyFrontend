@@ -9,8 +9,8 @@ import SideBar from '../layouts/SideBar.vue';
         <NavBar />
         <div class="flex flex-1 overflow-hidden bg-zinc-50 dark:bg-[#141D2C]">
             <SideBar />
-            <n-scrollbar class="flex-1 overflow-y-auto p-4">
-                <router-view v-slot="{ Component }">
+            <n-scrollbar class="flex-1 overflow-y-auto px-4 pb-4">
+                <router-view v-slot="{ Component }" class="mt-4">
                     <transition name="fade-slide" mode="out-in">
                         <component :is="Component" />
                     </transition>

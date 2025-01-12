@@ -3,9 +3,11 @@ import authServices from '../services/auth.services';
 import { authStores } from '../store/auth';
 import { FormInst, useMessage } from 'naive-ui';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const formRef = ref<FormInst | null>(null)
 const loading = ref<boolean>(false)
+const router = useRouter();
 const message = useMessage()
 const store = authStores()
 const form = ref<{ email: string, password: string }>({
@@ -20,16 +22,21 @@ const login = async (e: MouseEvent) => {
       try {
         loading.value = true
         const response = await authServices.login(form.value)
-        console.log("here", response);
+        // console.log("here", response);
         if (response.data.token) {
           localStorage.setItem('token', response.data.token)
           localStorage.removeItem("tokenRemoved");
           message.success('Bienvenido al Sistema')
           await store.getUser()
-
           setTimeout(() => {
-            window.location.href = '/'
-          }, 600)
+            if (store.user.permissions) {
+              if (store.user.permissions.find(e => e.name === 'dashboard')) {
+                router.push('/dashboard')
+              } else {
+                router.push(`/${store.user.permissions[0].name}`)
+              }
+            }
+          }, 300)
         }
       } catch (error) {
         console.log(error);
@@ -96,8 +103,8 @@ const rules = {
             </n-form-item-gi>
           </n-grid>
           <n-form-item>
-              <n-button type="primary" :loading="loading" class="w-full -mt-5 h-10" @click="login">Iniciar
-                Sesion</n-button>
+            <n-button type="primary" :loading="loading" class="w-full -mt-5 h-10" @click="login">Iniciar
+              Sesion</n-button>
           </n-form-item>
         </n-form>
       </div>

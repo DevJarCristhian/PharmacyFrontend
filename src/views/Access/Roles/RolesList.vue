@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import { defineAsyncComponent, h, onMounted, ref } from 'vue';
-import rolesServices from '../../../services/access/roles.services'
+import { defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
+import rolesServices from '../../../services/access/roles.services';
 import { Get, Params, Store } from './../../../services/interfaces/access/roles.interfaces';
 import { NButton } from 'naive-ui';
 import dayjs from 'dayjs';
 import JIcon from '../../../components/JIcon.vue';
+import { authStores } from '../../../store/auth';
+import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('../../../views/Access/Roles/modals/addRole.vue'))
+const add = defineAsyncComponent(() => import('./modals/AddRole.vue'))
 
-// const props = defineProps<{
-//     path: string;
-// }>();
+const props = defineProps<{
+    path: string;
+}>();
 
-// const actions = await useSectionStores.getActionsForSection(
-//     props.section ?? ""
-// );
-
-// console.log(props.path);
-
+const auth = authStores();
+const actions = ref<string[]>();
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
 const showModal = ref<boolean>(false)
@@ -49,13 +47,22 @@ const pagination = ref({
 
 onMounted(() => {
     getRoles()
+    getActions()
 })
+
+const getActions = () => {
+    if (auth.user.permissions) {
+        actions.value = validateActions(auth.user.permissions, props.path);
+    }
+}
+
+watch(() => auth.user.permissions, getActions);
 
 const getRoles = async () => {
     loading.value = true
     const response = await rolesServices.get(params.value)
     data.value = response.data
-    console.log(response);
+    // console.log(response);
     // pagination.value.pageCount = response.data.last_page
     // pagination.value.total = response.data.total
     loading.value = false
@@ -70,8 +77,6 @@ const roleReset = () => {
 }
 
 const setItems = (item: Get) => {
-    console.log(item);
-
     roleData.value.id = item.id
     roleData.value.description = item.description
     roleData.value.permissions = item.permissions
@@ -114,21 +119,22 @@ const columns = ref([
     {
         title: '',
         key: 'actions',
-        width: 150,
+        width: 60,
         align: 'center',
         render(row: any) {
+            if (!actions?.value?.includes('update')) { return; }
             return h(
                 NButton,
                 {
-                    size: 'tiny',
+                    size: 'small',
                     strong: true,
-                    secondary: true,
+                    quaternary: true,
                     onClick: () => {
                         setItems(row)
                     }
                 },
                 {
-                    default: () => h(JIcon, { name: 'edit', w: 'w-3' })
+                    default: () => h(JIcon, { name: 'edit', w: 'w-4' })
                 }
             )
         }
@@ -146,8 +152,8 @@ const columns = ref([
                 <div class="flex items-center gap-4">
                     <span class="text-lg -mt-1">Roles</span>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <n-button size="small" type="primary" @click="roleReset">
+                <div class="flex flex-wrap items-center gap-3">
+                    <n-button v-if="actions?.includes('add')" size="small" type="primary" @click="roleReset">
                         <j-icon w="w-[14px]" name="add" />
                         Nuevo
                     </n-button>
@@ -155,13 +161,9 @@ const columns = ref([
                         class="opacity-70 w-7 h-7 flex justify-center items-center hover:bg-slate-200/60 dark:hover:bg-[#141D2C] rounded-md">
                         <j-icon w="w-[12px]" name="refresh" />
                     </button>
-                    <button
-                        class="opacity-70 w-7 h-7 flex justify-center items-center hover:bg-slate-200/60 dark:hover:bg-[#141D2C] rounded-md">
-                        <j-icon w="w-[18px]" name="export" />
-                    </button>
 
-                    <n-input style="width: 200px" placeholder="Buscar..." v-model:value="params.search"
-                        @keydown.enter="pagination.onUpdatePage(1)">
+                    <n-input v-if="actions?.includes('filter')" style="width: 200px" placeholder="Buscar..."
+                        v-model:value="params.search" @keydown.enter="pagination.onUpdatePage(1)">
                         <template #prefix>
                             <j-icon w="w-[14px]" name="search" />
                         </template>

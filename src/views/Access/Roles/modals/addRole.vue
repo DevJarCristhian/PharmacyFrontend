@@ -28,6 +28,7 @@ onMounted(() => {
 })
 
 onUpdated(() => {
+    formData.value.permissions = [];
     if (props.show == true) {
         formData.value = props.items as Store;
     }
@@ -35,20 +36,25 @@ onUpdated(() => {
 
 const getPermissions = async () => {
     const response = await rolesServices.getPermissions()
-    const newData = response.data.map((item: any) => ({
-        ...item, children: JSON.parse(item.children)
-    }))
-    // console.log(newData);
+    const newData = response.data.map((item: any) => {
+        const children = JSON.parse(item.children);
+        children.unshift({ key: item.id, label: "Lista" });
+        return {
+            ...item,
+            children: children
+        };
+    });
     permissions.value = newData
 }
+
 
 const handleSubmit = async () => {
     formRef.value?.validate(async (errors) => {
         if (!errors) {
             loading.value = true
-            const response = formData.value.id ?
+            formData.value.id ?
                 await rolesServices.update(formData.value.id, formData.value) : await rolesServices.store(formData.value)
-            console.log(response)
+            // console.log(response)
             emit('refresh')
             loading.value = false
             closeModal()
@@ -77,9 +83,12 @@ const closeModal = () => {
             <n-form-item label="Descripción" path="description">
                 <n-input v-model:value="formData.description" placeholder="Ingrese Descripción" />
             </n-form-item>
-            <n-form-item label="Permisos" path="permissions" class="min-h-36">
-                <n-tree accordion expand-on-click cascade checkable :data="permissions"
-                    :default-checked-keys="formData.permissions" @update:checked-keys="updateCheckedKeys" />
+            <n-form-item label="Permisos" path="permissions" class="h-72">
+                <n-scrollbar style="max-height: 290px">
+                    <n-tree style="font-size: 18px;" accordion expand-on-click cascade checkable selectable
+                        :data="permissions" :default-checked-keys="formData.permissions"
+                        @update:checked-keys="updateCheckedKeys" />
+                </n-scrollbar>
             </n-form-item>
             <!-- <pre>{{ JSON.stringify(formData, null, 2) }}</pre> -->
         </n-form>

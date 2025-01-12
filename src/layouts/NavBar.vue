@@ -2,21 +2,17 @@
 import JIcon from '../components/JIcon.vue';
 import { useDarkMode } from '../utils/DarkMode';
 import { globalActions } from '../store/actions';
-import { h, ref, toRefs } from 'vue';
+import { ref, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 import authServices from '../services/auth.services';
 import { authStores } from '../store/auth';
+import { renderIcon } from '../utils/Functions';
 
 const { toggleDarkMode, theme } = useDarkMode();
 const { user } = toRefs(authStores())
 
 const store = globalActions();
 const router = useRouter();
-const renderIcon = (icon: any) => {
-    return () => {
-        return h(JIcon, { name: icon, w: 'w-4' });
-    }
-};
 
 const options = ref([
     {
@@ -62,7 +58,7 @@ const optionsNoty = ref([
     },
 ])
 
-const offset = [-5, -1] 
+const offset = [-5, 2] 
 </script>
 
 <template>
@@ -80,7 +76,7 @@ const offset = [-5, -1]
         <div class="flex items-center gap-1">
             <n-dropdown trigger="click" :show-arrow="true" :options="optionsNoty" @select="handleSelect">
                 <button class=" hover:bg-slate-200/60 dark:hover:bg-gray-800 rounded-md p-2">
-                    <n-badge :value="3" :max="15" :offset="offset">
+                    <n-badge dot type="success" :offset="offset">
                         <j-icon name="bell" class="opacity-60" />
                     </n-badge>
                 </button>
