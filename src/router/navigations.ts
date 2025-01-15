@@ -21,7 +21,7 @@ export default [
         href: "/products",
       },
       {
-        label: "Precios",
+        label: "Lista de Precios",
         key: "prices",
         href: "/prices",
       },
@@ -36,6 +36,11 @@ export default [
         label: "Doctores",
         key: "doctors",
         href: "/doctors",
+      },
+       {
+        label: "Pacientes",
+        key: "visitors",
+        href: "/visitors",
       },
       {
         label: "Visitadores",
