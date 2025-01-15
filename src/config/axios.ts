@@ -1,6 +1,6 @@
 import axios from "axios";
-// const apiBaseUrl = import.meta.env.VITE_API_URL;
-const apiBaseUrl = "https://pharmacybackend-production.up.railway.app/api/";
+const apiBaseUrl = import.meta.env.VITE_API_URL;
+// const apiBaseUrl = "https://pharmacybackend-production.up.railway.app/api/";
 
 const api = axios.create({
   baseURL: apiBaseUrl,

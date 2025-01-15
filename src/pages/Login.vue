@@ -83,7 +83,7 @@ const rules = {
           <span> Correo </span>
           <n-grid :cols="1">
             <n-form-item-gi path="mail" class="-mt-5">
-              <n-input v-model:value="form.email" placeholder="correo@ejemplo.com" @keydown.enter="login">
+              <n-input v-model:value="form.email" size="large" placeholder="correo@ejemplo.com" @keydown.enter="login">
                 <template #prefix>
                   <j-icon name="profile" w="w-5" />
                 </template>
@@ -94,7 +94,7 @@ const rules = {
           <span> Contraseña </span>
           <n-grid :cols="1">
             <n-form-item-gi path="password" class="-mt-5">
-              <n-input v-model:value="form.password" type="password" placeholder="ingrese contraseña"
+              <n-input v-model:value="form.password" size="large" type="password" placeholder="ingrese contraseña"
                 show-password-on="click" @keydown.enter="login">
                 <template #prefix>
                   <j-icon name="pass" w="w-5" />
