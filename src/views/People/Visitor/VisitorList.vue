@@ -4,7 +4,7 @@ import visitorServices from '../../../services/people/visitor.services';
 import { Get, Params, Store } from '../../../services/interfaces/people/visitor.interfaces';
 import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
-import { renderIcon } from '../../../utils/Functions';
+import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { validateActions } from '../../../utils/Config/validate';
 import { authStores } from '../../../store/auth';
 
@@ -18,6 +18,7 @@ const auth = authStores();
 const actions = ref<string[]>();
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
+const loadingExport = ref<boolean>(false);
 const showModal = ref<boolean>(false)
 const showDropdown = ref<boolean>(false)
 const x = ref<number>(0)
@@ -140,6 +141,12 @@ const rowProps = (row: any) => {
     }
 }
 
+const exportToExcel = async () => {
+    loadingExport.value = true;
+    const data = await visitorServices.exportToExcel();
+    await downloadExcel(data, "Lista Visitadores");
+    loadingExport.value = false;
+}
 </script>
 
 <template>
@@ -156,14 +163,21 @@ const rowProps = (row: any) => {
                         <j-icon w="w-[14px]" name="add" />
                         Nuevo
                     </n-button> -->
-                    <button @click="pagination.onUpdatePage(1)"
-                        class="opacity-70 w-7 h-7 flex justify-center items-center hover:bg-slate-200/60 dark:hover:bg-[#141D2C] rounded-md">
-                        <j-icon w="w-[12px]" name="refresh" />
-                    </button>
-                    <button v-if="actions?.includes('export')"
-                        class="opacity-70 w-7 h-7 flex justify-center items-center hover:bg-slate-200/60 dark:hover:bg-[#141D2C] rounded-md">
-                        <j-icon w="w-[18px]" name="export" />
-                    </button>
+                    <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"
+                        @click="exportToExcel" quaternary class="group" icon-placement="right">
+                        <div class="hidden group-hover:block text-xs">
+                            Exportar
+                        </div>
+                        <template #icon>
+                            <j-icon w="w-7" class="opacity-70" name="excel" />
+                        </template>
+                    </n-button>
+
+                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                        <template #icon>
+                            <j-icon w="w-[14px]" name="refresh" />
+                        </template>
+                    </n-button>
 
                     <n-input v-if="actions?.includes('filter')" style="width: 200px" placeholder="Buscar..."
                         v-model:value="params.search" @keydown.enter="pagination.onUpdatePage(1)">

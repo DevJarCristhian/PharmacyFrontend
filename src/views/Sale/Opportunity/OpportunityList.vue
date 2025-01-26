@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
-// import opportunityServices from '../../../services/sale/opportunity.services';
+import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from 'vue';
+import opportunityServices from '../../../services/sale/opportunity.services';
 import { Get, Params, Store } from '../../../services/interfaces/sale/opportunity.interfaces';
-import { DropdownOption } from 'naive-ui';
-// import dayjs from 'dayjs';
+import { DropdownOption, NTooltip } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
-import { renderIcon } from '../../../utils/Functions';
+import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
 const add = defineAsyncComponent(() => import('../../../views/Sale/Opportunity/modals/AddOpportunity.vue'))
 
 const props = defineProps<{
-    path: string;
-}>();
+    path: string
+}>()
 
-const auth = authStores();
-const actions = ref<string[]>();
+const auth = authStores()
+const actions = ref<string[]>()
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
+const loadingExport = ref<boolean>(false)
 const showModal = ref<boolean>(false)
 const showDropdown = ref<boolean>(false)
 const x = ref<number>(0)
@@ -56,74 +56,89 @@ onMounted(() => {
 
 const getActions = () => {
     if (auth.user.permissions) {
-        actions.value = validateActions(auth.user.permissions, props.path);
+        actions.value = validateActions(auth.user.permissions, props.path)
     }
 }
 
-watch(() => auth.user.permissions, getActions);
+watch(() => auth.user.permissions, getActions)
 
 const getOpportunity = async () => {
     loading.value = true
-    // const response = await opportunityServices.get(params.value)
-    // data.value = response.data.data
-    // console.log(response.data.data);
-    // pagination.value.pageCount = response.data.last_page
-    // pagination.value.total = response.data.total
+    const response = await opportunityServices.get(params.value)
+    data.value = response.data.data
+    // console.log(response.data.data)
+    pagination.value.pageCount = response.data.last_page
+    pagination.value.total = response.data.total
     loading.value = false
 }
 
-// const opportunityReset = () => {
-//     oportunityData.value = {
-//         description: '',
-//         permissions: []
-//     }
-//     showModal.value = true
-// }
-
 const columns = ref([
     {
-        title: '#',
-        key: 'index',
-        width: 50,
-        align: 'center',
-        render(_, index: number) {
-            return index + 1
+        title: 'Documento',
+        key: 'invoiceSerie',
+        width: 100,
+        align: 'left',
+        render(row: any) {
+            return h('div', { style: 'text-align: left;' }, [
+                h('div', { style: 'font-weight: bold;' }, row.invoiceSerie),
+                h('div', row.invoiceNumber)
+            ]);
         }
     },
     {
-        title: 'Nombre',
-        key: 'name',
-        ellipsis: {
-            tooltip: true
-        },
-        width: 210,
-    },
-    {
-        title: 'Direccion',
-        key: 'address',
-        ellipsis: {
-            tooltip: true
-        },
-        width: 170,
-    },
-    {
-        title: 'Pais',
-        key: 'countryName',
+        title: 'Fecha Emisión',
+        key: 'invoiceDate',
         width: 100,
     },
     {
-        title: 'Departamento',
-        key: 'departmentName',
-        width: 130,
+        title: 'Paciente',
+        key: 'patientFullName',
+        width: 150,
+        align: 'left',
+        render(row: any) {
+            return h('div', { style: 'text-align: left;' }, [
+                h('div', { style: 'font-weight: bold;' }, row.documentNumber),
+                h(NTooltip, { trigger: 'hover', placement: 'top' }, {
+                    default: () => row.patientFullName,
+                    trigger: () => h('div', {
+                        style: {
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            maxWidth: 'max-content',
+                        }
+                    }, row.patientFullName)
+                })
+            ]);
+        }
+    },
+
+    {
+        title: 'Producto',
+        key: 'productName',
+        ellipsis: {
+            tooltip: true
+        },
+        width: 200,
+    },
+
+    {
+        title: 'Cantidad',
+        key: 'quantity',
+        width: 60,
+        align: 'center',
     },
     {
-        title: 'Municipio',
-        key: 'city',
-        width: 130,
+        title: 'Farmacia',
+        key: 'farmacyName',
+        ellipsis: {
+            tooltip: true
+        },
+        width: 150,
     },
     {
         title: 'F. Creación',
-        key: 'date',
+        key: 'createdAt',
         width: 140,
     },
     {
@@ -162,6 +177,14 @@ const rowProps = (row: any) => {
         }
     }
 }
+
+const exportToExcel = async () => {
+    loadingExport.value = true
+    console.log("a");
+    const data = await opportunityServices.exportToExcel()
+    await downloadExcel(data, "Lista Oportunidades")
+    loadingExport.value = false
+}
 </script>
 
 <template>
@@ -174,18 +197,21 @@ const rowProps = (row: any) => {
                     <span class="text-lg -mt-1">Oportunidades</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- <n-button size="small" type="primary" @click="opportunityReset">
-                        <j-icon w="w-[14px]" name="add" />
-                        Nuevo
-                    </n-button> -->
-                    <button @click="pagination.onUpdatePage(1)"
-                        class="opacity-70 w-7 h-7 flex justify-center items-center hover:bg-slate-200/60 dark:hover:bg-[#141D2C] rounded-md">
-                        <j-icon w="w-[12px]" name="refresh" />
-                    </button>
-                    <button v-if="actions?.includes('export')"
-                        class="opacity-70 w-7 h-7 flex justify-center items-center hover:bg-slate-200/60 dark:hover:bg-[#141D2C] rounded-md">
-                        <j-icon w="w-[18px]" name="export" />
-                    </button>
+                    <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"
+                        @click="exportToExcel" quaternary class="group" icon-placement="right">
+                        <div class="hidden group-hover:block text-xs">
+                            Exportar
+                        </div>
+                        <template #icon>
+                            <j-icon w="w-7" class="opacity-70" name="excel" />
+                        </template>
+                    </n-button>
+
+                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                        <template #icon>
+                            <j-icon w="w-[14px]" name="refresh" />
+                        </template>
+                    </n-button>
 
                     <n-input v-if="actions?.includes('filter')" style="width: 200px" placeholder="Buscar..."
                         v-model:value="params.search" @keydown.enter="pagination.onUpdatePage(1)">

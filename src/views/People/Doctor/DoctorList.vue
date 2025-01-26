@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
-import doctorServices from '../../../services/people/doctor.services';
-import { Get, Params, Store } from '../../../services/interfaces/people/doctor.interfaces';
-import { DropdownOption } from 'naive-ui';
+import { defineAsyncComponent, nextTick, onMounted, ref, watch } from "vue";
+import doctorServices from "../../../services/people/doctor.services";
+import {
+    Get,
+    Params,
+    Store,
+} from "../../../services/interfaces/people/doctor.interfaces";
+import { DropdownOption } from "naive-ui";
 // import dayjs from 'dayjs';
-import JIcon from '../../../components/JIcon.vue';
-import { renderIcon } from '../../../utils/Functions';
-import { authStores } from '../../../store/auth';
-import { validateActions } from '../../../utils/Config/validate';
+import JIcon from "../../../components/JIcon.vue";
+import { downloadExcel, renderIcon } from "../../../utils/Functions";
+import { authStores } from "../../../store/auth";
+import { validateActions } from "../../../utils/Config/validate";
 
-const add = defineAsyncComponent(() => import('../../../views/People/Doctor/modals/AddDoctor.vue'))
+const add = defineAsyncComponent(
+    () => import("../../../views/People/Doctor/modals/AddDoctor.vue")
+);
 
 const props = defineProps<{
     path: string;
@@ -17,22 +23,23 @@ const props = defineProps<{
 
 const auth = authStores();
 const actions = ref<string[]>();
-const data = ref<Get[]>([])
-const loading = ref<boolean>(false)
-const showModal = ref<boolean>(false)
-const showDropdown = ref<boolean>(false)
-const x = ref<number>(0)
-const y = ref<number>(0)
+const data = ref<Get[]>([]);
+const loading = ref<boolean>(false);
+const loadingExport = ref<boolean>(false);
+const showModal = ref<boolean>(false);
+const showDropdown = ref<boolean>(false);
+const x = ref<number>(0);
+const y = ref<number>(0);
 const params = ref<Params>({
     page: 1,
     perPage: 50,
     search: null,
     status: null,
-})
+});
 const doctorData = ref<Store>({
-    description: '',
-    permissions: []
-})
+    description: "",
+    permissions: [],
+});
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -40,129 +47,125 @@ const pagination = ref({
     total: 0,
     pageSlot: 4,
     prefix() {
-        return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`
+        return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`;
     },
     onUpdatePage(page: any) {
-        params.value.page = page
-        pagination.value.page = page
-        getDoctor()
-    }
-})
+        params.value.page = page;
+        pagination.value.page = page;
+        getDoctor();
+    },
+});
 
 onMounted(() => {
-    getDoctor()
-    getActions()
-})
+    getDoctor();
+    getActions();
+});
 
 const getActions = () => {
     if (auth.user.permissions) {
         actions.value = validateActions(auth.user.permissions, props.path);
     }
-}
+};
 
 watch(() => auth.user.permissions, getActions);
 
 const getDoctor = async () => {
-    loading.value = true
-    const response = await doctorServices.get(params.value)
-    data.value = response.data.data
+    loading.value = true;
+    const response = await doctorServices.get(params.value);
+    data.value = response.data.data;
     // console.log(response.data.data);
-    pagination.value.pageCount = response.data.last_page
-    pagination.value.total = response.data.total
-    loading.value = false
-}
-
-// const doctorReset = () => {
-//     doctorData.value = {
-//         description: '',
-//         permissions: []
-//     }
-//     showModal.value = true
-// }
+    pagination.value.pageCount = response.data.last_page;
+    pagination.value.total = response.data.total;
+    loading.value = false;
+};
 
 const columns = ref([
     {
-        title: '#',
-        key: 'index',
+        title: "#",
+        key: "index",
         width: 50,
-        align: 'center',
+        align: "center",
         render(_, index: number) {
-            return index + 1
-        }
+            return index + 1;
+        },
     },
     {
-        title: 'Nombre',
-        key: 'name',
+        title: "Nombre",
+        key: "name",
         ellipsis: {
-            tooltip: true
+            tooltip: true,
         },
         width: 210,
     },
     {
-        title: 'Direccion',
-        key: 'address',
+        title: "Direccion",
+        key: "address",
         ellipsis: {
-            tooltip: true
+            tooltip: true,
         },
         width: 170,
     },
     {
-        title: 'Pais',
-        key: 'countryName',
+        title: "Pais",
+        key: "countryName",
         width: 100,
     },
     {
-        title: 'Departamento',
-        key: 'departmentName',
+        title: "Departamento",
+        key: "departmentName",
         width: 130,
     },
     {
-        title: 'Municipio',
-        key: 'city',
+        title: "Municipio",
+        key: "city",
         width: 130,
     },
     {
-        title: 'F. Creación',
-        key: 'date',
+        title: "F. Creación",
+        key: "date",
         width: 140,
     },
     {
-        title: 'F. Actualización',
-        key: 'updatedAt',
+        title: "F. Actualización",
+        key: "updatedAt",
         width: 140,
     },
-])
-
+]);
 
 const options: DropdownOption[] = [
     {
-        label: 'Complementar',
-        key: 'edit',
-        icon: renderIcon("edit")
-
+        label: "Complementar",
+        key: "edit",
+        icon: renderIcon("edit"),
     },
     {
-        label: 'Copiar Nombre',
-        key: 'name',
-        icon: renderIcon("copy")
+        label: "Copiar Nombre",
+        key: "name",
+        icon: renderIcon("copy"),
     },
-]
+];
 
 const rowProps = (row: any) => {
     return {
         onContextmenu: (e: MouseEvent) => {
             console.log(row);
-            e.preventDefault()
-            showDropdown.value = false
+            e.preventDefault();
+            showDropdown.value = false;
             nextTick().then(() => {
-                showDropdown.value = true
-                x.value = e.clientX
-                y.value = e.clientY
-            })
-        }
-    }
-}
+                showDropdown.value = true;
+                x.value = e.clientX;
+                y.value = e.clientY;
+            });
+        },
+    };
+};
 
+const exportToExcel = async () => {
+    loadingExport.value = true;
+    const data = await doctorServices.exportToExcel();
+    await downloadExcel(data, "Lista Doctores");
+    loadingExport.value = false;
+}
 </script>
 
 <template>
@@ -175,18 +178,21 @@ const rowProps = (row: any) => {
                     <span class="text-lg -mt-1">Doctores</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- <n-button size="small" type="primary" @click="doctorReset">
-                        <j-icon w="w-[14px]" name="add" />
-                        Nuevo
-                    </n-button> -->
-                    <button @click="pagination.onUpdatePage(1)"
-                        class="opacity-70 w-7 h-7 flex justify-center items-center hover:bg-slate-200/60 dark:hover:bg-[#141D2C] rounded-md">
-                        <j-icon w="w-[12px]" name="refresh" />
-                    </button>
-                    <button v-if="actions?.includes('export')"
-                        class="opacity-70 w-7 h-7 flex justify-center items-center hover:bg-slate-200/60 dark:hover:bg-[#141D2C] rounded-md">
-                        <j-icon w="w-[18px]" name="export" />
-                    </button>
+                    <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"
+                        @click="exportToExcel" quaternary class="group" icon-placement="right">
+                        <div class="hidden group-hover:block text-xs">
+                            Exportar
+                        </div>
+                        <template #icon>
+                            <j-icon w="w-7" class="opacity-70" name="excel" />
+                        </template>
+                    </n-button>
+
+                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                        <template #icon>
+                            <j-icon w="w-[14px]" name="refresh" />
+                        </template>
+                    </n-button>
 
                     <n-input v-if="actions?.includes('filter')" style="width: 200px" placeholder="Buscar..."
                         v-model:value="params.search" @keydown.enter="pagination.onUpdatePage(1)">
@@ -203,8 +209,13 @@ const rowProps = (row: any) => {
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => {
+                showDropdown = false;
+            }
+                " @select="() => {
+                    showDropdown = false;
+                }
+                    " />
     </div>
 </template>
 

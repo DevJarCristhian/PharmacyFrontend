@@ -1,7 +1,7 @@
 import api from "../../config/axios";
 import type { Params, Store } from "../interfaces/people/dependent.interfaces";
 
-const prefix = "people/dependent/";
+const prefix = "people/patient/";
 
 class dependentServices {
   async get(params: Params) {

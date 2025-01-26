@@ -3,6 +3,7 @@ import Login from "../pages/Login.vue";
 import index from "../pages/index.vue";
 import PageNotFound from "../pages/PageNotFound.vue";
 import Dashboard from "../pages/Dashboard/index.vue";
+import Calendar from "../pages/Calendar/index.vue";
 import Users from "../pages/Access/Users.vue";
 import Roles from "../pages/Access/Roles.vue";
 import Dependent from "../pages/People/Dependent.vue";
@@ -14,6 +15,7 @@ import Price from "../pages/Sale/Price.vue";
 import Chain from "../pages/Data/Chain.vue";
 import Institution from "../pages/Data/Institution.vue";
 import Pharmacy from "../pages/Data/Pharmacy.vue";
+import Patient from "../pages/People/Patient.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/login", component: Login },
@@ -23,10 +25,12 @@ const routes: Array<RouteRecordRaw> = [
     redirect: "/dashboard",
     children: [
       { name: "dashboard", path: "/dashboard", component: Dashboard },
+      { name: "calendar", path: "/calendar", component: Calendar },
       { name: "users", path: "/users", component: Users },
       { name: "roles", path: "/roles", component: Roles },
       { name: "visitors", path: "/visitors", component: Visitor },
       { name: "doctors", path: "/doctors", component: Doctor },
+      { name: "patient", path: "/patient", component: Patient },
       { name: "dependents", path: "/dependents", component: Dependent },
       { name: "opportunities", path: "/opportunities", component: Opportunity },
       { name: "products", path: "/products", component: Product },

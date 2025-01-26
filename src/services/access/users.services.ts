@@ -21,6 +21,10 @@ class usersServices {
     const { data } = await api.get(`${prefix}roles`);
     return data;
   }
+  async exportToExcel() {
+    const { data } = await api.post(`${prefix}export/`, { search: '' }, { responseType: 'blob' });
+    return data;
+  }
 }
 
 export default new usersServices();

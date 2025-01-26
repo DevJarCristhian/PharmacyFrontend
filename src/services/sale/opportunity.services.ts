@@ -1,7 +1,7 @@
 import api from "../../config/axios";
-import type { Params, Store } from "../interfaces/people/doctor.interfaces";
+import type { Params, Store } from "../interfaces/sale/opportunity.interfaces";
 
-const prefix = "persons/visitor/";
+const prefix = "sale/opportunity/";
 
 class opportunityServices {
   async get(params: Params) {
@@ -20,6 +20,10 @@ class opportunityServices {
   }
   async getPermissions() {
     const { data } = await api.get(`${prefix}permissions`);
+    return data;
+  }
+  async exportToExcel() {
+    const { data } = await api.post(`${prefix}export/`, { search: '' }, { responseType: 'blob' });
     return data;
   }
 }

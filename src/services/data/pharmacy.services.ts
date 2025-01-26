@@ -22,6 +22,10 @@ class pharmacyServices {
     const { data } = await api.get(`${prefix}permissions`);
     return data;
   }
+  async exportToExcel() {
+    const { data } = await api.post(`${prefix}export/`, { search: '' }, { responseType: 'blob' });
+    return data;
+  }
 }
 
 export default new pharmacyServices();

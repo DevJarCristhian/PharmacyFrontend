@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from 'vue';
-import productServices from '../../../services/sale/product.services';
-import { Get, Params, Store } from '../../../services/interfaces/sale/product.interfaces';
-import { DropdownOption, NTag } from 'naive-ui';
+import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
+import dependentServices from '../../../services/people/patient.services.ts';
+import { Get, Params, Store } from '../../../services/interfaces/people/patient.interfaces.ts';
+import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('../../../views/Sale/Product/modals/AddProduct.vue'))
-
+const add = defineAsyncComponent(() => import('./modals/AddPatient.vue'))
 const props = defineProps<{
     path: string
 }>()
@@ -29,7 +28,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const productData = ref<Store>({
+const patientData = ref<Store>({
     description: '',
     permissions: []
 })
@@ -45,12 +44,12 @@ const pagination = ref({
     onUpdatePage(page: any) {
         params.value.page = page
         pagination.value.page = page
-        getProduct()
+        getPatient()
     }
 })
 
 onMounted(() => {
-    getProduct()
+    getPatient()
     getActions()
 })
 
@@ -62,9 +61,9 @@ const getActions = () => {
 
 watch(() => auth.user.permissions, getActions);
 
-const getProduct = async () => {
+const getPatient = async () => {
     loading.value = true
-    const response = await productServices.get(params.value)
+    const response = await dependentServices.get(params.value)
     data.value = response.data.data
     // console.log(response.data.data);
     pagination.value.pageCount = response.data.last_page
@@ -72,14 +71,18 @@ const getProduct = async () => {
     loading.value = false
 }
 
-// const productReset = () => {
-//     productData.value = {
-//         description: '',
-//         permissions: []
-//     }
-//     showModal.value = true
+// const setItems = (item: Get) => {
+// console.log(item);
+// patientData.value.id = item.id
+// patientData.value.description = item.description
+// patientData.value.permissions = item.permissions
+// showModal.value = true
 // }
 
+// const formatDate = (date: string) => {
+//     if (!date || !dayjs(date).isValid()) { return '-'; }
+//     return dayjs(date).format('YYYY-MM-DD')
+// }
 const columns = ref([
     {
         title: '#',
@@ -92,94 +95,69 @@ const columns = ref([
     },
     {
         title: 'Nombre',
-        key: 'name',
+        key: 'FullName',
         ellipsis: {
             tooltip: true
-        },
-        width: 210,
-    },
-    {
-        title: 'Descripción',
-        key: 'description',
-        ellipsis: {
-            tooltip: true
-        },
-        width: 170,
-    },
-    {
-        title: 'Descripción Larga',
-        key: 'longDescription',
-        ellipsis: {
-            tooltip: true
-        },
-        width: 170,
-    },
-    {
-        title: 'Recibe',
-        key: 'receive',
-        width: 100,
-        align: 'center',
-    },
-    {
-        title: 'Condición',
-        key: 'condition',
-        width: 100,
-        align: 'center',
-    },
-    {
-        title: 'Maximo Canjes',
-        key: 'maxRedemptions',
-        width: 130,
-        align: 'center',
-    },
-    {
-        title: 'Linea',
-        key: 'line',
-        width: 130,
-        align: 'center',
-    },
-    {
-        title: 'Estado',
-        key: 'status',
-        width: 80,
-        render(row: any) {
-            return h(NTag, {
-                type: row.status == 1 ? 'success' : 'error', bordered: false,
-                round: true,
-                size: 'small',
-            }, () => row.status == 1 ? 'Activo' : 'Inactivo')
         }
     },
     {
-        title: 'Guatemala',
-        key: 'guatemala',
-        width: 120,
-        align: 'center',
+        title: 'Direccion',
+        key: 'address',
+        ellipsis: {
+            tooltip: true
+        }
     },
     {
-        title: 'Honduras',
-        key: 'honduras',
+        title: 'Correo',
+        key: 'email',
+        ellipsis: {
+            tooltip: true
+        }
+    },
+    // {
+    //     title: 'Genero',
+    //     key: 'gender',
+    //     width: 90,
+    //     render(row: any) {
+    //         return h(NTag, {
+    //             type: row.gender == 1 ? 'success' : 'error',
+    //             size: 'small',
+    //             bordered: false,
+    //             round: true,
+    //         }, {
+    //             default: () => row.gender == 1 ? 'Masculino' : 'Femenino'
+    //         })
+    //     }
+    // },
+    {
+        title: 'Telefono',
+        key: 'phone',
         width: 120,
-        align: 'center',
-
     },
     {
-        title: 'Panama',
-        key: 'panama',
-        width: 120,
-        align: 'center',
+        title: 'Pais',
+        key: 'countryName',
+        width: 90,
     },
     {
-        title: 'Nicaragua',
-        key: 'nicaragua',
+        title: 'Departamento',
+        key: 'departmentName',
         width: 120,
-        align: 'center',
     },
     {
-        title: 'Costa Rica',
-        key: 'costarica',
+        title: 'Documento',
+        key: 'documentNumber',
+        width: 140,
+    },
+    {
+        title: 'F.Nacimiento',
+        key: 'birthDate',
         width: 120,
-        align: 'center',
+    },
+    {
+        title: 'F.Inscripción',
+        key: 'enrollmentDate',
+        width: 120,
     },
 ])
 
@@ -192,8 +170,19 @@ const options: DropdownOption[] = [
 
     },
     {
-        label: 'Copiar Nombre',
-        key: 'name',
+        label: 'Copiar Celular',
+        key: 'phone',
+        icon: renderIcon("copy")
+    },
+    {
+        label: 'Copiar DPI',
+        key: 'doc',
+        icon: renderIcon("copy")
+    },
+    {
+        // label: () => h('span', { style: { color: 'red' } }, 'Delete'),
+        label: 'Copiar fila',
+        key: 'copy',
         icon: renderIcon("copy")
     },
 ]
@@ -213,22 +202,23 @@ const rowProps = (row: any) => {
     }
 }
 
+
 const exportToExcel = async () => {
-    loadingExport.value = true
-    const data = await productServices.exportToExcel()
-    await downloadExcel(data, "Lista Productos")
-    loadingExport.value = false
+    loadingExport.value = true;
+    const data = await dependentServices.exportToExcel();
+    await downloadExcel(data, "Lista Pacientes");
+    loadingExport.value = false;
 }
 </script>
 
 <template>
     <div>
-        <add :show="showModal" :items="productData" @close="showModal = !showModal"
+        <add :show="showModal" :items="patientData" @close="showModal = !showModal"
             @refresh="pagination.onUpdatePage(1)" />
         <div class="bg-white dark:bg-[#1E2838] shadow min-h-12 rounded mb-4 font-semibold p-2 px-3">
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">
-                    <span class="text-lg -mt-1">Productos</span>
+                    <span class="text-lg -mt-1">Pacientes</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"
@@ -258,7 +248,7 @@ const exportToExcel = async () => {
         </div>
 
         <n-data-table remote striped :columns="columns" :loading="loading" :data="data" :pagination="pagination"
-            size="small" min-height="70vh" max-height="70vh" :scroll-x="1900" :row-props="rowProps">
+            size="small" min-height="70vh" max-height="70vh" :scroll-x="1700" :row-props="rowProps">
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"

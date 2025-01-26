@@ -2,8 +2,14 @@ export default [
   {
     label: "Dashboard",
     key: "dashboard",
-    href: "/",
+    href: "/dashboard",
     i: "home",
+  },
+  {
+    label: "Calendario",
+    key: "calendar",
+    href: "/calendar",
+    i: "calendar",
   },
   {
     label: "Ventas",
@@ -37,10 +43,10 @@ export default [
         key: "doctors",
         href: "/doctors",
       },
-       {
+      {
         label: "Pacientes",
-        key: "visitors",
-        href: "/visitors",
+        key: "patient",
+        href: "/patient",
       },
       {
         label: "Visitadores",
@@ -70,7 +76,7 @@ export default [
         href: "/chains",
       },
       {
-        label: "Insituciones",
+        label: "Instituciones",
         key: "institutions",
         href: "/institutions",
       },
