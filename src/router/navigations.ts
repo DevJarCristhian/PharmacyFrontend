@@ -27,7 +27,7 @@ export default [
         href: "/products",
       },
       {
-        label: "Lista de Precios",
+        label: "Lista Precios",
         key: "prices",
         href: "/prices",
       },
@@ -45,8 +45,8 @@ export default [
       },
       {
         label: "Pacientes",
-        key: "patient",
-        href: "/patient",
+        key: "patients",
+        href: "/patients",
       },
       {
         label: "Visitadores",
@@ -106,8 +106,3 @@ export default [
     i: "settings",
   },
 ];
-// {
-//   title: 'Dashboard',
-//   to: { name: '/' },
-//   icon: { icon: 'dashboard' },
-// },

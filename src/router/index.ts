@@ -16,6 +16,7 @@ import Chain from "../pages/Data/Chain.vue";
 import Institution from "../pages/Data/Institution.vue";
 import Pharmacy from "../pages/Data/Pharmacy.vue";
 import Patient from "../pages/People/Patient.vue";
+import Setting from "../pages/Setting/index.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/login", component: Login },
@@ -30,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
       { name: "roles", path: "/roles", component: Roles },
       { name: "visitors", path: "/visitors", component: Visitor },
       { name: "doctors", path: "/doctors", component: Doctor },
-      { name: "patient", path: "/patient", component: Patient },
+      { name: "patients", path: "/patients", component: Patient },
       { name: "dependents", path: "/dependents", component: Dependent },
       { name: "opportunities", path: "/opportunities", component: Opportunity },
       { name: "products", path: "/products", component: Product },
@@ -38,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
       { name: "institutions", path: "/institutions", component: Institution },
       { name: "chains", path: "/chains", component: Chain },
       { name: "pharmacies", path: "/pharmacies", component: Pharmacy },
-      { name: "settings", path: "/settings", component: Dashboard },
+      { name: "settings", path: "/settings", component: Setting },
     ],
   },
   { path: "/:catchAll(.*)", component: PageNotFound },

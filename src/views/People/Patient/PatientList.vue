@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
+import { defineAsyncComponent, nextTick, onMounted, ref, h, watch } from 'vue';
 import dependentServices from '../../../services/people/patient.services.ts';
 import { Get, Params, Store } from '../../../services/interfaces/people/patient.interfaces.ts';
-import { DropdownOption } from 'naive-ui';
+import { DropdownOption, NTag } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
@@ -101,6 +101,11 @@ const columns = ref([
         }
     },
     {
+        title: 'Documento',
+        key: 'documentNumber',
+        width: 140,
+    },
+    {
         title: 'Direccion',
         key: 'address',
         ellipsis: {
@@ -114,21 +119,21 @@ const columns = ref([
             tooltip: true
         }
     },
-    // {
-    //     title: 'Genero',
-    //     key: 'gender',
-    //     width: 90,
-    //     render(row: any) {
-    //         return h(NTag, {
-    //             type: row.gender == 1 ? 'success' : 'error',
-    //             size: 'small',
-    //             bordered: false,
-    //             round: true,
-    //         }, {
-    //             default: () => row.gender == 1 ? 'Masculino' : 'Femenino'
-    //         })
-    //     }
-    // },
+    {
+        title: 'Genero',
+        key: 'gender',
+        width: 90,
+        render(row: any) {
+            return h(NTag, {
+                type: row.gender == 1 ? 'success' : 'error',
+                size: 'small',
+                bordered: false,
+                round: true,
+            }, {
+                default: () => row.gender == 1 ? 'Masculino' : 'Femenino'
+            })
+        }
+    },
     {
         title: 'Telefono',
         key: 'phone',
@@ -143,11 +148,6 @@ const columns = ref([
         title: 'Departamento',
         key: 'departmentName',
         width: 120,
-    },
-    {
-        title: 'Documento',
-        key: 'documentNumber',
-        width: 140,
     },
     {
         title: 'F.Nacimiento',

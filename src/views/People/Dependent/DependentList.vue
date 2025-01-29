@@ -104,6 +104,11 @@ const columns = ref([
         }
     },
     {
+        title: 'Documento',
+        key: 'documentNumber',
+        width: 140,
+    },
+    {
         title: 'Direccion',
         key: 'address',
         ellipsis: {
@@ -146,11 +151,6 @@ const columns = ref([
         title: 'Departamento',
         key: 'departmentName',
         width: 120,
-    },
-    {
-        title: 'Documento',
-        key: 'documentNumber',
-        width: 140,
     },
     {
         title: 'F.Nacimiento',
