@@ -2,7 +2,7 @@
 import { onMounted, onUpdated, ref } from 'vue'
 import { Get } from '../../../../services/interfaces/sale/product.interfaces';
 // import rolesServices from '../../../../services/people/dependent.services'
-import { useMessage, type FormInst, type FormRules } from 'naive-ui'
+import { type FormInst } from 'naive-ui'
 
 const props = defineProps({
     show: Boolean,
@@ -11,9 +11,9 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'refresh']);
 
-const message = useMessage()
+// const message = useMessage()
 const formRef = ref<FormInst | null>(null)
-const loading = ref<boolean>(false)
+// const loading = ref<boolean>(false)
 const formData = ref<Get>(props.items as Get)
 const items = ref<Get>(
     {
