@@ -37,10 +37,10 @@ const pagination = ref({
     prefix() {
         return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`
     },
-    onUpdatePage(page: any) {
+    async onUpdatePage(page: any) {
         params.value.page = page
         pagination.value.page = page
-        getMaintenance()
+        await getMaintenance()
     }
 })
 
@@ -170,8 +170,8 @@ const columns = ref([
                                 </template>
                             </n-button>
 
-                            <n-input v-if="actions?.includes('filter')" style="width: 200px" placeholder="Buscar..."
-                                v-model:value="params.search" @keydown.enter="pagination.onUpdatePage(1)">
+                            <n-input style="width: 200px" placeholder="Buscar..." v-model:value="params.search"
+                                @keydown.enter="pagination.onUpdatePage(1)">
                                 <template #prefix>
                                     <j-icon w="w-[14px]" name="search" />
                                 </template>

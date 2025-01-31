@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from 'vue';
 import productServices from '../../../services/sale/product.services';
-import { Get, Params, Store } from '../../../services/interfaces/sale/product.interfaces';
+import { Get, Params, } from '../../../services/interfaces/sale/product.interfaces';
 import { DropdownOption, NTag } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('../../../views/Sale/Product/modals/AddProduct.vue'))
+const add = defineAsyncComponent(() => import('./modals/ShowProduct.vue'))
 
 const props = defineProps<{
     path: string
@@ -19,7 +19,7 @@ const actions = ref<string[]>()
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
-const showModal = ref<boolean>(false)
+const showModal = ref<boolean>(true)
 const showDropdown = ref<boolean>(false)
 const x = ref<number>(0)
 const y = ref<number>(0)
@@ -29,9 +29,15 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const productData = ref<Store>({
+const productData = ref<Get>({
+    name: '',
     description: '',
-    permissions: []
+    longDescription: '',
+    observation: '',
+    receive: '',
+    condition: 1,
+    status: 1,
+    unitMeasure: 0,
 })
 const pagination = ref({
     page: 1,
@@ -66,19 +72,11 @@ const getProduct = async () => {
     loading.value = true
     const response = await productServices.get(params.value)
     data.value = response.data.data
-    // console.log(response.data.data);
+    console.log(response.data.data);
     pagination.value.pageCount = response.data.last_page
     pagination.value.total = response.data.total
     loading.value = false
 }
-
-// const productReset = () => {
-//     productData.value = {
-//         description: '',
-//         permissions: []
-//     }
-//     showModal.value = true
-// }
 
 const columns = ref([
     {
@@ -186,22 +184,22 @@ const columns = ref([
 
 const options: DropdownOption[] = [
     {
-        label: 'Complementar',
-        key: 'edit',
-        icon: renderIcon("edit")
+        label: 'Mostrar',
+        key: 'show',
+        icon: renderIcon("show")
 
     },
     {
         label: 'Copiar Nombre',
         key: 'name',
-        icon: renderIcon("copy")
+        icon: renderIcon("detail")
     },
 ]
 
 const rowProps = (row: any) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            showValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -211,6 +209,26 @@ const rowProps = (row: any) => {
             })
         }
     }
+}
+
+const showValues = (item: Get) => {
+    productData.value.name = item.name
+    productData.value.description = item.description
+    productData.value.longDescription = item.longDescription
+    productData.value.observation = item.observation
+    productData.value.receive = item.receive
+    productData.value.condition = item.condition
+    productData.value.status = item.status
+    productData.value.unitMeasure = item.unitMeasure
+}
+
+const openModal = (key: string) => {
+    if (key === 'show') {
+        showModal.value = true
+    } else {
+        navigator.clipboard.writeText(productData.value.name);
+    }
+    showDropdown.value = false
 }
 
 const exportToExcel = async () => {
@@ -258,12 +276,12 @@ const exportToExcel = async () => {
         </div>
 
         <n-data-table remote striped :columns="columns" :loading="loading" :data="data" :pagination="pagination"
-            size="small" min-height="70vh" max-height="70vh" :scroll-x="1900" :row-props="rowProps">
+            size="small" min-height="70vh" max-height="70vh" :scroll-x="1900" :row-props="rowProps"
+            style="font-size: 12.5px;">
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }" @select="openModal" />
     </div>
 </template>
 

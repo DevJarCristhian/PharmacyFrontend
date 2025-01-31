@@ -84,6 +84,7 @@ const handleSubmitCategory = async () => {
                 const index = categories.value.findIndex(x => x.value == formCategory.value.id)
                 categories.value[index] = response.data
             }
+            validatePartial()
             formData.value.maintenanceId = response.data.value
             loadingCategory.value = false
 
@@ -108,18 +109,32 @@ const closeModalCategory = () => {
 
 const rules: FormRules = {
     description: [
-        { required: true, message: "La descripción es Requerida", trigger: "blur" }
+        { required: true, message: "La descripción es Requerida", trigger: ['input', 'blur'] }
     ],
     maintenanceId: [
-        { required: true, type: "number", message: "Categoria Requerida", trigger: "blur" }
+        { required: true, type: "number", message: "Categoria Requerida", trigger: ['input', 'blur'] }
     ],
 }
 
 const rulesCategory: FormRules = {
     description: [
-        { required: true, message: "La descripción es Requerida", trigger: "blur" }
+        { required: true, message: "La descripción es Requerida", trigger: ['input', 'blur'] }
     ],
 }
+
+const validatePartial = () => {
+    formRef.value?.validate(
+        (errors) => {
+            if (errors) {
+                console.error("aaaaaaaaaaa")
+            }
+        },
+        (rule) => {
+            return rule?.key === 'maintenanceId'
+        }
+    )
+}
+
 </script>
 <template>
     <n-modal :show="show" :on-close="closeModal" @esc="closeModal()" preset="card" :mask-closable="false"
@@ -129,7 +144,8 @@ const rulesCategory: FormRules = {
         <n-form ref="formRef" :model="formData" :rules="rules" class="flex flex-col gap-1">
             <n-form-item path="maintenanceId">
                 <n-input-group>
-                    <n-select v-model:value="formData.maintenanceId" :options="categories" placeholder="Seleccione" />
+                    <n-select v-model:value="formData.maintenanceId" @update:value="validatePartial"
+                        :options="categories" placeholder="Seleccione" />
                     <n-button v-if="formData.maintenanceId" type="primary" ghost
                         @click="editCategory(formData.maintenanceId)">
                         <j-icon w="w-[14px]" name="edit" />

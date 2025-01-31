@@ -180,7 +180,6 @@ const rowProps = (row: any) => {
 
 const exportToExcel = async () => {
     loadingExport.value = true
-    console.log("a");
     const data = await opportunityServices.exportToExcel()
     await downloadExcel(data, "Lista Oportunidades")
     loadingExport.value = false
