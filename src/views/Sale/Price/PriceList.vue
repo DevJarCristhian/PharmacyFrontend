@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 // import priceServices from '../../../services/sale/price.services';
-import { Get, Params, Store } from '../../../services/interfaces/sale/price.interfaces';
+import { Get, Params } from '../../../services/interfaces/sale/price.interfaces';
 import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('../../../views/Sale/Price/modals/AddPrice.vue'))
+// const add = defineAsyncComponent(() => import('../../../views/Sale/Price/modals/AddPrice.vue'))
 
 const props = defineProps<{
     path: string
@@ -19,7 +19,7 @@ const actions = ref<string[]>()
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
-const showModal = ref<boolean>(false)
+// const showModal = ref<boolean>(false)
 const showDropdown = ref<boolean>(false)
 const x = ref<number>(0)
 const y = ref<number>(0)
@@ -29,10 +29,10 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const priceData = ref<Store>({
-    description: '',
-    permissions: []
-})
+// const priceData = ref<Store>({
+//     description: '',
+//     permissions: []
+// })
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -175,8 +175,8 @@ const exportToExcel = async () => {
 
 <template>
     <div>
-        <add :show="showModal" :items="priceData" @close="showModal = !showModal"
-            @refresh="pagination.onUpdatePage(1)" />
+        <!-- <add :show="showModal" :items="priceData" @close="showModal = !showModal"
+            @refresh="pagination.onUpdatePage(1)" /> -->
         <div class="bg-white dark:bg-[#1E2838] shadow min-h-12 rounded mb-4 font-semibold p-2 px-3">
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">

@@ -2,7 +2,7 @@
 import { onMounted, ref, toRefs, watch } from 'vue'
 import { Get, Store } from '../../../../services/interfaces/people/patient.interfaces';
 import patientServices from '../../../../services/people/patient.services'
-import { c, useMessage, type FormInst } from 'naive-ui'
+import { useMessage, type FormInst } from 'naive-ui'
 import { allStore } from '../../../../store/all';
 
 const props = defineProps({

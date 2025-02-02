@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from 'vue';
 import opportunityServices from '../../../services/sale/opportunity.services';
-import { Get, Params, Store } from '../../../services/interfaces/sale/opportunity.interfaces';
+import { Get, Params } from '../../../services/interfaces/sale/opportunity.interfaces';
 import { DropdownOption, NTooltip } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
@@ -144,13 +144,13 @@ const columns = ref([
 const options: DropdownOption[] = [
     {
         label: 'Complementar',
-        key: 'edit',
-        icon: renderIcon("edit")
+        key: 'show',
+        icon: renderIcon("show")
 
     },
     {
-        label: 'Copiar Paciente',
-        key: 'name',
+        label: 'Copiar Producto',
+        key: 'product',
         icon: renderIcon("copy")
     },
 ]
@@ -179,8 +179,9 @@ const openModal = (key: string) => {
     showDropdown.value = false
     if (key === 'show') {
         showModal.value = true
-    } else {
-        navigator.clipboard.writeText(opportunityData.value.patientFullName);
+    }
+    if (key === 'product') {
+        navigator.clipboard.writeText(opportunityData.value.productName);
     }
 }
 
