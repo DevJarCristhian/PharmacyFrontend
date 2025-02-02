@@ -21,6 +21,9 @@ const light = {
     color: "#FFFFFF",
     textColor: "#000",
   },
+  Form: {
+    feedbackHeightMedium: "10px",
+  },
 };
 
 const dark = {
@@ -43,6 +46,9 @@ const dark = {
   },
   Card: {
     colorModal: "#1f2839",
+  },
+  Form: {
+    feedbackHeightMedium: "10px",
   },
 };
 

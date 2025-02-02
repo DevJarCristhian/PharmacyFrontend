@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
 import chainServices from '../../../services/data/chain.services';
-import { Get, Params, Store } from '../../../services/interfaces/data/chain.interfaces';
+import { Params, Get } from '../../../services/interfaces/data/chain.interfaces';
 import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('../../../views/Data/Chain/modals/AddChain.vue'))
+const add = defineAsyncComponent(() => import('./modals/ShowChain.vue'))
 
 const props = defineProps<{
     path: string
@@ -30,10 +30,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const chainData = ref<Store>({
-    description: '',
-    permissions: []
-})
+const chainData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -99,22 +96,22 @@ const columns = ref([
 
 const options: DropdownOption[] = [
     {
-        label: 'Complementar',
-        key: 'edit',
-        icon: renderIcon("edit")
+        label: 'Mostrar',
+        key: 'show',
+        icon: renderIcon("show")
 
     },
     {
-        label: 'Copiar Nombre',
+        label: 'Copiar Cadena',
         key: 'name',
         icon: renderIcon("copy")
     },
 ]
 
-const rowProps = (row: any) => {
+const rowProps = (row: Get) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            setValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -123,6 +120,19 @@ const rowProps = (row: any) => {
                 y.value = e.clientY
             })
         }
+    }
+}
+
+const setValues = (item: Get) => {
+    chainData.value = item
+}
+
+const openModal = (key: string) => {
+    showDropdown.value = false
+    if (key === 'show') {
+        showModal.value = true
+    } else {
+        navigator.clipboard.writeText(chainData.value.chain);
     }
 }
 
@@ -175,8 +185,7 @@ const exportToExcel = async () => {
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }" @select="openModal" />
     </div>
 </template>
 

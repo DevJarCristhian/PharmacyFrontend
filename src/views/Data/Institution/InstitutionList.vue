@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
 import institutionServices from '../../../services/data/institution.services';
-import { Get, Params, Store } from '../../../services/interfaces/data/institution.interfaces';
+import { Get, Params } from '../../../services/interfaces/data/institution.interfaces';
 import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('../../../views/Data/Institution/modals/AddInstitution.vue'))
+const add = defineAsyncComponent(() => import('./modals/ShowInstitution.vue'))
 
 const props = defineProps<{
     path: string;
@@ -29,10 +29,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const institutionData = ref<Store>({
-    description: '',
-    permissions: []
-})
+const institutionData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -106,9 +103,9 @@ const columns = ref([
 
 const options: DropdownOption[] = [
     {
-        label: 'Complementar',
-        key: 'edit',
-        icon: renderIcon("edit")
+        label: 'Mostrar',
+        key: 'show',
+        icon: renderIcon("show")
 
     },
     {
@@ -116,12 +113,17 @@ const options: DropdownOption[] = [
         key: 'name',
         icon: renderIcon("copy")
     },
+    {
+        label: 'Copiar Dirección',
+        key: 'address',
+        icon: renderIcon("copy")
+    },
 ]
 
 const rowProps = (row: any) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            setValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -130,6 +132,21 @@ const rowProps = (row: any) => {
                 y.value = e.clientY
             })
         }
+    }
+}
+
+const setValues = (item: Get) => {
+    institutionData.value = item
+}
+
+const openModal = (key: string) => {
+    showDropdown.value = false
+    if (key === 'show') {
+        showModal.value = true
+    } else if (key === 'name') {
+        navigator.clipboard.writeText(institutionData.value.name);
+    } else {
+        navigator.clipboard.writeText(institutionData.value.address);
     }
 }
 
@@ -182,8 +199,7 @@ const exportToExcel = async () => {
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }" @select="openModal" />
     </div>
 </template>
 

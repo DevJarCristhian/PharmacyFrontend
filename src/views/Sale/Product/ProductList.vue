@@ -19,7 +19,7 @@ const actions = ref<string[]>()
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
-const showModal = ref<boolean>(true)
+const showModal = ref<boolean>(false)
 const showDropdown = ref<boolean>(false)
 const x = ref<number>(0)
 const y = ref<number>(0)
@@ -29,16 +29,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const productData = ref<Get>({
-    name: '',
-    description: '',
-    longDescription: '',
-    observation: '',
-    receive: '',
-    condition: 1,
-    status: 1,
-    unitMeasure: 0,
-})
+const productData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -72,7 +63,7 @@ const getProduct = async () => {
     loading.value = true
     const response = await productServices.get(params.value)
     data.value = response.data.data
-    console.log(response.data.data);
+    // console.log(response.data.data);
     pagination.value.pageCount = response.data.last_page
     pagination.value.total = response.data.total
     loading.value = false
@@ -192,14 +183,24 @@ const options: DropdownOption[] = [
     {
         label: 'Copiar Nombre',
         key: 'name',
-        icon: renderIcon("detail")
+        icon: renderIcon("copy")
+    },
+    {
+        label: 'Copiar Descripción',
+        key: 'description',
+        icon: renderIcon("copy")
+    },
+    {
+        label: 'Copiar Descripción Larga',
+        key: 'longDescription',
+        icon: renderIcon("copy")
     },
 ]
 
-const rowProps = (row: any) => {
+const rowProps = (row: Get) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            showValues(row)
+            setValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -211,24 +212,34 @@ const rowProps = (row: any) => {
     }
 }
 
-const showValues = (item: Get) => {
-    productData.value.name = item.name
-    productData.value.description = item.description
-    productData.value.longDescription = item.longDescription
+const setValues = (item: Get) => {
+    productData.value = item
+    productData.value.costarica = item.costarica.toString()
+    productData.value.guatemala = item.guatemala.toString()
+    productData.value.honduras = item.honduras.toString()
+    productData.value.nicaragua = item.nicaragua.toString()
+    productData.value.panama = item.panama.toString()
+    productData.value.status = item.status.toString()
+    productData.value.line = item.line.toString()
+    productData.value.maxRedemptions = item.maxRedemptions.toString()
+    productData.value.condition = item.condition.toString()
     productData.value.observation = item.observation
-    productData.value.receive = item.receive
-    productData.value.condition = item.condition
-    productData.value.status = item.status
-    productData.value.unitMeasure = item.unitMeasure
 }
 
 const openModal = (key: string) => {
+    showDropdown.value = false
     if (key === 'show') {
         showModal.value = true
-    } else {
+    }
+    if (key === 'name') {
         navigator.clipboard.writeText(productData.value.name);
     }
-    showDropdown.value = false
+    if (key === 'description') {
+        navigator.clipboard.writeText(productData.value.description);
+    }
+    if (key === 'longDescription') {
+        navigator.clipboard.writeText(productData.value.longDescription);
+    }
 }
 
 const exportToExcel = async () => {

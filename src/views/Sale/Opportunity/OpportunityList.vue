@@ -8,7 +8,7 @@ import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('../../../views/Sale/Opportunity/modals/AddOpportunity.vue'))
+const add = defineAsyncComponent(() => import('./modals/ShowOpportunity.vue'))
 
 const props = defineProps<{
     path: string
@@ -29,10 +29,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const oportunityData = ref<Store>({
-    description: '',
-    permissions: []
-})
+const opportunityData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -66,7 +63,7 @@ const getOpportunity = async () => {
     loading.value = true
     const response = await opportunityServices.get(params.value)
     data.value = response.data.data
-    // console.log(response.data.data)
+    console.log(response.data.data)
     pagination.value.pageCount = response.data.last_page
     pagination.value.total = response.data.total
     loading.value = false
@@ -123,7 +120,7 @@ const columns = ref([
     },
 
     {
-        title: 'Cantidad',
+        title: 'Cant',
         key: 'quantity',
         width: 60,
         align: 'center',
@@ -137,13 +134,8 @@ const columns = ref([
         width: 150,
     },
     {
-        title: 'F. Creación',
-        key: 'createdAt',
-        width: 140,
-    },
-    {
         title: 'F. Actualización',
-        key: 'updatedAt',
+        key: 'dateUpdated',
         width: 140,
     },
 ])
@@ -157,16 +149,16 @@ const options: DropdownOption[] = [
 
     },
     {
-        label: 'Copiar Nombre',
+        label: 'Copiar Paciente',
         key: 'name',
         icon: renderIcon("copy")
     },
 ]
 
-const rowProps = (row: any) => {
+const rowProps = (row: Get) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            setValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -175,6 +167,20 @@ const rowProps = (row: any) => {
                 y.value = e.clientY
             })
         }
+    }
+}
+
+const setValues = (item: Get) => {
+    opportunityData.value = item
+    opportunityData.value.quantity = item.quantity.toString()
+}
+
+const openModal = (key: string) => {
+    showDropdown.value = false
+    if (key === 'show') {
+        showModal.value = true
+    } else {
+        navigator.clipboard.writeText(opportunityData.value.patientFullName);
     }
 }
 
@@ -188,7 +194,7 @@ const exportToExcel = async () => {
 
 <template>
     <div>
-        <add :show="showModal" :items="oportunityData" @close="showModal = !showModal"
+        <add :show="showModal" :items="opportunityData" @close="showModal = !showModal"
             @refresh="pagination.onUpdatePage(1)" />
         <div class="bg-white dark:bg-[#1E2838] shadow min-h-12 rounded mb-4 font-semibold p-2 px-3">
             <div class="flex flex-wrap justify-between gap-1 items-center">
@@ -227,8 +233,7 @@ const exportToExcel = async () => {
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }" @select="openModal" />
     </div>
 </template>
 

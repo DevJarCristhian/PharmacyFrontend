@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { onMounted, onUpdated, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Get } from '../../../../services/interfaces/sale/product.interfaces';
-// import rolesServices from '../../../../services/people/dependent.services'
 import { type FormInst } from 'naive-ui'
 
 const props = defineProps({
@@ -11,82 +10,94 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'refresh']);
 
-// const message = useMessage()
 const formRef = ref<FormInst | null>(null)
-// const loading = ref<boolean>(false)
-const formData = ref<Get>(props.items as Get)
-const items = ref<Get>(
-    {
-        "condition": 2,
-        "description": "ARBI 300 MG",
-        "longDescription": "ARBI 300 MG",
-        "status": 1,
-        "id": 41,
-        "name": "ARBI 300 MG",
-        "observation": "",
-        "receive": "1 Caja",
-        "unitMeasure": 0
-    }
-)
-// const permissions = ref<Get[]>([])
+const items = ref<Get>(props.items as Get)
 
-onMounted(() => {
-    // // getPermissions()
+watch(props, (newVal) => {
+    items.value = newVal.items as Get;
 })
-
-onUpdated(() => {
-    if (props.show == true) {
-        formData.value = props.items as Get;
-    }
-})
-
-// // const getPermissions = async () => {
-// //     const response = await rolesServices.getPermissions()
-//     const newData = response.data.map((item: any) => ({
-//         ...item, children: JSON.parse(item.children)
-//     }))
-//     // console.log(newData);
-// //     permissions.value = newData
-// }
 
 const closeModal = () => {
     emit("close");
-    formRef.value?.restoreValidation()
 };
 
 </script>
 <template>
     <n-modal :show="show" :on-close="closeModal" @esc="closeModal()" preset="card" :mask-closable="false"
-        :title="formData.id ? 'Editar Dependiente' : 'Crear Dependiente'" close-on-esc
-        style="width: 700px; height: 500px;" :auto-focus="false">
+        title="Producto" close-on-esc style="width: 700px;" :auto-focus="false">
 
-        <n-form ref="formRef" :model="formData" class="flex flex-col gap-1">
-            <n-form-item label="Nombre">
-                <n-input v-model:value="items.name" readonly placeholder="Cargando..." />
-            </n-form-item>
-            <n-form-item label="Descripción">
-                <n-input v-model:value="items.description" readonly placeholder="Cargando..." />
-            </n-form-item>
-
-            <n-grid x-gap="12" cols="12 100:1 450:12">
-                <n-form-item label="Descripción">
-                    <n-input v-model:value="items.description" readonly placeholder="Cargando..." />
-                </n-form-item>
-
-                <n-form-item-gi span="3" label="Fecha Nacimiento">
-                    <n-date-picker type="date" value-format="yyyy-MM-dd" :actions="null" style="width: 100%" />
+        <n-form ref="formRef" :model="items" class="-mt-2">
+            <n-grid x-gap="12" cols="12 200:1 450:12">
+                <n-form-item-gi span="8" label="Nombre">
+                    <n-input v-model:value="items.name" readonly placeholder="" :maxlength="3" />
                 </n-form-item-gi>
 
-                <n-form-item-gi span="2" label="Edad">
-                    <n-input v-model:value="items.description" placeholder="Edad" @paste.prevent :maxlength="3" />
-                </n-form-item-gi>
-
-                <n-form-item-gi span="4" label="Telefono">
-                    <n-input v-model:value="items.longDescription" placeholder="Telefono" @paste.prevent
-                        :maxlength="20" />
+                <n-form-item-gi span="4" label="Unidad de Medida">
+                    <n-input v-model:value="items.unitMeasure" readonly placeholder="" :maxlength="3" />
                 </n-form-item-gi>
             </n-grid>
-            <!-- <pre>{{ JSON.stringify(formData, null, 2) }}</pre> -->
+
+            <n-grid x-gap="12" cols="12 200:1 450:12">
+                <n-form-item-gi span="8" label="Descripción">
+                    <n-input v-model:value="items.description" readonly placeholder="" :maxlength="3" />
+                </n-form-item-gi>
+
+                <n-form-item-gi span="4" label="Recibe">
+                    <n-input v-model:value="items.receive" readonly placeholder="" />
+                </n-form-item-gi>
+            </n-grid>
+
+            <n-grid x-gap="12" cols="12 200:1 450:12">
+                <n-form-item-gi span="9" label="Descripción Larga">
+                    <n-input v-model:value="items.longDescription" readonly placeholder="" :maxlength="20" />
+                </n-form-item-gi>
+
+                <n-form-item-gi span="3" label="Maximo Canjes">
+                    <n-input v-model:value="items.maxRedemptions" readonly placeholder="" />
+                </n-form-item-gi>
+            </n-grid>
+
+            <n-grid x-gap="12" cols="24 100:1 450:24">
+                <n-form-item-gi span="9" label="Linea">
+                    <n-input v-model:value="items.line" readonly placeholder="" />
+                </n-form-item-gi>
+
+                <n-form-item-gi span="9" label="Condición">
+                    <n-input v-model:value="items.condition" readonly placeholder="" />
+                </n-form-item-gi>
+
+                <n-form-item-gi span="6" label="Guatemala">
+                    <n-input v-model:value="items.guatemala" readonly placeholder="" />
+                </n-form-item-gi>
+            </n-grid>
+
+            <n-grid x-gap="12" cols="12 100:1 450:12">
+                <n-form-item-gi span="3" label="Costa Rica">
+                    <n-input v-model:value="items.costarica" readonly placeholder="" />
+                </n-form-item-gi>
+
+                <n-form-item-gi span="3" label="Nicaragua">
+                    <n-input v-model:value="items.nicaragua" readonly placeholder="" />
+                </n-form-item-gi>
+
+                <n-form-item-gi span="3" label="Panama">
+                    <n-input v-model:value="items.panama" readonly placeholder="" />
+                </n-form-item-gi>
+
+                <n-form-item-gi span="3" label="Honduras">
+                    <n-input v-model:value="items.honduras" readonly placeholder="" />
+                </n-form-item-gi>
+            </n-grid>
+
+            <n-grid x-gap="12" cols="12 100:1 450:12">
+                <n-form-item-gi span="9" label="Observación">
+                    <n-input v-model:value="items.observation" readonly placeholder="" />
+                </n-form-item-gi>
+                <n-form-item-gi span="3" label="Estado">
+                    <n-input v-model:value="items.status" readonly placeholder="" />
+                </n-form-item-gi>
+            </n-grid>
+            <!-- <pre>{{ JSON.stringify(items, null, 2) }}</pre> -->
         </n-form>
     </n-modal>
 </template>

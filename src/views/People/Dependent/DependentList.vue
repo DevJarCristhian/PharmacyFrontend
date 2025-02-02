@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from 'vue';
 import dependentServices from '../../../services/people/dependent.services';
-import { Get, Params, Store } from '../../../services/interfaces/people/dependent.interfaces';
+import { Get, Params } from '../../../services/interfaces/people/dependent.interfaces';
 import { DropdownOption, NTag } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('./modals/AddDependents.vue'))
+const add = defineAsyncComponent(() => import('./modals/ShowDependent.vue'))
+
 const props = defineProps<{
     path: string
 }>()
@@ -28,10 +29,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const dependentData = ref<Store>({
-    description: '',
-    permissions: []
-})
+const dependentData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -71,18 +69,6 @@ const getDependent = async () => {
     loading.value = false
 }
 
-// const setItems = (item: Get) => {
-// console.log(item);
-// dependentData.value.id = item.id
-// dependentData.value.description = item.description
-// dependentData.value.permissions = item.permissions
-// showModal.value = true
-// }
-
-// const formatDate = (date: string) => {
-//     if (!date || !dayjs(date).isValid()) { return '-'; }
-//     return dayjs(date).format('YYYY-MM-DD')
-// }
 const columns = ref([
     {
         title: '#',
@@ -95,10 +81,7 @@ const columns = ref([
     },
     {
         title: 'Nombre',
-        key: 'firstName',
-        render(row: any) {
-            return row.firstName + ' ' + row.lastName
-        },
+        key: 'fullName',
         ellipsis: {
             tooltip: true
         }
@@ -133,7 +116,7 @@ const columns = ref([
                 bordered: false,
                 round: true,
             }, {
-                default: () => row.gender == 1 ? 'Masculino' : 'Femenino'
+                default: () => row.gender == 1 ? 'Hombre' : 'Mujer'
             })
         }
     },
@@ -162,56 +145,28 @@ const columns = ref([
         key: 'enrollmentDate',
         width: 120,
     },
-    // {
-    //     title: 'Fecha Actualización',
-    //     key: 'updatedAt'
-    // },
-    // {
-    //     title: '',
-    //     key: 'actions',
-    //     width: 50,
-    //     align: 'center',
-    //     render(row: any) {
-    //         return h(
-    //             NButton,
-    //             {
-    //                 size: 'small',
-    //                 strong: true,
-    //                 secondary: true,
-    //                 onClick: () => {
-    //                     setItems(row)
-    //                 }
-    //             },
-    //             {
-    //                 default: () => h(JIcon, { name: 'more', w: 'w-4' })
-    //             }
-    //         )
-    //     }
-    // }
 ])
-
 
 const options: DropdownOption[] = [
     {
-        label: 'Complementar',
-        key: 'edit',
-        icon: renderIcon("edit")
+        label: 'Mostrar',
+        key: 'show',
+        icon: renderIcon("show")
 
     },
     {
-        label: 'Copiar Celular',
+        label: 'Copiar Nombre',
+        key: 'name',
+        icon: renderIcon("copy")
+    },
+    {
+        label: 'Copiar Telefono',
         key: 'phone',
         icon: renderIcon("copy")
     },
     {
-        label: 'Copiar DPI',
-        key: 'doc',
-        icon: renderIcon("copy")
-    },
-    {
-        // label: () => h('span', { style: { color: 'red' } }, 'Delete'),
-        label: 'Copiar fila',
-        key: 'copy',
+        label: 'Copiar Doocumento',
+        key: 'document',
         icon: renderIcon("copy")
     },
 ]
@@ -219,7 +174,7 @@ const options: DropdownOption[] = [
 const rowProps = (row: any) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            setValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -231,6 +186,25 @@ const rowProps = (row: any) => {
     }
 }
 
+const setValues = (item: Get) => {
+    dependentData.value = item
+}
+
+const openModal = (key: string) => {
+    showDropdown.value = false
+    if (key === 'show') {
+        showModal.value = true
+    }
+    if (key === 'name') {
+        navigator.clipboard.writeText(dependentData.value.fullName);
+    }
+    if (key === 'phone') {
+        navigator.clipboard.writeText(dependentData.value.phone);
+    }
+    if (key === 'document') {
+        navigator.clipboard.writeText(dependentData.value.documentNumber);
+    }
+}
 
 const exportToExcel = async () => {
     loadingExport.value = true;
@@ -250,10 +224,6 @@ const exportToExcel = async () => {
                     <span class="text-lg -mt-1">Dependientes</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- <n-button size="small" type="primary" @click="dependentReset">
-                        <j-icon w="w-[14px]" name="add" />
-                        Nuevo
-                    </n-button> -->
                     <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"
                         @click="exportToExcel" quaternary class="group" icon-placement="right">
                         <div class="hidden group-hover:block text-xs">
@@ -285,8 +255,7 @@ const exportToExcel = async () => {
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }" @select="openModal" />
     </div>
 </template>
 

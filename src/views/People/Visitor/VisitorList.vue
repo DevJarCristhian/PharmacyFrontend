@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
 import visitorServices from '../../../services/people/visitor.services';
-import { Get, Params, Store } from '../../../services/interfaces/people/visitor.interfaces';
+import { Get, Params } from '../../../services/interfaces/people/visitor.interfaces';
 import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { validateActions } from '../../../utils/Config/validate';
 import { authStores } from '../../../store/auth';
 
-const add = defineAsyncComponent(() => import('../../../views/People/Visitor/modals/AddVisitor.vue'))
+const add = defineAsyncComponent(() => import('./modals/ShowVisor.vue'))
 
 const props = defineProps<{
     path: string;
@@ -29,10 +29,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const visitorData = ref<Store>({
-    description: '',
-    permissions: []
-})
+const visitorData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -72,14 +69,6 @@ const getVisitor = async () => {
     loading.value = false
 }
 
-// const visitorReset = () => {
-//     visitorData.value = {
-//         description: '',
-//         permissions: []
-//     }
-//     showModal.value = true
-// }
-
 const columns = ref([
     {
         title: '#',
@@ -114,9 +103,9 @@ const columns = ref([
 
 const options: DropdownOption[] = [
     {
-        label: 'Complementar',
-        key: 'edit',
-        icon: renderIcon("edit")
+        label: 'Mostrar',
+        key: 'show',
+        icon: renderIcon("show")
 
     },
     {
@@ -126,10 +115,10 @@ const options: DropdownOption[] = [
     },
 ]
 
-const rowProps = (row: any) => {
+const rowProps = (row: Get) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            setValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -138,6 +127,19 @@ const rowProps = (row: any) => {
                 y.value = e.clientY
             })
         }
+    }
+}
+
+const setValues = (item: Get) => {
+    visitorData.value = item
+}
+
+const openModal = (key: string) => {
+    showDropdown.value = false
+    if (key === 'show') {
+        showModal.value = true
+    } else {
+        navigator.clipboard.writeText(visitorData.value.name);
     }
 }
 
@@ -194,8 +196,7 @@ const exportToExcel = async () => {
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }" @select="openModal" />
     </div>
 </template>
 

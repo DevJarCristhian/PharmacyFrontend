@@ -4,7 +4,6 @@ import doctorServices from "../../../services/people/doctor.services";
 import {
     Get,
     Params,
-    Store,
 } from "../../../services/interfaces/people/doctor.interfaces";
 import { DropdownOption } from "naive-ui";
 // import dayjs from 'dayjs';
@@ -13,9 +12,7 @@ import { downloadExcel, renderIcon } from "../../../utils/Functions";
 import { authStores } from "../../../store/auth";
 import { validateActions } from "../../../utils/Config/validate";
 
-const add = defineAsyncComponent(
-    () => import("../../../views/People/Doctor/modals/AddDoctor.vue")
-);
+const add = defineAsyncComponent(() => import('./modals/ShowDoctor.vue'))
 
 const props = defineProps<{
     path: string;
@@ -36,10 +33,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 });
-const doctorData = ref<Store>({
-    description: "",
-    permissions: [],
-});
+const doctorData = ref<Get>({} as Get);
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -134,8 +128,8 @@ const columns = ref([
 
 const options: DropdownOption[] = [
     {
-        label: "Complementar",
-        key: "edit",
+        label: "Mostrar",
+        key: "show",
         icon: renderIcon("edit"),
     },
     {
@@ -148,7 +142,7 @@ const options: DropdownOption[] = [
 const rowProps = (row: any) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            setValues(row)
             e.preventDefault();
             showDropdown.value = false;
             nextTick().then(() => {
@@ -159,6 +153,19 @@ const rowProps = (row: any) => {
         },
     };
 };
+
+const setValues = (item: Get) => {
+    doctorData.value = item
+}
+
+const openModal = (key: string) => {
+    showDropdown.value = false
+    if (key === 'show') {
+        showModal.value = true
+    } else {
+        navigator.clipboard.writeText(doctorData.value.name);
+    }
+}
 
 const exportToExcel = async () => {
     loadingExport.value = true;
@@ -212,10 +219,7 @@ const exportToExcel = async () => {
             :show="showDropdown" :on-clickoutside="() => {
                 showDropdown = false;
             }
-                " @select="() => {
-                    showDropdown = false;
-                }
-                    " />
+                " @select="openModal" />
     </div>
 </template>
 

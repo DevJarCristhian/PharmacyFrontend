@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { defineAsyncComponent, nextTick, onMounted, ref, h, watch } from 'vue';
-import dependentServices from '../../../services/people/patient.services.ts';
-import { Get, Params, Store } from '../../../services/interfaces/people/patient.interfaces.ts';
+import patientServices from '../../../services/people/patient.services.ts';
+import { Get, Params } from '../../../services/interfaces/people/patient.interfaces.ts';
 import { DropdownOption, NTag } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('./modals/AddPatient.vue'))
+const add = defineAsyncComponent(() => import('./modals/ShowPatient.vue'))
 const props = defineProps<{
     path: string
 }>()
@@ -28,10 +28,7 @@ const params = ref<Params>({
     search: null,
     status: null,
 })
-const patientData = ref<Store>({
-    description: '',
-    permissions: []
-})
+const patientData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -63,7 +60,7 @@ watch(() => auth.user.permissions, getActions);
 
 const getPatient = async () => {
     loading.value = true
-    const response = await dependentServices.get(params.value)
+    const response = await patientServices.get(params.value)
     data.value = response.data.data
     // console.log(response.data.data);
     pagination.value.pageCount = response.data.last_page
@@ -71,18 +68,6 @@ const getPatient = async () => {
     loading.value = false
 }
 
-// const setItems = (item: Get) => {
-// console.log(item);
-// patientData.value.id = item.id
-// patientData.value.description = item.description
-// patientData.value.permissions = item.permissions
-// showModal.value = true
-// }
-
-// const formatDate = (date: string) => {
-//     if (!date || !dayjs(date).isValid()) { return '-'; }
-//     return dayjs(date).format('YYYY-MM-DD')
-// }
 const columns = ref([
     {
         title: '#',
@@ -95,7 +80,7 @@ const columns = ref([
     },
     {
         title: 'Nombre',
-        key: 'FullName',
+        key: 'fullName',
         ellipsis: {
             tooltip: true
         }
@@ -106,7 +91,7 @@ const columns = ref([
         width: 140,
     },
     {
-        title: 'Direccion',
+        title: 'Dirección',
         key: 'address',
         ellipsis: {
             tooltip: true
@@ -130,7 +115,7 @@ const columns = ref([
                 bordered: false,
                 round: true,
             }, {
-                default: () => row.gender == 1 ? 'Masculino' : 'Femenino'
+                default: () => row.gender == 1 ? 'Hombre' : 'Mujer'
             })
         }
     },
@@ -165,24 +150,22 @@ const columns = ref([
 const options: DropdownOption[] = [
     {
         label: 'Complementar',
-        key: 'edit',
+        key: 'show',
         icon: renderIcon("edit")
-
     },
     {
-        label: 'Copiar Celular',
+        label: 'Copiar Nombre',
+        key: 'name',
+        icon: renderIcon("copy")
+    },
+    {
+        label: 'Copiar Telefono',
         key: 'phone',
         icon: renderIcon("copy")
     },
     {
-        label: 'Copiar DPI',
-        key: 'doc',
-        icon: renderIcon("copy")
-    },
-    {
-        // label: () => h('span', { style: { color: 'red' } }, 'Delete'),
-        label: 'Copiar fila',
-        key: 'copy',
+        label: 'Copiar Correo',
+        key: 'email',
         icon: renderIcon("copy")
     },
 ]
@@ -190,7 +173,7 @@ const options: DropdownOption[] = [
 const rowProps = (row: any) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            setValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -202,10 +185,29 @@ const rowProps = (row: any) => {
     }
 }
 
+const setValues = (item: Get) => {
+    patientData.value = item
+}
+
+const openModal = (key: string) => {
+    showDropdown.value = false
+    if (key === 'show') {
+        showModal.value = true
+    }
+    if (key === 'name') {
+        navigator.clipboard.writeText(patientData.value.fullName);
+    }
+    if (key === 'phone') {
+        navigator.clipboard.writeText(patientData.value.phone);
+    }
+    if (key === 'email') {
+        navigator.clipboard.writeText(patientData.value.email);
+    }
+}
 
 const exportToExcel = async () => {
     loadingExport.value = true;
-    const data = await dependentServices.exportToExcel();
+    const data = await patientServices.exportToExcel();
     await downloadExcel(data, "Lista Pacientes");
     loadingExport.value = false;
 }
@@ -252,8 +254,7 @@ const exportToExcel = async () => {
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }" @select="openModal" />
     </div>
 </template>
 

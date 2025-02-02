@@ -12,25 +12,14 @@ export interface Get {
   longDescription: string;
   observation: string;
   receive: string;
-  condition: number;
-  status: number;
-  unitMeasure: number;
-}
-
-export interface Store {
-  id?: number;
-  description: string;
-  permissions: number[];
-}
-export interface Permission {
-  id: number;
-  description: string;
-  parent: number;
-}
-
-export interface Permissions {
-  id: number;
-  description: string;
-  parent: number | null;
-  children: Permissions[];
+  condition: number | string;
+  status: number | string;
+  unitMeasure: number | string;
+  costarica: number | string;
+  nicaragua: number | string;
+  panama: number | string;
+  honduras: number | string;
+  guatemala: number | string;
+  line: number | string;
+  maxRedemptions: number | string;
 }
