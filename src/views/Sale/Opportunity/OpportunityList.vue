@@ -63,7 +63,7 @@ const getOpportunity = async () => {
     loading.value = true
     const response = await opportunityServices.get(params.value)
     data.value = response.data.data
-    console.log(response.data.data)
+    // console.log(response.data.data)
     pagination.value.pageCount = response.data.last_page
     pagination.value.total = response.data.total
     loading.value = false

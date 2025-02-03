@@ -46,8 +46,6 @@ watch(props, () => {
     }
 })
 
-watch
-
 const getPatient = async () => {
     const response = await patientServices.getById(props.items.id)
     formData.value = response.data
@@ -184,16 +182,16 @@ const closeModal = () => {
                                 placeholder="Seleccione" />
                         </n-form-item-gi>
 
-                        <n-form-item-gi span="3" label="Id Operador">
+                        <!-- <n-form-item-gi span="3" label="Id Operador">
                             <n-input v-model:value="formData.operatorId" readonly placeholder="" />
-                        </n-form-item-gi>
+                        </n-form-item-gi> -->
                     </n-grid>
 
-                    <n-grid x-gap="12" cols="12 200:1 450:12">
+                    <!-- <n-grid x-gap="12" cols="12 200:1 450:12">
                         <n-form-item-gi span="12" label="Información del Paciente">
                             <n-input v-model:value="formData.patientInformation" readonly placeholder="" />
                         </n-form-item-gi>
-                    </n-grid>
+                    </n-grid> -->
                 </n-form>
             </n-tab-pane>
 

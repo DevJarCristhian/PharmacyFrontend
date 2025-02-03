@@ -18,20 +18,35 @@ export interface Get {
   dateUpdated: string;
 }
 
-export interface Store {
+export interface GetbyId {
   id?: number;
-  description: string;
-  permissions: number[];
-}
-export interface Permission {
-  id: number;
-  description: string;
-  parent: number;
+  active: number | string;
+  usedQuantity: number | string;
+  cancellation: string | null;
+  certificationDate: string | null;
+  exchangeState: string | null;
+  validation: string | null;
+
+  lastDateTaken: string | null;
+  dateAbandonTreatment: string | null;
+
+  reasonBuyId: number | null;
+  reasonAnulationId: number | null;
+  diagnosisId: number | null;
+  doseId: number | null;
+  treatmentTimeId: number | null;
+
+  observations: string;
+  dateUpdated: string;
 }
 
-export interface Permissions {
-  id: number;
-  description: string;
-  parent: number | null;
-  children: Permissions[];
+export interface Store {
+  id?: number;
+  reasonBuyId: number;
+  reasonAnulationId: number;
+  diagnosisId: number;
+  doseId: number;
+  treatmentTimeId: number;
+  lastDateTaken: string;
+  dateAbandonTreatment: string;
 }

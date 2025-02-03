@@ -10,6 +10,14 @@ class opportunityServices {
     });
     return data;
   }
+  async getById(id: number) {
+    const { data } = await api.get(`${prefix}${id}`);
+    return data;
+  }
+  async getCategories() {
+    const { data } = await api.get(`all/maintenance`);
+    return data;
+  }
   async store(data: Store) {
     const { data: response } = await api.post(`${prefix}store`, data);
     return response;
@@ -23,7 +31,11 @@ class opportunityServices {
     return data;
   }
   async exportToExcel() {
-    const { data } = await api.post(`${prefix}export/`, { search: '' }, { responseType: 'blob' });
+    const { data } = await api.post(
+      `${prefix}export/`,
+      { search: "" },
+      { responseType: "blob" }
+    );
     return data;
   }
 }
