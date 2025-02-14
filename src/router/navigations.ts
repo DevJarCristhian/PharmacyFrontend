@@ -12,6 +12,12 @@ export default [
     i: "calendar",
   },
   {
+    label: "Whastapp",
+    key: "whatsapp",
+    href: "/whatsapp",
+    i: "comunication",
+  },
+  {
     label: "Ventas",
     key: "sales",
     i: "sale",
@@ -87,6 +93,11 @@ export default [
     key: "access",
     i: "users",
     children: [
+      {
+        label: "Conexiones",
+        key: "access",
+        href: "/access",
+      },
       {
         label: "Usuarios",
         key: "users",

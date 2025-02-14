@@ -16,9 +16,9 @@ export interface Get {
   email: string;
   password?: string;
   role: Role;
-  status: string;
-  created_at?: Date;
-  updated_at?: Date;
+  status: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Store {
@@ -26,6 +26,6 @@ export interface Store {
   name: string;
   email: string;
   password?: string | null;
-  role_id: number | null;
+  roleId: number | null;
   status: boolean;
 }

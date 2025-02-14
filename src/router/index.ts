@@ -17,6 +17,8 @@ import Institution from "../pages/Data/Institution.vue";
 import Pharmacy from "../pages/Data/Pharmacy.vue";
 import Patient from "../pages/People/Patient.vue";
 import Setting from "../pages/Setting/index.vue";
+import Whatsapp from "../pages/Whatsapp/Whatsapp.vue";
+import Access from "../pages/Access/Connetion.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/login", component: Login },
@@ -27,6 +29,8 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       { name: "dashboard", path: "/dashboard", component: Dashboard },
       { name: "calendar", path: "/calendar", component: Calendar },
+      { name: "whatsapp", path: "/whatsapp", component: Whatsapp },
+      { name: "access", path: "/access", component: Access },
       { name: "users", path: "/users", component: Users },
       { name: "roles", path: "/roles", component: Roles },
       { name: "visitors", path: "/visitors", component: Visitor },

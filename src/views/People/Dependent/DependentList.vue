@@ -62,10 +62,10 @@ watch(() => auth.user.permissions, getActions);
 const getDependent = async () => {
     loading.value = true
     const response = await dependentServices.get(params.value)
-    data.value = response.data.data
-    // console.log(response.data.data);
-    pagination.value.pageCount = response.data.last_page
-    pagination.value.total = response.data.total
+    // console.log(response);
+    data.value = response.data
+    pagination.value.pageCount = response.last_page
+    pagination.value.total = response.total
     loading.value = false
 }
 

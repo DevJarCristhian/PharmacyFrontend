@@ -25,7 +25,7 @@ export const authStores = defineStore("auth", {
   }),
   actions: {
     async getUser() {
-      const { data } = await authServices.getUser();
+      const data = await authServices.getUser();
       // console.log("here", data);
       this.user = data as User;
       let permissions = await this.user.permissions;

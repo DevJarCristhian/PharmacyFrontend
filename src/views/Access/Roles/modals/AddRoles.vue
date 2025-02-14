@@ -28,7 +28,7 @@ onMounted(() => {
 })
 
 onUpdated(() => {
-    formData.value.permissions = [];
+    // formData.value.permissions = [];
     if (props.show == true) {
         formData.value = props.items as Store;
     }
@@ -36,14 +36,15 @@ onUpdated(() => {
 
 const getPermissions = async () => {
     const response = await rolesServices.getPermissions()
-    const newData = response.data.map((item: any) => {
-        const children = JSON.parse(item.children);
+    const newData = response.map((item: any) => {
+        const children = item.children;
         children.unshift({ key: item.id, label: "Lista" });
         return {
             ...item,
             children: children
         };
     });
+
     permissions.value = newData
 }
 

@@ -25,7 +25,7 @@ const rules: FormRules = {
         { required: true, message: "Correo Requerido", trigger: "blur" },
         { type: "email", message: "Ingresa un correo valido", trigger: "blur" }
     ],
-    role_id: [
+    roleId: [
         { required: true, type: "number", message: "Rol Requerido", trigger: "blur" }
     ],
     password: [
@@ -46,7 +46,7 @@ onUpdated(() => {
 
 const getRoles = async () => {
     const response = await usersServices.getRoles()
-    roles.value = response.data
+    roles.value = response
 }
 
 const handleSubmit = async () => {
@@ -84,8 +84,8 @@ const closeModal = () => {
             <n-form-item label="Email" path="email">
                 <n-input v-model:value="formData.email" placeholder="Ingrese Email" />
             </n-form-item>
-            <n-form-item label="Rol" path="role_id">
-                <n-select v-model:value="formData.role_id" :options="roles" placeholder="Selecciona Rol" />
+            <n-form-item label="Rol" path="roleId">
+                <n-select v-model:value="formData.roleId" :options="roles" placeholder="Selecciona Rol" />
             </n-form-item>
             <n-form-item label="Contraseña" :path="formData.id ? '' : 'password'">
                 <n-input v-model:value="formData.password" type="password" placeholder="Ingrese Contraseña"

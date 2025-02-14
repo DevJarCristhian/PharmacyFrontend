@@ -23,8 +23,8 @@ const login = async (e: MouseEvent) => {
         loading.value = true
         const response = await authServices.login(form.value)
         // console.log("here", response);
-        if (response.data.token) {
-          localStorage.setItem('token', response.data.token)
+        if (response.token) {
+          localStorage.setItem('token', response.token)
           localStorage.removeItem("tokenRemoved");
           message.success('Bienvenido al Sistema')
           await store.getUser()

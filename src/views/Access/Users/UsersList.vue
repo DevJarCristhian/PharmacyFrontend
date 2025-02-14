@@ -36,7 +36,7 @@ const userData = ref<Store>({
     name: '',
     email: '',
     password: null,
-    role_id: null,
+    roleId: null,
     status: true
 })
 const pagination = ref({
@@ -71,10 +71,10 @@ watch(() => auth.user.permissions, getActions);
 const getUsers = async () => {
     loading.value = true
     const response = await usersServices.get(params.value)
-    data.value = response.data.data
+    data.value = response
     // console.log(response);
-    pagination.value.pageCount = response.data.last_page
-    pagination.value.total = response.data.total
+    // pagination.value.pageCount = response.data.last_page
+    // pagination.value.total = response.data.total
     loading.value = false
 }
 
@@ -82,7 +82,7 @@ const userReset = () => {
     userData.value = {
         name: '',
         email: '',
-        role_id: null,
+        roleId: null,
         status: true
     }
     showModal.value = true
@@ -92,8 +92,8 @@ const setItems = (item: Get) => {
     userData.value.id = item.id
     userData.value.name = item.name
     userData.value.email = item.email
-    userData.value.role_id = item.role.id
-    userData.value.status = item.status == 'active' ? true : false
+    userData.value.roleId = item.role.id
+    userData.value.status = item.status
     showModal.value = true
 }
 
@@ -146,29 +146,29 @@ const columns = ref([
             return h(
                 NTag,
                 {
-                    type: row.status == "active" ? 'success' : 'error',
+                    type: row.status ? 'success' : 'error',
                     bordered: false,
                     round: true,
                     size: 'small',
                 },
                 {
-                    default: () => row.status == "active" ? 'Activo' : 'Inactivo'
+                    default: () => row.status ? 'Activo' : 'Inactivo'
                 }
             )
         }
     },
     {
         title: 'Fecha de creación',
-        key: 'created_at',
+        key: 'createdAt',
         render(row: any) {
-            return formatDate(row.created_at)
+            return formatDate(row.createdAt)
         }
     },
     {
         title: 'Fecha de actualización',
-        key: 'updated_at',
+        key: 'updatedAt',
         render(row: any) {
-            return formatDate(row.updated_at)
+            return formatDate(row.updatedAt)
         }
     },
     {

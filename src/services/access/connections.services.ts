@@ -1,8 +1,12 @@
 import api from "../../config/axios";
-import type { Params, Store } from "../interfaces/access/users.interfaces";
-const prefix = "access/users/";
+import type {
+  Params,
+  Store,
+  UpdateConnection,
+} from "../interfaces/access/connections.interfaces";
+const prefix = "connection";
 
-class usersServices {
+class connectionsServices {
   async get(params: Params) {
     const { data } = await api.get(`${prefix}`, {
       params,
@@ -14,21 +18,18 @@ class usersServices {
     return response;
   }
   async update(id: number, data: Store) {
-    const { data: response } = await api.put(`${prefix}${id}`, data);
+    const { data: response } = await api.put(`${prefix}/${id}`, data);
     return response;
   }
   async getRoles() {
     const { data } = await api.get(`${prefix}roles`);
     return data;
   }
-  async exportToExcel() {
-    const { data } = await api.post(
-      `${prefix}export/`,
-      { search: "" },
-      { responseType: "blob" }
-    );
-    return data;
+
+  async updateQr(id: number, data: UpdateConnection) {
+    const { data: response } = await api.put(`${prefix}${id}`, data);
+    return response;
   }
 }
 
-export default new usersServices();
+export default new connectionsServices();

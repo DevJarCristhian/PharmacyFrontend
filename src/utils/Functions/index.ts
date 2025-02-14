@@ -9,16 +9,26 @@ export const renderIcon = (icon: string, size: string = "w-4") => {
 };
 
 export const downloadExcel = async (data: any, filename: string) => {
-  const dateNow = dayjs().format('YYYY-MM-DD HH-mm');
+  const dateNow = dayjs().format("YYYY-MM-DD HH-mm");
   const url = window.URL.createObjectURL(new Blob([data]));
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.setAttribute("download", `${filename} ${dateNow}.xlsx`);
   document.body.appendChild(a);
   a.click();
-}
+  a.remove();
+};
 
 export const formatDate = (date: string) => {
-  if (!date || !dayjs(date).isValid()) { return '-'; }
-  return dayjs(date).format('YYYY/MM/DD')
-}
+  if (!date || !dayjs(date).isValid()) {
+    return "-";
+  }
+  return dayjs(date).format("YYYY/MM/DD");
+};
+
+export const formatDateLarge = (date: string) => {
+  if (!date || !dayjs(date).isValid()) {
+    return "-";
+  }
+  return dayjs(date).format("YYYY/MM/DD HH:mm");
+};

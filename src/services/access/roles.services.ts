@@ -10,11 +10,21 @@ class rolesServices {
     return data;
   }
   async store(data: Store) {
-    const { data: response } = await api.post(`${prefix}store`, data);
+    const filterData = data.permissions.filter((permission) =>
+      Number.isInteger(permission)
+    );
+    data.permissions = filterData;
+
+    const { data: response } = await api.post(`${prefix}`, data);
     return response;
   }
   async update(id: number, data: Store) {
-    const { data: response } = await api.put(`${prefix}update/${id}`, data);
+    const filterData = data.permissions.filter((permission) =>
+      Number.isInteger(permission)
+    );
+    data.permissions = filterData;
+
+    const { data: response } = await api.put(`${prefix}${id}`, data);
     return response;
   }
   async getPermissions() {
