@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { onMounted, ref, toRefs, watch } from 'vue'
-import { Get, GetbyId } from '../../../../services/interfaces/sale/opportunity.interfaces';
+import { Get, GetOpportunity, Update } from '../../../../services/interfaces/sale/opportunity.interfaces';
 import opportunityServices from '../../../../services/sale/opportunity.services'
 import { useMessage, type FormInst } from 'naive-ui'
 import { allStore } from '../../../../store/all';
+import { formatDateLarge, formatDateLa } from '../../../../utils/Functions';
 
 const props = defineProps({
     show: Boolean,
@@ -17,26 +18,36 @@ const store = allStore()
 const formRef = ref<FormInst | null>(null)
 const loading = ref<boolean>(false)
 const { diagnosis, tratmentTime, doseRecommended, reasonBuy, reasonAnulation } = toRefs(allStore())
+const dataValues = ref<GetOpportunity>({
+    "patientFullName": "",
+    "active": "",
+    "usedQuantity": "",
+    "cancellation": "",
+    "certificationDate": null,
+    "exchangeState": null,
+    "validation": null,
+    "lastDateTaken": null,
+    "dateAbandonTreatment": null,
+    "reasonBuyId": null,
+    "reasonAnulationId": null,
+    "diagnosisId": null,
+    "doseId": null,
+    "treatmentTimeId": null,
+    "observations": "",
+    "dateUpdated": ""
+} as GetOpportunity)
 
-const formData = ref<GetbyId>(
+const formData = ref<Update>(
     {
-        "patientFullName": "",
-        "active": "",
-        "usedQuantity": "",
-        "cancellation": "",
-        "certificationDate": null,
-        "exchangeState": null,
-        "validation": null,
-        "lastDateTaken": null,
-        "dateAbandonTreatment": null,
         "reasonBuyId": null,
         "reasonAnulationId": null,
         "diagnosisId": null,
         "doseId": null,
         "treatmentTimeId": null,
+        "lastDateTaken": null,
+        "dateAbandonTreatment": null,
         "observations": "",
-        "dateUpdated": "2025-01-23 16:43:39"
-    } as GetbyId)
+    } as Update)
 
 onMounted(() => {
     getCategories()
@@ -45,19 +56,33 @@ onMounted(() => {
 watch(props, () => {
     if (props.show) {
         getOpportunity()
+        props.items.invoiceDate = formatDateLa(props.items.invoiceDate, 'short')
     }
 })
 
 const getOpportunity = async () => {
     const response = await opportunityServices.getById(props.items.id)
-    // console.log(response);
-    formData.value = response.data
-    formData.value.active = formData.value.active.toString()
-    formData.value.usedQuantity = formData.value.usedQuantity.toString()
+    // console.log(response.data);
+    dataValues.value = response.data
+
+    dataValues.value.active = dataValues.value.active.toString()
+    dataValues.value.dateUpdated = formatDateLarge(response.data.dateUpdated)
+    dataValues.value.usedQuantity = dataValues.value.usedQuantity.toString()
+
+    formData.value.lastDateTaken = formatDateLa(response.data.lastDateTaken)
+    formData.value.dateAbandonTreatment = formatDateLa(response.data.dateAbandonTreatment)
+    formData.value.reasonBuyId = response.data.reasonBuyId
+    formData.value.reasonAnulationId = response.data.reasonAnulationId
+    formData.value.diagnosisId = response.data.diagnosisId
+    formData.value.doseId = response.data.doseId
+    formData.value.treatmentTimeId = response.data.treatmentTimeId
+    formData.value.observations = response.data.observations
 }
 
 const getCategories = async () => {
     const response = await opportunityServices.getCategories()
+    // console.log(response.data);
+
     setTimeout(() => {
         store.setCategories(response.data)
     }, 200)
@@ -88,7 +113,7 @@ const closeModal = () => {
 </script>
 <template>
     <n-modal :show="show" :on-close="closeModal" @esc="closeModal()" preset="card" :mask-closable="false"
-        title="Oportunidad" close-on-esc style="width: 800px; min-height: 430px;" :auto-focus="false">
+        title="Oportunidad" close-on-esc style="width: 800px; min-height: 490px;" :auto-focus="false">
         <n-tabs type="line" animated class="-mt-6">
             <n-tab-pane name="start" tab="Datos Principales">
                 <n-form ref="formRef" :model="items">
@@ -136,29 +161,29 @@ const closeModal = () => {
                 <n-form ref="formRef" :model="formData">
                     <n-grid x-gap="12" cols="12 200:1 450:12">
                         <n-form-item-gi span="4" label="Cantidades utilizadas">
-                            <n-input v-model:value="formData.usedQuantity" readonly placeholder="" />
+                            <n-input v-model:value="dataValues.usedQuantity" readonly placeholder="" />
                         </n-form-item-gi>
 
                         <n-form-item-gi span="4" label="Fecha bonificacion">
-                            <n-input v-model:value="formData.certificationDate" readonly placeholder="" />
+                            <n-input v-model:value="dataValues.certificationDate" readonly placeholder="" />
                         </n-form-item-gi>
 
                         <n-form-item-gi span="4" label="Estado canje">
-                            <n-input v-model:value="formData.exchangeState" readonly placeholder="" />
+                            <n-input v-model:value="dataValues.exchangeState" readonly placeholder="" />
                         </n-form-item-gi>
                     </n-grid>
 
                     <n-grid x-gap="12" cols="12 200:1 450:12">
                         <n-form-item-gi span="4" label="validacion">
-                            <n-input v-model:value="formData.validation" readonly placeholder="" />
+                            <n-input v-model:value="dataValues.validation" readonly placeholder="" />
                         </n-form-item-gi>
 
                         <n-form-item-gi span="4" label="activo">
-                            <n-input v-model:value="formData.active" readonly placeholder="" />
+                            <n-input v-model:value="dataValues.active" readonly placeholder="" />
                         </n-form-item-gi>
 
                         <n-form-item-gi span="4" label="anulacion">
-                            <n-input v-model:value="formData.cancellation" readonly placeholder="" />
+                            <n-input v-model:value="dataValues.cancellation" readonly placeholder="" />
                         </n-form-item-gi>
                     </n-grid>
 
@@ -190,13 +215,14 @@ const closeModal = () => {
                                 placeholder="Seleccione" />
                         </n-form-item-gi>
 
+
                         <n-form-item-gi span="3" label="Fecha Ultima toma">
-                            <n-date-picker type="date" value-format="yyyy-MM-dd" placeholder="Seleccione"
+                            <n-date-picker type="date" value-format="yyyy-MM-dd HH:mm" placeholder="Seleccione"
                                 v-model:formatted-value="formData.lastDateTaken" />
                         </n-form-item-gi>
 
                         <n-form-item-gi span="3" label="Abandono tratamiento">
-                            <n-date-picker type="date" value-format="yyyy-MM-dd" placeholder="Seleccione"
+                            <n-date-picker type="date" value-format="yyyy-MM-dd HH:mm" placeholder="Seleccione"
                                 v-model:formatted-value="formData.dateAbandonTreatment" />
                         </n-form-item-gi>
                     </n-grid>
@@ -214,7 +240,7 @@ const closeModal = () => {
 
                     <n-grid x-gap="12" cols="12 200:1 450:12">
                         <n-form-item-gi span="12" label="Fecha de Actualización">
-                            <n-input v-model:value="formData.dateUpdated" readonly placeholder="-" />
+                            <n-input v-model:value="dataValues.dateUpdated" readonly placeholder="-" />
                         </n-form-item-gi>
                     </n-grid>
                 </n-form>

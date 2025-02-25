@@ -12,7 +12,7 @@ export interface GetCategory {
 export interface Get {
   id?: number;
   description: string;
-  maintenanceId: number;
+  maintenanceId: string;
   category: string;
   status: number;
 }

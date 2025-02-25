@@ -60,17 +60,17 @@ watch(() => auth.user.permissions, getActions);
 const getMaintenance = async () => {
     loading.value = true
     const response = await maintenanceServices.getChild(params.value)
-    // console.log(response.data.data);
-    data.value = response.data.data
-    pagination.value.pageCount = response.data.last_page
-    pagination.value.total = response.data.total
+    // console.log(response);
+    data.value = response.data
+    pagination.value.pageCount = response.last_page
+    pagination.value.total = response.total
     loading.value = false
 }
 
 const setItems = (item: Get) => {
     maintenanceData.value.id = item.id
     maintenanceData.value.description = item.description
-    maintenanceData.value.maintenanceId = item.maintenanceId
+    maintenanceData.value.maintenanceId = parseInt(item.maintenanceId)
     maintenanceData.value.status = item.status == 1 ? true : false
     showModal.value = true
 }

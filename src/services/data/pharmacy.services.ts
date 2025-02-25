@@ -1,7 +1,7 @@
 import api from "../../config/axios";
 import type { Params } from "../interfaces/people/doctor.interfaces";
 
-const prefix = "data/pharmacy/";
+const prefix = "data/pharmacy";
 
 class pharmacyServices {
   async get(params: Params) {
@@ -12,7 +12,7 @@ class pharmacyServices {
   }
   async exportToExcel() {
     const { data } = await api.post(
-      `${prefix}export/`,
+      `${prefix}/export/`,
       { search: "" },
       { responseType: "blob" }
     );

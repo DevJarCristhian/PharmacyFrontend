@@ -9,13 +9,13 @@ const light = {
     primaryColorSuppl: "#937E1FFF",
   },
   Menu: {
-    itemTextColor: "#9FA9AD",
+    itemTextColor: "#606060",
     itemTextColorHover: "#FFD100FF",
-    itemIconColor: "#9FA9AD",
+    itemIconColor: "#606060",
     itemIconColorHover: "#FFD100FF",
-    itemIconColorCollapsed: "#9FA9AD",
+    itemIconColorCollapsed: "#606060",
     arrowColorHover: "#FFD100FF",
-    arrowColor: "#9FA9AD",
+    arrowColor: "#606060",
   },
   Tooltip: {
     color: "#FFFFFF",

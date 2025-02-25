@@ -6,9 +6,8 @@ import {
     Params,
 } from "../../../services/interfaces/people/doctor.interfaces";
 import { DropdownOption } from "naive-ui";
-// import dayjs from 'dayjs';
 import JIcon from "../../../components/JIcon.vue";
-import { downloadExcel, renderIcon } from "../../../utils/Functions";
+import { downloadExcel, formatDateLa, renderIcon } from "../../../utils/Functions";
 import { authStores } from "../../../store/auth";
 import { validateActions } from "../../../utils/Config/validate";
 
@@ -21,6 +20,8 @@ const props = defineProps<{
 const auth = authStores();
 const actions = ref<string[]>();
 const data = ref<Get[]>([]);
+const optionDeparment = ref<any>([]);
+const optionCity = ref<any>([]);
 const loading = ref<boolean>(false);
 const loadingExport = ref<boolean>(false);
 const showModal = ref<boolean>(false);
@@ -31,7 +32,10 @@ const params = ref<Params>({
     page: 1,
     perPage: 50,
     search: null,
-    status: null,
+    department: null,
+    city: null,
+    startDate: null,
+    endDate: null,
 });
 const doctorData = ref<Get>({} as Get);
 const pagination = ref({
@@ -49,6 +53,13 @@ const pagination = ref({
         getDoctor();
     },
 });
+const searchV = ref<{
+    searchcity: string | null,
+    searchDep: string | null,
+}>({
+    searchcity: null,
+    searchDep: null,
+})
 
 onMounted(() => {
     getDoctor();
@@ -66,10 +77,10 @@ watch(() => auth.user.permissions, getActions);
 const getDoctor = async () => {
     loading.value = true;
     const response = await doctorServices.get(params.value);
-    data.value = response.data.data;
-    // console.log(response.data.data);
-    pagination.value.pageCount = response.data.last_page;
-    pagination.value.total = response.data.total;
+    data.value = response.data;
+    // console.log(response.data);
+    pagination.value.pageCount = response.last_page;
+    pagination.value.total = response.total;
     loading.value = false;
 };
 
@@ -118,11 +129,17 @@ const columns = ref([
         title: "F. Creación",
         key: "date",
         width: 140,
+        render(row: any) {
+            return formatDateLa(row.date);
+        },
     },
     {
         title: "F. Actualización",
         key: "updatedAt",
         width: 140,
+        render(row: any) {
+            return formatDateLa(row.updatedAt);
+        },
     },
 ]);
 
@@ -173,6 +190,48 @@ const exportToExcel = async () => {
     await downloadExcel(data, "Lista Doctores");
     loadingExport.value = false;
 }
+
+const deparmentSearch = async (search: string) => {
+    if (search !== null && search.length > 1) {
+        optionDeparment.value = [];
+        const response = await doctorServices.getDepartment(search)
+        optionDeparment.value = response;
+    } else if (search == "") {
+        searchV.value.searchDep = null;
+        params.value.department = null;
+    }
+};
+
+const selectDepartment = async (value: any) => {
+    const patt = await optionDeparment.value.find((v: any) => v.value == value).value
+    params.value.department = patt;
+};
+
+const citySearch = async (search: string) => {
+    if (search !== null && search.length > 1) {
+        optionCity.value = [];
+        const response = await doctorServices.getCity(search)
+        optionCity.value = response;
+    } else if (search == "") {
+        searchV.value.searchcity = null;
+        params.value.city = null;
+    }
+};
+
+const selectCity = async (value: any) => {
+    const patt = await optionCity.value.find((v: any) => v.value == value).value
+    params.value.city = patt;
+};
+
+const clearFilters = () => {
+    params.value.department = null;
+    params.value.city = null;
+    params.value.startDate = null;
+    params.value.endDate = null;
+    searchV.value.searchDep = null;
+    searchV.value.searchcity = null;
+    pagination.value.onUpdatePage(1)
+}
 </script>
 
 <template>
@@ -183,6 +242,73 @@ const exportToExcel = async () => {
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">
                     <span class="text-lg -mt-1">Doctores</span>
+
+                    <n-popover v-if="actions?.includes('filter')" placement="bottom" trigger="click">
+                        <template #trigger>
+                            <div
+                                class="flex items-center gap-1 cursor-pointer select-none opacity-60 hover:opacity-100">
+                                <j-icon w="w-[16px]" name="filter" />
+                                <span>Filtros</span>
+                                <j-icon w="w-[14px]" name="down" />
+                            </div>
+                        </template>
+
+                        <div class="grid" style="width: 250px; height: 230px;">
+                            <div>
+                                <div class="mb-1">Departamento</div>
+                                <n-auto-complete size="small" placeholder="Buscar" v-model:value="searchV.searchDep"
+                                    @update:value="deparmentSearch" @select="selectDepartment" clearable
+                                    :options="optionDeparment">
+                                    <template #prefix>
+                                        <n-icon>
+                                            <j-icon w="w-[14px]" name="search" />
+                                        </n-icon>
+                                    </template>
+                                </n-auto-complete>
+                            </div>
+
+                            <div>
+                                <div class="mb-1">Municipio</div>
+                                <n-auto-complete size="small" placeholder="Buscar" v-model:value="searchV.searchcity"
+                                    @update:value="citySearch" @select="selectCity" clearable :options="optionCity">
+                                    <template #prefix>
+                                        <n-icon>
+                                            <j-icon w="w-[14px]" name="search" />
+                                        </n-icon>
+                                    </template>
+                                </n-auto-complete>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <div>
+                                    <div class="mb-1">Fecha Inicio</div>
+                                    <n-date-picker size="small" type="date" value-format="yyyy-MM-dd HH:mm"
+                                        placeholder="Inicio" v-model:formatted-value="params.startDate" :actions="null"
+                                        clearable />
+                                </div>
+
+                                <div>
+                                    <div class="mb-1">Fecha Fin</div>
+                                    <n-date-picker size="small" type="date" value-format="yyyy-MM-dd" placeholder="Fin"
+                                        v-model:formatted-value="params.endDate" :actions="null" clearable />
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 mt-3">
+                                <n-button class="w-[60%]" size="small" type="primary"
+                                    @click="pagination.onUpdatePage(1)">
+                                    <j-icon w="w-[14px]" name="filter" />
+                                    Filtrar
+                                </n-button>
+
+                                <n-button size="small" quaternary @click="clearFilters">
+                                    <j-icon w="w-[14px]" name="delete" />
+                                    Limpiar
+                                </n-button>
+                            </div>
+                            <!-- <pre class="bg-black">{{ JSON.stringify(params, null, 2) }}</pre> -->
+                        </div>
+                    </n-popover>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"

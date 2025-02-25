@@ -4,12 +4,23 @@ export interface Params {
   search?: string | null;
 }
 
-export interface GetMessage {
-  id?: number;
-  description: string;
-  maintenanceId: number;
-  category: string;
-  status: number;
+export interface ParamsPatient {
+  search?: string | null;
+  gender?: number | null;
+  birthDate?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+}
+
+export interface GetPatient {
+  id: string;
+  documentNumber: string;
+  name: string;
+  gender: string;
+  phone: string;
+  birthDate: string;
+  age: string;
+  selected: boolean;
 }
 
 export interface GetContact {
@@ -20,10 +31,41 @@ export interface GetContact {
   status: number;
 }
 
-export interface GetPatient {
-  id?: number;
-  description: string;
-  maintenanceId: number;
-  category: string;
-  status: number;
+export interface GetMessageDefault {
+  contactId: number;
+  name: string;
+  number: string;
+  profilePicUrl: string;
+  lastMessage: string;
+  lastMessageDate: string;
+  messages: {
+    id: number;
+    body: string;
+    ack: number;
+    read: number;
+    mediaType: string;
+    mediaUrl?: string;
+    fromMe?: number;
+    isDelete?: string;
+    createdAt?: string;
+  }[];
+}
+
+export interface StoreMessage {
+  contactId: number;
+  number: string;
+  message: string;
+  mediaType?: string;
+  mediaUrl?: string;
+  read?: string;
+}
+
+export interface StoreManyMessage {
+  message: string | null;
+  mediaUrl?: string;
+  patients: {
+    patientId: string;
+    number: string;
+    name: string;
+  }[];
 }

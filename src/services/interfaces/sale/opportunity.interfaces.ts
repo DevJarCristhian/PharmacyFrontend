@@ -2,11 +2,17 @@ export interface Params {
   page: number;
   perPage: number;
   search?: string | null;
-  status?: string | null;
+  emissionDate?: string | null;
+  patientId?: string | null;
+  productId?: string | null;
+  pharmacyId?: string | null;
+  userId?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 export interface Get {
-  id?: number;
+  id?: string;
   documentNumber: string;
   patientFullName: string;
   farmacyName: string;
@@ -18,8 +24,8 @@ export interface Get {
   dateUpdated: string;
 }
 
-export interface GetbyId {
-  id?: number;
+export interface GetOpportunity {
+  id?: string;
   active: number | string;
   usedQuantity: number | string;
   cancellation: string | null;
@@ -40,13 +46,13 @@ export interface GetbyId {
   dateUpdated: string;
 }
 
-export interface Store {
-  id?: number;
-  reasonBuyId: number;
-  reasonAnulationId: number;
-  diagnosisId: number;
-  doseId: number;
-  treatmentTimeId: number;
+export interface Update {
+  reasonBuyId: number | null;
+  reasonAnulationId: number | null;
+  diagnosisId: number | null;
+  doseId: number | null;
+  treatmentTimeId: string;
   lastDateTaken: string;
-  dateAbandonTreatment: string;
+  dateAbandonTreatment: string | null;
+  observations: string | null;
 }

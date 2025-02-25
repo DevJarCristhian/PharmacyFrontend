@@ -12,10 +12,16 @@ class dependentServices {
   }
   async exportToExcel() {
     const { data } = await api.post(
-      `${prefix}/export`,
+      `${prefix}/export/`,
       { search: "" },
       { responseType: "blob" }
     );
+    return data;
+  }
+  async getDepartment(text: string) {
+    const { data } = await api.get(`people/patient/filter/department`, {
+      params: { search: text },
+    });
     return data;
   }
 }

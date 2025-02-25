@@ -4,7 +4,7 @@ import opportunityServices from '../../../services/sale/opportunity.services';
 import { Get, Params } from '../../../services/interfaces/sale/opportunity.interfaces';
 import { DropdownOption, NTooltip } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
-import { downloadExcel, renderIcon } from '../../../utils/Functions';
+import { downloadExcel, formatDateLa, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
@@ -17,6 +17,10 @@ const props = defineProps<{
 const auth = authStores()
 const actions = ref<string[]>()
 const data = ref<Get[]>([])
+const optionPatients = ref<any>([]);
+const optionProducts = ref<any>([]);
+const optionPharmacies = ref<any>([]);
+
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
 const showModal = ref<boolean>(false)
@@ -27,7 +31,23 @@ const params = ref<Params>({
     page: 1,
     perPage: 50,
     search: null,
-    status: null,
+    emissionDate: null,
+    patientId: null,
+    productId: null,
+    pharmacyId: null,
+    userId: null,
+    startDate: null,
+    endDate: null,
+
+})
+const searchV = ref<{
+    searchP: string | null,
+    searchPro: string | null,
+    searchPhar: string | null,
+}>({
+    searchP: null,
+    searchPro: null,
+    searchPhar: null,
 })
 const opportunityData = ref<Get>({} as Get)
 const pagination = ref({
@@ -62,10 +82,10 @@ watch(() => auth.user.permissions, getActions)
 const getOpportunity = async () => {
     loading.value = true
     const response = await opportunityServices.get(params.value)
-    data.value = response.data.data
-    // console.log(response.data.data)
-    pagination.value.pageCount = response.data.last_page
-    pagination.value.total = response.data.total
+    data.value = response.data
+    // console.log(response.data)
+    pagination.value.pageCount = response.last_page
+    pagination.value.total = response.total
     loading.value = false
 }
 
@@ -86,6 +106,9 @@ const columns = ref([
         title: 'Fecha Emisión',
         key: 'invoiceDate',
         width: 100,
+        render(row: Get) {
+            return formatDateLa(row.invoiceDate, "short");
+        }
     },
     {
         title: 'Paciente',
@@ -137,6 +160,9 @@ const columns = ref([
         title: 'F. Actualización',
         key: 'dateUpdated',
         width: 140,
+        render(row: Get) {
+            return formatDateLa(row.dateUpdated);
+        }
     },
 ])
 
@@ -191,6 +217,72 @@ const exportToExcel = async () => {
     await downloadExcel(data, "Lista Oportunidades")
     loadingExport.value = false
 }
+
+const patientSearch = async (search: string) => {
+    if (search !== null && search.length > 1) {
+        optionPatients.value = [];
+        const response = await opportunityServices.getPatients(search)
+        optionPatients.value = response;
+    }
+    if (search == "") {
+        searchV.value.searchP = null;
+        params.value.patientId = null;
+    }
+};
+
+const selectPatient = async (value: any) => {
+    const patt = await optionPatients.value.find((v: any) => v.value == value).id
+    params.value.patientId = patt;
+};
+
+const productSearch = async (search: string) => {
+    if (search !== null && search.length > 1) {
+        optionProducts.value = [];
+        const response = await opportunityServices.getProduct(search)
+        optionProducts.value = response;
+    }
+    if (search == "") {
+        searchV.value.searchPro = null;
+        params.value.productId = null;
+    }
+};
+
+const selectProduct = async (value: any) => {
+    const patt = await optionProducts.value.find((v: any) => v.value == value).value
+    params.value.productId = patt;
+};
+
+const pharmacySearch = async (search: string) => {
+    if (search !== null && search.length > 1) {
+        optionPharmacies.value = [];
+        const response = await opportunityServices.getPharmacy(search)
+        optionPharmacies.value = response;
+    }
+    if (search == "") {
+        searchV.value.searchPhar = null;
+        params.value.pharmacyId = null;
+    }
+};
+
+const selectPharmacy = async (value: any) => {
+    const patt = await optionPharmacies.value.find((v: any) => v.value == value).value
+    params.value.pharmacyId = patt;
+};
+
+const clearFilters = () => {
+    params.value.search = null;
+    params.value.emissionDate = null;
+    params.value.patientId = null;
+    params.value.productId = null;
+    params.value.pharmacyId = null;
+    params.value.userId = null;
+    params.value.startDate = null;
+    params.value.endDate = null;
+    searchV.value.searchP = null;
+    searchV.value.searchPro = null;
+    searchV.value.searchPhar = null;
+    pagination.value.onUpdatePage(1)
+}
 </script>
 
 <template>
@@ -201,7 +293,102 @@ const exportToExcel = async () => {
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">
                     <span class="text-lg -mt-1">Oportunidades</span>
+
+                    <n-popover v-if="actions?.includes('filter')" placement="bottom" trigger="click">
+                        <template #trigger>
+                            <div
+                                class="flex items-center gap-1 cursor-pointer select-none opacity-60 hover:opacity-100">
+                                <j-icon w="w-[16px]" name="filter" />
+                                <span>Filtros</span>
+                                <j-icon w="w-[14px]" name="down" />
+                            </div>
+                        </template>
+
+                        <div class="grid" style="width: 250px; height: 350px;">
+                            <div>
+                                <div class="mb-1">Paciente</div>
+                                <n-auto-complete size="small" placeholder="Buscar" v-model:value="searchV.searchP"
+                                    @update:value="patientSearch" @select="selectPatient" clearable
+                                    :options="optionPatients">
+                                    <template #prefix>
+                                        <n-icon>
+                                            <j-icon w="w-[14px]" name="search" />
+                                        </n-icon>
+                                    </template>
+                                </n-auto-complete>
+                            </div>
+
+                            <div>
+                                <div class="mb-1">Producto</div>
+                                <n-auto-complete size="small" placeholder="Buscar" v-model:value="searchV.searchPro"
+                                    @update:value="productSearch" @select="selectProduct" clearable
+                                    :options="optionProducts">
+                                    <template #prefix>
+                                        <n-icon>
+                                            <j-icon w="w-[14px]" name="search" />
+                                        </n-icon>
+                                    </template>
+                                </n-auto-complete>
+                            </div>
+
+                            <div>
+                                <div class="mb-1">Farmacia</div>
+                                <n-auto-complete size="small" placeholder="Buscar" v-model:value="searchV.searchPhar"
+                                    @update:value="pharmacySearch" @select="selectPharmacy" clearable
+                                    :options="optionPharmacies">
+                                    <template #prefix>
+                                        <n-icon>
+                                            <j-icon w="w-[14px]" name="search" />
+                                        </n-icon>
+                                    </template>
+                                </n-auto-complete>
+                            </div>
+
+                            <!-- <div>
+                                <div class="mb-1">Usuario</div>
+                                <n-select size="small" filterable v-model:value="params.userId" :options="[]"
+                                    placeholder="Seleccione" clearable />
+                            </div> -->
+
+                            <div>
+                                <div class="mb-1">Fecha Emisión</div>
+                                <n-date-picker size="small" type="date" value-format="yyyy-MM-dd HH:mm"
+                                    placeholder="Seleccione" v-model:formatted-value="params.emissionDate"
+                                    :actions="null" clearable />
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <div>
+                                    <div class="mb-1">Fecha Inicio</div>
+                                    <n-date-picker size="small" type="date" value-format="yyyy-MM-dd HH:mm"
+                                        placeholder="Inicio" v-model:formatted-value="params.startDate" :actions="null"
+                                        clearable />
+                                </div>
+
+                                <div>
+                                    <div class="mb-1">Fecha Fin</div>
+                                    <n-date-picker size="small" type="date" value-format="yyyy-MM-dd" placeholder="Fin"
+                                        v-model:formatted-value="params.endDate" :actions="null" clearable />
+                                </div>
+                            </div>
+
+                            <div class="flex gap-2 mt-3">
+                                <n-button class="w-[60%]" size="small" type="primary"
+                                    @click="pagination.onUpdatePage(1)">
+                                    <j-icon w="w-[14px]" name="filter" />
+                                    Filtrar
+                                </n-button>
+
+                                <n-button size="small" quaternary @click="clearFilters">
+                                    <j-icon w="w-[14px]" name="delete" />
+                                    Limpiar
+                                </n-button>
+                            </div>
+                            <!-- <pre class="bg-black">{{ JSON.stringify(params, null, 2) }}</pre> -->
+                        </div>
+                    </n-popover>
                 </div>
+
                 <div class="flex flex-wrap items-center gap-2">
                     <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"
                         @click="exportToExcel" quaternary class="group" icon-placement="right">

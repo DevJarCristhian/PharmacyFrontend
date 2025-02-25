@@ -2,11 +2,15 @@ export interface Params {
   page: number;
   perPage: number;
   search?: string | null;
-  status?: string | null;
+  gender?: number | null;
+  department?: number | null;
+  birthDate?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 export interface Get {
-  id?: number;
+  id?: string;
   departmentName: string;
   countryName: string;
   fullName: string;
@@ -20,8 +24,8 @@ export interface Get {
   enrollmentDate: string;
 }
 
-export interface Store {
-  patientInformation: string;
+export interface GetPatient {
+  // patientInformation: string;
   programStartDate: string;
   doctorName: string;
   institutionName: string;
@@ -32,7 +36,7 @@ export interface Store {
   verified: string;
   gender: number;
   quantityRedemptions: string;
-  operatorId: string;
+  // operatorId: string;
   civilStatus: number;
   patientStatus: number;
   patientType: number;
@@ -42,28 +46,11 @@ export interface Store {
   dateUpdated: string;
 }
 
-// {
-//     // "id": 10162,
-//     // "FullName": "HEIDY LUCRECIA CAMEY AJPACAJA",
-//     // "documentType": "dpi",
-//     // "patientInformation": "{\"medicos\":[\"0\"],\"medicamento\":[\"3\"]}",
-//     "programStartDate": "2025-01-23",
-//     "doctorName": "LOURDES GABRIELA MARTINEZ DOMINGUEZ",
-//     "institutionName": "SIN INSTITUCION",
-//     "medicationConsumption": 1,
-//     "emailSending": 1,
-//     "whatsappSending": 1,
-//     "physicalMailSending": 0,
-//     "verified": 5,
-//     "redemptions": 1,
-//     "operatorId": 0,
-//     "civilStatus": null,
-//     "patientStatus": null,
-//     "contactName": "",
-//     "description": "",
-//     "dateUpdated": "2025-01-23 17:04:40",
-//     // "createdBy": null,
-//     // "updatedBy": null,
-//     // "createdAt": "2025-01-23 00:00:00",
-//     // "deleted": 0
-// }
+export interface Update {
+  gender: number;
+  civilStatus: number | null;
+  patientStatus: number | null;
+  patientType: number | null;
+  contactName: string;
+  description: string;
+}

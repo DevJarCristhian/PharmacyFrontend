@@ -23,16 +23,18 @@ defineProps<ChatBubbleProps>();
       </h5>
       <div class="max-w-md grid">
         <div
-          :class="['px-3.5 py-2 rounded-3xl justify-start items-center gap-3 text-black', sender === 'user' ? 'bg-[#d8fdd2]  rounded-tr-none' : 'bg-gray-100  rounded-tl-none']">
-          <h5 class="text-sm font-normal">{{ message }}</h5>
-        </div>
-        <div :class="['items-center inline-flex mx-4', sender === 'user' ? 'justify-end' : 'justify-start']">
-          <Check v-if="sender === 'user'" :status="status" />
-          <h6 class="text-gray-500 text-xs font-normal leading-4 py-1">
-            {{ formatDateLarge(timestamp) }}
-          </h6>
+          :class="['px-3 pt-0.5 rounded-xl shadow justify-start items-center  text-black', sender === 'user' ? 'bg-[#d8fdd2]  rounded-tr-none' : 'bg-white  rounded-tl-none']">
+          <h5 class="text-sm font-normal -mb-1">{{ message }}</h5>
+
+          <div class="items-center inline-flex justify-end ml-5">
+            <h6 class="text-gray-500/80 dark:text-gray-600/80 text-[11px] leading-4  mr-1">
+              {{ formatDateLarge(timestamp) }}
+            </h6>
+            <Check v-if="sender === 'user'" :status="status" />
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>

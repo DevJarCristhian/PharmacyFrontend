@@ -2,11 +2,14 @@ export interface Params {
   page: number;
   perPage: number;
   search?: string | null;
-  status?: string | null;
+  department?: number | null;
+  city?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 export interface Get {
-  id?: number;
+  id?: string;
   departmentName: string;
   countryName: string;
   city: string;

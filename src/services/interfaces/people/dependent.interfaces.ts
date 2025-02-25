@@ -2,7 +2,11 @@ export interface Params {
   page: number;
   perPage: number;
   search?: string | null;
-  status?: string | null;
+  gender?: number | null;
+  department?: number | null;
+  birthDate?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 export interface Get {

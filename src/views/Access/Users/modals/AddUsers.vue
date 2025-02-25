@@ -81,16 +81,24 @@ const closeModal = () => {
             <n-form-item label="Nombres" path="name">
                 <n-input v-model:value="formData.name" placeholder="Ingrese Nombres" />
             </n-form-item>
+
             <n-form-item label="Email" path="email">
                 <n-input v-model:value="formData.email" placeholder="Ingrese Email" />
             </n-form-item>
+
             <n-form-item label="Rol" path="roleId">
-                <n-select v-model:value="formData.roleId" :options="roles" placeholder="Selecciona Rol" />
+                <n-select v-model:value="formData.roleId" :options="roles" placeholder="Seleccione" />
             </n-form-item>
+
             <n-form-item label="Contraseña" :path="formData.id ? '' : 'password'">
                 <n-input v-model:value="formData.password" type="password" placeholder="Ingrese Contraseña"
                     show-password-on="click" />
             </n-form-item>
+
+            <n-form-item label="Whatsapp">
+                <n-select v-model:value="formData.whatsappId" :options="roles" clearable placeholder="Seleccione" />
+            </n-form-item>
+
             <n-form-item label="Estado">
                 <n-switch :disabled="formData.id ? false : true" v-model:value="formData.status" />
             </n-form-item>

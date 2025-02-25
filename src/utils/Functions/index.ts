@@ -1,6 +1,8 @@
 import { h } from "vue";
 import JIcon from "../../components/JIcon.vue";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 export const renderIcon = (icon: string, size: string = "w-4") => {
   return () => {
@@ -19,16 +21,26 @@ export const downloadExcel = async (data: any, filename: string) => {
   a.remove();
 };
 
-export const formatDate = (date: string) => {
+export const formatDateLarge = (date: string, type: string = "large") => {
   if (!date || !dayjs(date).isValid()) {
     return "-";
   }
-  return dayjs(date).format("YYYY/MM/DD");
+
+  if (type === "large") {
+    return dayjs(date).format("YYYY-MM-DD HH:mm");
+  } else {
+    return dayjs(date).format("YYYY-MM-DD");
+  }
 };
 
-export const formatDateLarge = (date: string) => {
+export const formatDateLa = (date: string, type: string = "large") => {
   if (!date || !dayjs(date).isValid()) {
-    return "-";
+    return null;
   }
-  return dayjs(date).format("YYYY/MM/DD HH:mm");
+
+  if (type === "large") {
+    return dayjs.utc(date).format("YYYY-MM-DD HH:mm");
+  } else {
+    return dayjs.utc(date).format("YYYY-MM-DD");
+  }
 };

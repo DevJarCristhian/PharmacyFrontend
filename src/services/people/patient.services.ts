@@ -1,7 +1,7 @@
 import api from "../../config/axios";
-import type { Params, Store } from "../interfaces/people/patient.interfaces";
+import type { Params, Update } from "../interfaces/people/patient.interfaces";
 
-const prefix = "people/patient/";
+const prefix = "people/patient";
 
 class patientServices {
   async get(params: Params) {
@@ -10,29 +10,30 @@ class patientServices {
     });
     return data;
   }
-  async getById(id: number) {
-    const { data } = await api.get(`${prefix}${id}`);
+  async getById(id: string) {
+    const { data } = await api.get(`${prefix}/${id}`);
     return data;
   }
   async getCategories() {
-    const { data } = await api.get(`all/maintenance`);
+    const data = await api.get(`${prefix}/all/maintenance`);
     return data;
   }
-  async store(data: Store) {
-    const { data: response } = await api.post(`${prefix}store`, data);
+  async update(id: string, data: Update) {
+    const { data: response } = await api.put(`${prefix}/${id}`, data);
     return response;
   }
-  async update(id: number, data: Store) {
-    const { data: response } = await api.put(`${prefix}update/${id}`, data);
-    return response;
-  }
-
   async exportToExcel() {
     const { data } = await api.post(
-      `${prefix}export/`,
+      `${prefix}/export/`,
       { search: "" },
       { responseType: "blob" }
     );
+    return data;
+  }
+  async getDepartment(text: string) {
+    const { data } = await api.get(`${prefix}/filter/department`, {
+      params: { search: text },
+    });
     return data;
   }
 }

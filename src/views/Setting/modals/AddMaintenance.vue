@@ -36,7 +36,7 @@ onUpdated(() => {
 
 const getCategory = async () => {
     const response = await maintenanceServices.get()
-    categories.value = response.data
+    categories.value = response
 }
 
 const handleSubmit = async () => {
@@ -79,13 +79,13 @@ const handleSubmitCategory = async () => {
             // console.log(response);
 
             if (!formCategory.value.id) {
-                categories.value.unshift(response.data)
+                categories.value.unshift(response)
             } else {
                 const index = categories.value.findIndex(x => x.value == formCategory.value.id)
-                categories.value[index] = response.data
+                categories.value[index] = response
             }
             validatePartial()
-            formData.value.maintenanceId = response.data.value
+            formData.value.maintenanceId = response.value
             loadingCategory.value = false
 
             message.success(formCategory.value.id ? 'Categoria Actualizada' : 'Categoria Creada')
@@ -146,13 +146,14 @@ const validatePartial = () => {
                 <n-input-group>
                     <n-select v-model:value="formData.maintenanceId" @update:value="validatePartial"
                         :options="categories" placeholder="Seleccione" />
-                    <n-button v-if="formData.maintenanceId" type="primary" ghost
+                    <n-button v-if="formData.maintenanceId && !formData.id" type="primary" ghost
                         @click="editCategory(formData.maintenanceId)">
                         <j-icon w="w-[14px]" name="edit" />
                     </n-button>
                 </n-input-group>
                 <template #label>Categoria
-                    <n-text style="cursor: pointer; margin-left: 6px" type="primary" @click="newCategory()">
+                    <n-text v-if="!formData.id" style="cursor: pointer; margin-left: 6px" type="primary"
+                        @click="newCategory()">
                         [+ Nuevo]
                     </n-text>
                 </template>

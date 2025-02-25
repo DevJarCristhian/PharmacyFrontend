@@ -6,7 +6,7 @@ export interface Params {
 }
 
 export interface Get {
-  id?: number;
+  id?: string;
   name: string;
   address: string;
   date: string;

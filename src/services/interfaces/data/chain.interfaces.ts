@@ -6,7 +6,7 @@ export interface Params {
 }
 
 export interface Get {
-  id?: number;
+  id?: string;
   chain: string;
   countryName: string;
 }

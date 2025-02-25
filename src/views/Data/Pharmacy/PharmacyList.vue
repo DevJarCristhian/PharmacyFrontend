@@ -62,10 +62,10 @@ watch(() => auth.user.permissions, getActions)
 const getPharmacy = async () => {
     loading.value = true
     const response = await pharmacyServices.get(params.value)
-    data.value = response.data.data
-    // console.log(response.data.data);
-    pagination.value.pageCount = response.data.last_page
-    pagination.value.total = response.data.total
+    data.value = response.data
+    // console.log(response.data);
+    pagination.value.pageCount = response.last_page
+    pagination.value.total = response.total
     loading.value = false
 }
 

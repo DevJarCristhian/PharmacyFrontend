@@ -4,7 +4,7 @@ import institutionServices from '../../../services/data/institution.services';
 import { Get, Params } from '../../../services/interfaces/data/institution.interfaces';
 import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
-import { downloadExcel, renderIcon } from '../../../utils/Functions';
+import { downloadExcel, formatDateLa, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
@@ -62,10 +62,10 @@ watch(() => auth.user.permissions, getActions)
 const getInstitution = async () => {
     loading.value = true
     const response = await institutionServices.get(params.value)
-    data.value = response.data.data
-    // console.log(response.data.data);
-    pagination.value.pageCount = response.data.last_page
-    pagination.value.total = response.data.total
+    data.value = response.data
+    // console.log(response.data);
+    pagination.value.pageCount = response.last_page
+    pagination.value.total = response.total
     loading.value = false
 }
 
@@ -93,10 +93,16 @@ const columns = ref([
     {
         title: 'F. Creación',
         key: 'date',
+        render(row: Get) {
+            return formatDateLa(row.date)
+        }
     },
     {
         title: 'F. Actualización',
         key: 'updatedAt',
+        render(row: Get) {
+            return formatDateLa(row.updatedAt)
+        }
     },
 ])
 
@@ -165,7 +171,7 @@ const exportToExcel = async () => {
         <div class="bg-white dark:bg-[#1E2838] shadow min-h-12 rounded mb-4 font-semibold p-2 px-3">
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">
-                    <span class="text-lg -mt-1">Instituciónes</span>
+                    <span class="text-lg -mt-1">Instituciones</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"

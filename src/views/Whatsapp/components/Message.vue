@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue';
-import { formatDate } from '../../../utils/Functions';
+import { formatDateLa } from '../../../utils/Functions';
 // import Check from './Check.vue';
 
 interface MessageProps {
@@ -29,7 +29,7 @@ defineProps<MessageProps>();
         <div class="flex flex-col w-full border-b dark:border-slate-700/60 -mt-1 p-1">
             <div class="flex items-center justify-between">
                 <span class="font-medium">{{ name }}</span>
-                <span class="text-xs text-gray-400">{{ formatDate(timestamp) }}</span>
+                <span class="text-xs text-gray-400">{{ formatDateLa(timestamp, "short") }}</span>
             </div>
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
