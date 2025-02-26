@@ -138,7 +138,7 @@ const openModal = (key: string) => {
 
 const exportToExcel = async () => {
     loadingExport.value = true
-    const data = await chainServices.exportToExcel()
+    const data = await chainServices.exportToExcel(params.value)
     await downloadExcel(data, "Lista Cadenas")
     loadingExport.value = false
 }

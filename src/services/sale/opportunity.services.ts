@@ -26,12 +26,10 @@ class opportunityServices {
     const { data: response } = await api.put(`${prefix}/${id}`, data);
     return response;
   }
-  async exportToExcel() {
-    const { data } = await api.post(
-      `${prefix}/export/`,
-      { search: "" },
-      { responseType: "blob" }
-    );
+  async exportToExcel(params: Params) {
+    const { data } = await api.post(`${prefix}/export/`, params, {
+      responseType: "blob",
+    });
     return data;
   }
   async getPatients(text: string) {

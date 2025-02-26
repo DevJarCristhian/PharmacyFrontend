@@ -158,7 +158,7 @@ const openModal = (key: string) => {
 
 const exportToExcel = async () => {
     loadingExport.value = true;
-    const data = await institutionServices.exportToExcel()
+    const data = await institutionServices.exportToExcel(params.value)
     await downloadExcel(data, "Lista Instituciones")
     loadingExport.value = false;
 }

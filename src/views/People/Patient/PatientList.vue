@@ -223,7 +223,7 @@ const openModal = (key: string) => {
 
 const exportToExcel = async () => {
     loadingExport.value = true;
-    const data = await patientServices.exportToExcel();
+    const data = await patientServices.exportToExcel(params.value);
     await downloadExcel(data, "Lista Pacientes");
     loadingExport.value = false;
 }

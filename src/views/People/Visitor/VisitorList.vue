@@ -151,7 +151,7 @@ const openModal = (key: string) => {
 
 const exportToExcel = async () => {
     loadingExport.value = true;
-    const data = await visitorServices.exportToExcel();
+    const data = await visitorServices.exportToExcel(params.value);
     await downloadExcel(data, "Lista Visitadores");
     loadingExport.value = false;
 }

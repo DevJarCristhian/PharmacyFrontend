@@ -74,7 +74,7 @@ const getUsers = async () => {
     data.value = response
     // console.log(response);
     // pagination.value.pageCount = response.data.last_page
-    // pagination.value.total = response.data.total
+    pagination.value.total = response.length
     loading.value = false
 }
 
@@ -198,7 +198,7 @@ const columns = ref([
 
 const exportToExcel = async () => {
     loadingExport.value = true
-    const data = await usersServices.exportToExcel()
+    const data = await usersServices.exportToExcel(params.value)
     await downloadExcel(data, "Lista Usuarios")
     loadingExport.value = false
 }

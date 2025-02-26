@@ -244,7 +244,7 @@ const openModal = (key: string) => {
 
 const exportToExcel = async () => {
     loadingExport.value = true
-    const data = await productServices.exportToExcel()
+    const data = await productServices.exportToExcel(params.value)
     await downloadExcel(data, "Lista Productos")
     loadingExport.value = false
 }

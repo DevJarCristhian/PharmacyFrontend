@@ -10,12 +10,10 @@ class visitorServices {
     });
     return data;
   }
-  async exportToExcel() {
-    const { data } = await api.post(
-      `${prefix}/export/`,
-      { search: "" },
-      { responseType: "blob" }
-    );
+  async exportToExcel(params: Params) {
+    const { data } = await api.post(`${prefix}/export/`, params, {
+      responseType: "blob",
+    });
     return data;
   }
 }
