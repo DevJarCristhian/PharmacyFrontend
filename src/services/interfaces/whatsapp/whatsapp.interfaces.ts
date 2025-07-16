@@ -38,6 +38,8 @@ export interface GetMessageDefault {
   profilePicUrl: string;
   lastMessage: string;
   lastMessageDate: string;
+  mediaType: string;
+  fromMe: number;
   messages: {
     id: number;
     body: string;
@@ -55,14 +57,13 @@ export interface StoreMessage {
   contactId: number;
   number: string;
   message: string;
-  mediaType?: string;
-  mediaUrl?: string;
+  mediaType: string;
+  file: string | null;
   read?: string;
 }
 
 export interface StoreManyMessage {
-  message: string | null;
-  mediaUrl?: string;
+  templateId: number | null;
   patients: {
     patientId: string;
     number: string;

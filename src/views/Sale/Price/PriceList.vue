@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue';
-// import priceServices from '../../../services/sale/price.services';
+import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from 'vue';
+import priceServices from '../../../services/sale/price.services';
 import { Get, Params } from '../../../services/interfaces/sale/price.interfaces';
-import { DropdownOption } from 'naive-ui';
+import { DropdownOption, NTag } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
-import { renderIcon } from '../../../utils/Functions';
+import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-// const add = defineAsyncComponent(() => import('../../../views/Sale/Price/modals/AddPrice.vue'))
+const add = defineAsyncComponent(() => import('./modals/ShowPrice.vue'))
 
 const props = defineProps<{
     path: string
@@ -19,7 +19,7 @@ const actions = ref<string[]>()
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
-// const showModal = ref<boolean>(false)
+const showModal = ref<boolean>(false)
 const showDropdown = ref<boolean>(false)
 const x = ref<number>(0)
 const y = ref<number>(0)
@@ -27,12 +27,8 @@ const params = ref<Params>({
     page: 1,
     perPage: 50,
     search: null,
-    status: null,
 })
-// const priceData = ref<Store>({
-//     description: '',
-//     permissions: []
-// })
+const priceData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -64,21 +60,13 @@ watch(() => auth.user.permissions, getActions);
 
 const getPrice = async () => {
     loading.value = true
-    // const response = await priceServices.get(params.value)
-    // data.value = response.data.data
-    // // console.log(response.data.data);
-    // pagination.value.pageCount = response.data.last_page
-    // pagination.value.total = response.data.total
+    const response = await priceServices.get(params.value)
+    data.value = response.data
+    // console.log(response);
+    pagination.value.pageCount = response.last_page
+    pagination.value.total = response.total
     loading.value = false
 }
-
-// const priceReset = () => {
-//     priceData.value = {
-//         description: '',
-//         permissions: []
-//     }
-//     showModal.value = true
-// }
 
 const columns = ref([
     {
@@ -91,16 +79,21 @@ const columns = ref([
         }
     },
     {
-        title: 'Nombre',
-        key: 'name',
+        title: 'Producto',
+        key: 'productName',
         ellipsis: {
             tooltip: true
         },
         width: 210,
     },
     {
-        title: 'Direccion',
-        key: 'address',
+        title: 'Precio',
+        key: 'price',
+        width: 100,
+    },
+    {
+        title: 'Cadena',
+        key: 'chainName',
         ellipsis: {
             tooltip: true
         },
@@ -109,40 +102,39 @@ const columns = ref([
     {
         title: 'Pais',
         key: 'countryName',
-        width: 100,
-    },
-    {
-        title: 'Departamento',
-        key: 'departmentName',
         width: 130,
     },
     {
-        title: 'Municipio',
-        key: 'city',
-        width: 130,
-    },
-    {
-        title: 'F. Creación',
-        key: 'date',
+        title: 'Estado',
+        key: 'status',
         width: 140,
-    },
-    {
-        title: 'F. Actualización',
-        key: 'updatedAt',
-        width: 140,
+        render(row: any) {
+            return h(
+                NTag,
+                {
+                    type: row.status == 1 ? "success" : "error",
+                    size: "small",
+                    bordered: false,
+                    round: true,
+                },
+                {
+                    default: () => (row.status == 1 ? "Activo" : "Inactivo"),
+                }
+            );
+        },
     },
 ])
 
 
 const options: DropdownOption[] = [
     {
-        label: 'Complementar',
-        key: 'edit',
-        icon: renderIcon("edit")
+        label: 'Mostrar',
+        key: 'show',
+        icon: renderIcon("show")
 
     },
     {
-        label: 'Copiar Nombre',
+        label: 'Copiar Producto',
         key: 'name',
         icon: renderIcon("copy")
     },
@@ -151,7 +143,7 @@ const options: DropdownOption[] = [
 const rowProps = (row: any) => {
     return {
         onContextmenu: (e: MouseEvent) => {
-            console.log(row);
+            setValues(row)
             e.preventDefault()
             showDropdown.value = false
             nextTick().then(() => {
@@ -163,20 +155,37 @@ const rowProps = (row: any) => {
     }
 }
 
+const setValues = (item: Get) => {
+    priceData.value = item
+}
+const openModal = (key: string) => {
+    showDropdown.value = false
+    if (key === 'show') {
+        showModal.value = true
+    } else {
+        navigator.clipboard.writeText(priceData.value.productName);
+    }
+}
+
 const exportToExcel = async () => {
     loadingExport.value = true
-    console.log("a")
-
-    // const data = await priceServices.exportToExcel()
-    // await downloadExcel(data, "Lista de Precios")
+    const data = await priceServices.exportToExcel(params.value)
+    await downloadExcel(data, "Lista de Precios")
     loadingExport.value = false
+}
+
+const clearFilters = () => {
+    params.value.page = 1
+    params.value.search = null
+    pagination.value.page = 1
+    getPrice()
 }
 </script>
 
 <template>
     <div>
-        <!-- <add :show="showModal" :items="priceData" @close="showModal = !showModal"
-            @refresh="pagination.onUpdatePage(1)" /> -->
+        <add :show="showModal" :items="priceData" @close="showModal = !showModal"
+            @refresh="pagination.onUpdatePage(1)" />
         <div class="bg-white dark:bg-[#1E2838] shadow min-h-12 rounded mb-4 font-semibold p-2 px-3">
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">
@@ -193,7 +202,7 @@ const exportToExcel = async () => {
                         </template>
                     </n-button>
 
-                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                    <n-button @click="clearFilters" :loading="loading" size="small" quaternary>
                         <template #icon>
                             <j-icon w="w-[14px]" name="refresh" />
                         </template>
@@ -214,8 +223,7 @@ const exportToExcel = async () => {
         </n-data-table>
 
         <n-dropdown placement="bottom" :show-arrow="true" trigger="manual" :x="x" :y="y" :options="options"
-            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }"
-            @select="() => { showDropdown = false }" />
+            :show="showDropdown" :on-clickoutside="() => { showDropdown = false }" @select="openModal" />
     </div>
 </template>
 

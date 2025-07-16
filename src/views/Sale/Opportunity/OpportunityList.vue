@@ -270,18 +270,20 @@ const selectPharmacy = async (value: any) => {
 };
 
 const clearFilters = () => {
-    params.value.search = null;
-    params.value.emissionDate = null;
-    params.value.patientId = null;
-    params.value.productId = null;
-    params.value.pharmacyId = null;
-    params.value.userId = null;
-    params.value.startDate = null;
-    params.value.endDate = null;
-    searchV.value.searchP = null;
-    searchV.value.searchPro = null;
-    searchV.value.searchPhar = null;
-    pagination.value.onUpdatePage(1)
+    params.value.search = null
+    params.value.emissionDate = null
+    params.value.patientId = null
+    params.value.productId = null
+    params.value.pharmacyId = null
+    params.value.userId = null
+    params.value.startDate = null
+    params.value.endDate = null
+    searchV.value.searchP = null
+    searchV.value.searchPro = null
+    searchV.value.searchPhar = null
+    params.value.page = 1
+    pagination.value.page = 1
+    getOpportunity()
 }
 </script>
 
@@ -400,7 +402,7 @@ const clearFilters = () => {
                         </template>
                     </n-button>
 
-                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                    <n-button @click="clearFilters" :loading="loading" size="small" quaternary>
                         <template #icon>
                             <j-icon w="w-[14px]" name="refresh" />
                         </template>

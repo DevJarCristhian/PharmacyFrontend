@@ -32,9 +32,32 @@ class whatsappServices {
     return data;
   }
 
-  async sendMessage(values: StoreMessage) {
-    const { data } = await api.post(`ws/send-message`, values);
+  async getTemplates(search: string) {
+    const { data } = await api.get(`connection/templates/type`, {
+      params: { search },
+    });
     return data;
+  }
+
+  async sendMessage(data: StoreMessage) {
+    const formData = new FormData();
+    formData.append("contactId", data.contactId.toString());
+    formData.append("number", data.number);
+    formData.append("message", data.message);
+
+    if (data.file) {
+      formData.append("file", data.file);
+      formData.append("mediaType", "image");
+    } else {
+      formData.append("mediaType", "chat");
+    }
+
+    const { data: response } = await api.post(`ws/send-message`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response;
   }
 
   async sendManyMessage(values: StoreManyMessage) {

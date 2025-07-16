@@ -6,16 +6,22 @@ export interface Params {
 
 export interface Get {
   id?: number;
-  description: string;
-  permissions: number[];
-  created_at?: Date;
-  updated_at?: Date;
+  name: string;
+  message: string;
+  type: number;
+  contentType: number;
+  file: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Store {
   id?: number;
-  description: string;
-  permissions: number[];
+  name: string;
+  message: string;
+  type: number;
+  contentType: number;
+  file: string | null;
 }
 export interface Permission {
   id: number;

@@ -245,13 +245,16 @@ const selectDepartment = async (value: any) => {
 };
 
 const clearFilters = () => {
-    params.value.gender = null;
-    params.value.department = null;
-    params.value.birthDate = null;
-    params.value.startDate = null;
-    params.value.endDate = null;
-    searchV.value.searchDep = null;
-    pagination.value.onUpdatePage(1)
+    params.value.search = null
+    params.value.gender = null
+    params.value.department = null
+    params.value.birthDate = null
+    params.value.startDate = null
+    params.value.endDate = null
+    searchV.value.searchDep = null
+    params.value.page = 1
+    pagination.value.page = 1
+    getPatient()
 }
 
 const genderOptions = [
@@ -355,7 +358,7 @@ const genderOptions = [
                         </template>
                     </n-button>
 
-                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                    <n-button @click="clearFilters" :loading="loading" size="small" quaternary>
                         <template #icon>
                             <j-icon w="w-[14px]" name="refresh" />
                         </template>

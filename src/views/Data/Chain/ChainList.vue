@@ -28,7 +28,6 @@ const params = ref<Params>({
     page: 1,
     perPage: 50,
     search: null,
-    status: null,
 })
 const chainData = ref<Get>({} as Get)
 const pagination = ref({
@@ -142,6 +141,13 @@ const exportToExcel = async () => {
     await downloadExcel(data, "Lista Cadenas")
     loadingExport.value = false
 }
+
+const clearFilters = () => {
+    params.value.page = 1
+    params.value.search = null
+    pagination.value.page = 1
+    getChain()
+}
 </script>
 
 <template>
@@ -164,7 +170,7 @@ const exportToExcel = async () => {
                         </template>
                     </n-button>
 
-                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                    <n-button @click="clearFilters" :loading="loading" size="small" quaternary>
                         <template #icon>
                             <j-icon w="w-[14px]" name="refresh" />
                         </template>

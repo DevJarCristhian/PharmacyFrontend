@@ -2,18 +2,21 @@
 import JIcon from '../components/JIcon.vue';
 import { useDarkMode } from '../utils/DarkMode';
 import { globalActions } from '../store/actions';
-import { ref, toRefs } from 'vue';
+import { ref, toRefs, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import authServices from '../services/auth.services';
 import { authStores } from '../store/auth';
 import { renderIcon } from '../utils/Functions';
+import useWhatsappJob from '../utils/websocket/useWhatsappJob';
 
+const { notify } = useWhatsappJob();
 const { toggleDarkMode, theme } = useDarkMode();
 const { user } = toRefs(authStores())
 
 const store = globalActions();
 const router = useRouter();
-
+const showNoty = ref<boolean>(false)
+const timeLeft = ref<number>(0);
 const options = ref([
     {
         label: theme.value ? 'Modo Oscuro' : 'Modo Claro',
@@ -58,7 +61,21 @@ const optionsNoty = ref([
     },
 ])
 
-const offset = [-5, 2] 
+const offset = [-5, 2]
+
+watch(notify, () => {
+    timeLeft.value = 4;
+});
+
+setInterval(async () => {
+    if (timeLeft.value > 0) {
+        timeLeft.value--;
+    }
+}, 1000);
+
+watch(timeLeft, (newTimeLeft) => {
+    showNoty.value = newTimeLeft === 0 ? false : true;
+});
 </script>
 
 <template>
@@ -105,6 +122,13 @@ const offset = [-5, 2]
                     </div>
                 </div>
             </n-dropdown>
+        </div>
+        <div v-if="showNoty"
+            class="fixed right-1/3 top-2 z-50 bg-white dark:bg-slate-700 p-2 w-56 h-10 rounded-md drop-shadow-md">
+            <div class="flex items-center center gap-2">
+                <j-icon w="w-[18px]" name="check" />
+                <span>Mensaje Enviado {{ 1 + ' de ' + 100 }}</span>
+            </div>
         </div>
     </div>
 </template>

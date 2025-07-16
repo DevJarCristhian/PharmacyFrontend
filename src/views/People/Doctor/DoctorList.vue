@@ -224,14 +224,18 @@ const selectCity = async (value: any) => {
 };
 
 const clearFilters = () => {
+    params.value.search = null;
     params.value.department = null;
     params.value.city = null;
     params.value.startDate = null;
     params.value.endDate = null;
     searchV.value.searchDep = null;
     searchV.value.searchcity = null;
-    pagination.value.onUpdatePage(1)
+    params.value.page = 1;
+    pagination.value.page = 1;
+    getDoctor();
 }
+
 </script>
 
 <template>
@@ -321,7 +325,7 @@ const clearFilters = () => {
                         </template>
                     </n-button>
 
-                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                    <n-button @click="clearFilters" :loading="loading" size="small" quaternary>
                         <template #icon>
                             <j-icon w="w-[14px]" name="refresh" />
                         </template>

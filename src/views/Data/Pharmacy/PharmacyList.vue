@@ -26,8 +26,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    search: null,
-    status: null,
+    search: null
 })
 const pharmacyData = ref<Get>({} as Get)
 const pagination = ref({
@@ -161,6 +160,13 @@ const exportToExcel = async () => {
     await downloadExcel(data, "Lista Farmacias")
     loadingExport.value = false
 }
+
+const clearFilters = () => {
+    params.value.page = 1
+    params.value.search = null
+    pagination.value.page = 1
+    getPharmacy()
+}
 </script>
 
 <template>
@@ -183,7 +189,7 @@ const exportToExcel = async () => {
                         </template>
                     </n-button>
 
-                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                    <n-button @click="clearFilters" :loading="loading" size="small" quaternary>
                         <template #icon>
                             <j-icon w="w-[14px]" name="refresh" />
                         </template>

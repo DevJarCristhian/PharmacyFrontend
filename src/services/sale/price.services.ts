@@ -1,7 +1,7 @@
 import api from "../../config/axios";
 import type { Params } from "../interfaces/people/doctor.interfaces";
 
-const prefix = "people/visitor/";
+const prefix = "sale/price/";
 
 class priceServices {
   async get(params: Params) {

@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { NScrollbar } from 'naive-ui';
+import { NScrollbar, useMessage } from 'naive-ui';
 import Bubble from './components/Bubble.vue';
 import { ref, onMounted, watch, defineAsyncComponent } from 'vue';
 import Message from './components/Message.vue';
-import useSocket from '../../utils/websocket/useWebsocket';
-import whatsappServices from '../../services/whatsapp/whatsapp.services';
-import Contact from './components/Contact.vue';
-import { GetMessageDefault, StoreMessage } from '../../services/interfaces/whatsapp/whatsapp.interfaces';
+import useSocket from '../../../utils/websocket/useWebsocket';
+import whatsappServices from '../../../services/whatsapp/whatsapp.services';
+import { GetMessageDefault, StoreMessage } from '../../../services/interfaces/whatsapp/whatsapp.interfaces';
 import dayjs from 'dayjs';
 const { newMessage } = useSocket();
 
 const sendModal = defineAsyncComponent(() => import('./components/SendMessage.vue'))
 
+const message = useMessage()
 const scrollbarContent = ref<InstanceType<typeof NScrollbar> | null>(null);
 const innerContent = ref<HTMLElement | null>(null);
 const contacts = ref<any>([])
 const chats = ref<any>();
+const URLIMG = ref<any>(null)
 const showSend = ref<boolean>(false)
+const loadingImg = ref<boolean>(false)
+const dateNow = ref<string>(new Date().toISOString())
 const contactValues = ref<GetMessageDefault>({} as GetMessageDefault);
 const optionPatients = ref<any>([]);
 const searchPatient = ref<any>("");
@@ -24,12 +27,13 @@ const valuesSend = ref<StoreMessage>({
     number: '',
     message: '',
     contactId: 0,
-    mediaType: 'chat'
+    mediaType: 'chat',
+    file: null
 })
 
 onMounted(() => {
     getChats();
-    getContacts();
+    // getContacts();
 });
 
 watch(newMessage, () => {
@@ -42,9 +46,9 @@ const getChat = (chat: GetMessageDefault) => {
     valuesSend.value.number = chat.number;
     valuesSend.value.mediaType = "chat";
     // console.log(chat);
-    if (scrollbarContent.value && innerContent.value) {
-        scrollbarContent.value.scrollTo({ top: innerContent.value.scrollHeight });
-    }
+    setTimeout(() => {
+        scrollbarContent.value?.scrollTo({ top: innerContent.value?.scrollHeight });
+    }, 150)
 }
 
 const addNewMessage = (message: any) => {
@@ -54,6 +58,8 @@ const addNewMessage = (message: any) => {
             verifyExist = true;
             chat.lastMessage = message.body;
             chat.lastMessageDate = message.createdAt;
+            chat.mediaType = message.mediaType;
+            chat.fromMe = message.fromMe;
             chat.messages.push(message);
         }
     })
@@ -65,9 +71,17 @@ const addNewMessage = (message: any) => {
             lastMessageDate: message.createdAt,
             name: message.name,
             profilePicUrl: message.profilePicUrl,
+            mediaType: message.mediaType,
+            fromMe: message.fromMe,
             messages: [message]
         }
         chats.value.push(newMessage);
+    }
+
+    if (message.contactId === valuesSend.value.contactId) {
+        setTimeout(() => {
+            scrollbarContent.value?.scrollTo({ top: innerContent.value?.scrollHeight });
+        }, 100)
     }
 }
 
@@ -83,9 +97,11 @@ const getContacts = async () => {
     contacts.value = response
 }
 
-const addMessage = (values: StoreMessage) => {
+const addMessage = (values: StoreMessage, file: boolean) => {
     contactValues.value.lastMessage = values.message;
     contactValues.value.lastMessageDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    contactValues.value.mediaType = file ? 'image' : 'chat';
+    contactValues.value.fromMe = 1;
     contactValues.value.messages.push({
         body: values.message,
         createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
@@ -98,13 +114,37 @@ const addMessage = (values: StoreMessage) => {
 }
 
 const sendMessage = async (values: StoreMessage) => {
-    if (values.message.trim() !== '') {
-        console.log(values);
-        const response = await whatsappServices.sendMessage(values)
+    if (values.message.trim() !== '' || values.file) {
+        if (values.file) {
+            loadingImg.value = true;
+        }
+
+        const response = await whatsappServices.sendMessage(valuesSend.value)
         console.log(response);
-        addMessage(values);
+        addMessage(values, values.file ? true : false);
         valuesSend.value.message = '';
+
+        setTimeout(() => {
+            scrollbarContent.value?.scrollTo({ top: innerContent.value?.scrollHeight });
+            clearImage();
+            loadingImg.value = false;
+        }, 200)
     }
+}
+
+const beforeUpload = async ({ file }) => {
+    if (file.file.type == "image/png" || file.file.type == "image/jpg" || file.file.type == "image/jpeg") {
+        URLIMG.value = URL.createObjectURL(file.file);
+        valuesSend.value.file = file.file
+        return true;
+    }
+    message.error("El archivo necesita ser una Imagen.");
+    return false;
+}
+
+const clearImage = () => {
+    URLIMG.value = null
+    valuesSend.value.file = null
 }
 
 </script>
@@ -136,18 +176,18 @@ const sendMessage = async (values: StoreMessage) => {
 
                 <n-tabs type="segment" animated>
                     <n-tab-pane name="chats" tab="Chats" class="scrollbar overflow-y-auto h-[calc(86vh-5.7rem)] -mt-2">
-                        <Message v-for="item in chats" :key="item.id" :message="item.lastMessage"
+                        <Message v-for="item in chats" :key="item.id" :message="item.lastMessage" :fromMe="item.fromMe"
                             :count="item.fromMe == 1 ? undefined : item.messages.length"
                             :timestamp="item.lastMessageDate" :avatar="item.profilePicUrl" :name="item.name"
-                            :status="false" @click="getChat(item)" />
-
+                            :mediaType="item.mediaType" @click="getChat(item)" />
                         <!-- <pre>{{ JSON.stringify(valuesSend, null, 2) }}</pre> -->
                     </n-tab-pane>
 
-                    <n-tab-pane name="contacts" tab="Contactos"
+                    <n-tab-pane name="newMessages" tab="Nuevos (1)"
                         class="scrollbar overflow-y-auto h-[calc(86vh-5.7rem)]  -mt-2">
-                        <Contact v-for="item in contacts" :key="item.id" :number="item.number"
-                            :profilePicUrl="item.profilePicUrl" :name="item.name" />
+                        <Message message="Hola buenas tardes" :count="3" :timestamp="dateNow" :fromMe="1"
+                            avatar="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                            name="+51 923 453 643" :status="false" />
                     </n-tab-pane>
                 </n-tabs>
             </div>
@@ -192,36 +232,37 @@ const sendMessage = async (values: StoreMessage) => {
                     <div ref="innerContent" class="mt-1 px-3">
                         <p v-for="(item, index) in contactValues.messages" :key="index">
                             <Bubble v-if="item" :message="item.body" :sender="item.fromMe === 0 ? 'bot' : 'user'"
-                                :timestamp="item.createdAt" :status="false" />
+                                :timestamp="item.createdAt" :status="false" :img="item.mediaUrl"
+                                :loading="loadingImg" />
                         </p>
                     </div>
                 </n-scrollbar>
 
                 <div class="flex items-center gap-2 w-full h-16 py-3 px-4 border-t dark:border-slate-700">
-                    <div>
-                        <n-float-button position="relative" menu-trigger="click">
-                            <n-icon>
-                                <j-icon w="w-[20px]" name="add" />
-                            </n-icon>
-                            <template #menu>
-                                <n-float-button>
-                                    <n-icon>
-                                        <j-icon w="w-[20px]" name="file" />
-                                    </n-icon>
-                                </n-float-button>
-                                <n-float-button>
-                                    <n-icon>
-                                        <j-icon w="w-[20px]" name="img" />
-                                    </n-icon>
-                                </n-float-button>
-                            </template>
-                        </n-float-button>
+                    <div v-if="URLIMG"
+                        class="flex items-center justify-center w-52 h-52 rounded-r-lg overflow-hidden bg-white dark:bg-gray-900 absolute -mt-64 -ml-4">
+                        <n-image width="192" :src="URLIMG" preview-disabled />
                     </div>
+
+                    <n-upload v-if="!URLIMG" @before-upload="beforeUpload" :max="1" :show-file-list="false"
+                        class="w-11">
+                        <n-button secondary circle size="large">
+                            <template #icon>
+                                <n-icon><j-icon w="w-[20px]" name="img" /></n-icon>
+                            </template>
+                        </n-button>
+                    </n-upload>
+
+                    <n-button v-else tertiary type="error" circle size="large" @click="clearImage">
+                        <template #icon>
+                            <n-icon><j-icon w="w-[20px]" name="delete" /></n-icon>
+                        </template>
+                    </n-button>
 
                     <n-input placeholder="Escribe el mensaje" v-model:value="valuesSend.message"
                         @keydown.enter="sendMessage(valuesSend)" />
 
-                    <div v-if="valuesSend.message.trim() !== ''" @click="sendMessage(valuesSend)"
+                    <div v-if="valuesSend.message.trim() !== '' || URLIMG" @click="sendMessage(valuesSend)"
                         class="flex items-center justify-center cursor-pointer transition-transform duration-300 ease-in-out transform active:scale-90 bg-gray-200/50 dark:bg-zinc-800/80 text-yellow-400 h-10 w-14 rounded-lg">
                         <j-icon w="w-[20px]" name="send" />
                     </div>
@@ -245,9 +286,9 @@ const sendMessage = async (values: StoreMessage) => {
 .background-div {
     width: 100%;
     height: 100%;
-    background-image: url('../../assets/wbackground.png');
+    background-image: url('../../../assets/wbackground.png');
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
+    /* background-repeat: no-repeat; */
 }
 </style>

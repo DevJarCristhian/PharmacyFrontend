@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
-import rolesServices from '../../../services/access/roles.services';
-import { Get, Params, Store } from './../../../services/interfaces/access/roles.interfaces';
-import { NButton } from 'naive-ui';
+import templatesServices from '../../../services/whatsapp/template.services';
+import { Get, Params, Store } from './../../../services/interfaces/whatsapp/template.interfaces';
+import { NButton, NTag } from 'naive-ui';
 import dayjs from 'dayjs';
 import JIcon from '../../../components/JIcon.vue';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 
-const add = defineAsyncComponent(() => import('./modals/AddRoles.vue'))
+const add = defineAsyncComponent(() => import('./modals/AddTemplates.vue'))
 
 const props = defineProps<{
     path: string;
@@ -24,9 +24,12 @@ const params = ref<Params>({
     perPage: 50,
     search: null
 })
-const roleData = ref<Store>({
-    description: '',
-    permissions: []
+const templateData = ref<Store>({
+    type: 1,
+    name: '',
+    message: '',
+    contentType: 1,
+    file: null,
 })
 const pagination = ref({
     page: 1,
@@ -40,12 +43,12 @@ const pagination = ref({
     onUpdatePage(page: any) {
         params.value.page = page
         pagination.value.page = page
-        getRoles()
+        getTemplates()
     }
 })
 
 onMounted(() => {
-    getRoles()
+    getTemplates()
     getActions()
 })
 
@@ -57,28 +60,35 @@ const getActions = () => {
 
 watch(() => auth.user.permissions, getActions);
 
-const getRoles = async () => {
+const getTemplates = async () => {
     loading.value = true
-    const response = await rolesServices.get(params.value)
+    const response = await templatesServices.get(params.value)
     data.value = response
     // console.log(response);
+    pagination.value.total = response.length
     // pagination.value.pageCount = response.data.last_page
     // pagination.value.total = response.data.total
     loading.value = false
 }
 
-const roleReset = () => {
-    roleData.value = {
-        description: '',
-        permissions: []
+const templateReset = () => {
+    templateData.value = {
+        type: 1,
+        name: '',
+        message: '',
+        contentType: 1,
+        file: null,
     }
     showModal.value = true
 }
 
 const setItems = (item: Get) => {
-    roleData.value.id = item.id
-    roleData.value.description = item.description
-    roleData.value.permissions = item.permissions
+    templateData.value.id = item.id
+    templateData.value.name = item.name
+    templateData.value.message = item.message
+    templateData.value.type = item.type
+    templateData.value.contentType = item.contentType
+    templateData.value.file = item.file
     showModal.value = true
 }
 
@@ -98,8 +108,42 @@ const columns = ref([
         }
     },
     {
-        title: 'Description',
-        key: 'description'
+        title: 'Tipo',
+        key: 'type',
+        render(row: any) {
+            return h(NTag, {
+                type: row.type == 1 ? 'success' : 'info',
+                size: 'small',
+                bordered: false,
+                round: true,
+            }, {
+                default: () => row.type == 1 ? 'Reenvio' : 'Programado'
+            })
+        }
+    },
+    {
+        title: 'Nombre',
+        key: 'name'
+    },
+    {
+        title: 'Mensaje',
+        key: 'message',
+        render(row: any) {
+            return h(
+                'div',
+                {
+                    class: 'overflow-hidden text-ellipsis whitespace-nowrap w-30',
+                },
+                row.message
+            );
+        }
+    },
+    {
+        title: 'Contenido',
+        key: 'contentType',
+        render(row: any) {
+            return row.contentType == 1 ? 'Solo Mensaje' : 'Mensaje con Imagen'
+        }
     },
     {
         title: 'Fecha de creación',
@@ -144,21 +188,21 @@ const clearFilters = () => {
     params.value.page = 1
     params.value.search = null
     pagination.value.page = 1
-    getRoles()
+    getTemplates()
 }
 </script>
 
 <template>
     <div>
-        <add :show="showModal" :items="roleData" @close="showModal = !showModal"
+        <add :show="showModal" :items="templateData" @close="showModal = !showModal"
             @refresh="pagination.onUpdatePage(1)" />
         <div class="bg-white dark:bg-[#1E2838] shadow min-h-12 rounded mb-4 font-semibold p-2 px-3">
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">
-                    <span class="text-lg -mt-1">Roles</span>
+                    <span class="text-lg -mt-1">Plantillas</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
-                    <n-button v-if="actions?.includes('add')" size="small" type="primary" @click="roleReset">
+                    <n-button v-if="actions?.includes('add')" size="small" type="primary" @click="templateReset">
                         <j-icon w="w-[14px]" name="add" />
                         Nuevo
                     </n-button>

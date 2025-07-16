@@ -27,7 +27,6 @@ const params = ref<Params>({
     page: 1,
     perPage: 50,
     search: null,
-    status: null,
 })
 const visitorData = ref<Get>({} as Get)
 const pagination = ref({
@@ -100,9 +99,6 @@ const columns = ref([
     {
         title: 'F. Actualización',
         key: 'updatedAt',
-        // render(row: Get) {
-        //     return formatDateLa(row.date)
-        // }
     },
 ])
 
@@ -155,6 +151,13 @@ const exportToExcel = async () => {
     await downloadExcel(data, "Lista Visitadores");
     loadingExport.value = false;
 }
+
+const clearFilters = () => {
+    params.value.page = 1
+    params.value.search = null
+    pagination.value.page = 1;
+    getVisitor()
+}
 </script>
 
 <template>
@@ -167,10 +170,6 @@ const exportToExcel = async () => {
                     <span class="text-lg -mt-1">Visitadores</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- <n-button size="small" type="primary" @click="visitorReset">
-                        <j-icon w="w-[14px]" name="add" />
-                        Nuevo
-                    </n-button> -->
                     <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"
                         @click="exportToExcel" quaternary class="group" icon-placement="right">
                         <div class="hidden group-hover:block text-xs">
@@ -181,7 +180,7 @@ const exportToExcel = async () => {
                         </template>
                     </n-button>
 
-                    <n-button @click="pagination.onUpdatePage(1)" :loading="loading" size="small" quaternary>
+                    <n-button @click="clearFilters" :loading="loading" size="small" quaternary>
                         <template #icon>
                             <j-icon w="w-[14px]" name="refresh" />
                         </template>

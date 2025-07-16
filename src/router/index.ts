@@ -18,6 +18,7 @@ import Pharmacy from "../pages/Data/Pharmacy.vue";
 import Patient from "../pages/People/Patient.vue";
 import Setting from "../pages/Setting/index.vue";
 import Whatsapp from "../pages/Whatsapp/Whatsapp.vue";
+import Templates from "../pages/Whatsapp/Templates.vue";
 import Access from "../pages/Access/Connetion.vue";
 
 const routes: Array<RouteRecordRaw> = [
@@ -30,6 +31,7 @@ const routes: Array<RouteRecordRaw> = [
       { name: "dashboard", path: "/dashboard", component: Dashboard },
       { name: "calendar", path: "/calendar", component: Calendar },
       { name: "whatsapp", path: "/whatsapp", component: Whatsapp },
+      { name: "templates", path: "/templates", component: Templates },
       { name: "access", path: "/access", component: Access },
       { name: "users", path: "/users", component: Users },
       { name: "roles", path: "/roles", component: Roles },

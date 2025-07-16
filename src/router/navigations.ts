@@ -12,10 +12,21 @@ export default [
     i: "calendar",
   },
   {
-    label: "Whastapp",
+    label: "Whatsapp",
     key: "whatsapp",
-    href: "/whatsapp",
     i: "comunication",
+    children: [
+      {
+        label: "Chats",
+        key: "whatsapp",
+        href: "/whatsapp",
+      },
+      {
+        label: "Plantillas",
+        key: "templates",
+        href: "/templates",
+      },
+    ],
   },
   {
     label: "Ventas",
