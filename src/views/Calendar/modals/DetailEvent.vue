@@ -1,20 +1,15 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { useCalendarStore } from '../actions/useCalendarStore.ts';
 import type { NewEvent } from '../actions/types.ts'
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 dayjs.locale('es');
 
-const props = defineProps({
+defineProps({
     show: Boolean,
     event: Object as () => NewEvent,
 });
 
 const emit = defineEmits(['close', 'refresh', 'open-edit']);
-const store = useCalendarStore()
-const loading = ref<boolean>(false)
-
 
 const closeModal = () => {
     emit("close");
@@ -36,7 +31,7 @@ const setFormatDate = (date: Date | string, hour: string): string => {
     <!-- @pointerleave="closeModal()" -->
     <div v-if="show" class="floating-panel bg-white dark:bg-slate-800 py-2 px-3 rounded-lg shadow-lg">
         <div class="flex gap-2 justify-between items-center">
-            <div class="text-lg font-semibold">
+            <div class="flex gap-2 text-lg font-semibold">
                 <n-tag v-if="event.extendedProps.calendar === 'Recordatorio'" :bordered="false" type="warning"
                     size="small">
                     Recordatorio
@@ -45,11 +40,17 @@ const setFormatDate = (date: Date | string, hour: string): string => {
                 <n-tag v-else :bordered="false" type="info" size="small">
                     Programación
                 </n-tag>
+
+                <n-tag :bordered="false"
+                    :type="event.extendedProps.status == 'Finalizado' ? 'success' : event.extendedProps.status == 'En Proceso' ? '' : 'info'"
+                    size="small" round>
+                    {{ event.extendedProps.status }}
+                </n-tag>
             </div>
 
             <div class="flex gap-3">
-                <n-button text @click="openEdit()"> <j-icon w="w-[16px]" class=" text-gray-400 hover:text-blue-500"
-                        name="edit" />
+                <n-button v-if="event.extendedProps.status === 'Pendiente'" text @click="openEdit()"> <j-icon
+                        w="w-[16px]" class=" text-gray-400 hover:text-blue-500" name="edit" />
                 </n-button>
                 <n-button text @click="closeModal()">
                     <j-icon w="w-[28px]" class="rotate-45 text-gray-400 hover:text-red-500" name="add" />
@@ -96,7 +97,7 @@ const setFormatDate = (date: Date | string, hour: string): string => {
                     </n-tag>
 
                     <n-tag :bordered="false" type="error" size="small">
-                        No enviados {{ event.extendedProps.totalNot }}
+                        No Enviados {{ event.extendedProps.totalNot }}
                     </n-tag>
                 </div>
             </div>

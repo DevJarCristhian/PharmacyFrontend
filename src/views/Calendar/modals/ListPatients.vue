@@ -88,7 +88,6 @@ const closeModal = () => {
     formRef.value?.restoreValidation()
 };
 
-
 const selectAll = (checked: boolean) => {
     checkAll.value = checked;
     patientData.value.forEach((v) => {
@@ -106,12 +105,12 @@ const selectAll = (checked: boolean) => {
     } else {
         patientSend.value = [];
     }
-
 }
 
 const setPatients = async () => {
     if (patientSend.value.length > 0) {
         emit("setPatients", patientSend.value);
+        message.success(`${patientSend.value.length} pacientes seleccionados`);
         closeModal();
     }
 }

@@ -1,5 +1,6 @@
 import api from "../../../config/axios";
-import type { Params, Store } from "./calendar.interfaces";
+// import type { Params, Store } from "./calendar.interfaces";
+import type { Store } from "./calendar.interfaces";
 
 const prefix = "calendar/";
 

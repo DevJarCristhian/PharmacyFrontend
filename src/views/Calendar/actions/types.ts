@@ -10,12 +10,12 @@ export interface CalendarEvent {
   extendedProps: Record<string, any>;
 }
 
-interface Patient {
-  id?: number;
-  patientId: string;
-  namePatient: string;
-  phone: string;
-}
+// interface Patient {
+//   id?: number;
+//   patientId: string;
+//   namePatient: string;
+//   phone: string;
+// }
 
 export interface Event extends CalendarEvent {
   extendedProps: {

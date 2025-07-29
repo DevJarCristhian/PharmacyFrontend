@@ -5,7 +5,7 @@ import whatsappServices from '../../../../services/whatsapp/whatsapp.services';
 import { useMessage, type FormInst } from 'naive-ui'
 import { ParamsPatient, GetPatient, StoreManyMessage } from '../../../../services/interfaces/whatsapp/whatsapp.interfaces';
 
-const props = defineProps({
+defineProps({
     show: Boolean
 });
 

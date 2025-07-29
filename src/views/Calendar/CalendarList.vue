@@ -33,7 +33,6 @@ const openNew = () => {
 
     isEventHandlerSidebarActive.value = true
 }
-store.fetchNotifications()
 
 watch(() => store.listEvents, (newVal) => {
     dataCalendary.value = newVal

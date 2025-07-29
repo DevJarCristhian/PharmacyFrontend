@@ -53,7 +53,7 @@ export const useCalendarStore = defineStore("calendar", {
       // params.startDate = DateTime.fromISO(startDate).toFormat("yyyy-LL-dd HH:mm")
       // params.endDate = DateTime.fromISO(endDate).toFormat("yyyy-LL-dd HH:mm")
       const { data } = await calendarServices.get();
-      // console.log(data);
+      console.log(data);
 
       this.listEvents = data;
 
@@ -66,7 +66,7 @@ export const useCalendarStore = defineStore("calendar", {
     },
     async fetchNotifications() {
       const { data } = await calendarServices.getNotifications();
-      console.log(data);
+      // console.log(data);
       this.notify = data;
     },
   },

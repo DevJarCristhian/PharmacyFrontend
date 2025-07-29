@@ -8,14 +8,17 @@ import authServices from '../services/auth.services';
 import { authStores } from '../store/auth';
 import { renderIcon } from '../utils/Functions';
 import useWhatsappJob from '../utils/websocket/useWhatsappJob';
+import { useCalendarStore } from '../views/Calendar/actions/useCalendarStore';
 
 const { notify } = useWhatsappJob();
 const { toggleDarkMode, theme } = useDarkMode();
 const { user } = toRefs(authStores())
 
+const storeCal = useCalendarStore()
 const store = globalActions();
 const router = useRouter();
-const showNoty = ref<boolean>(false)
+const showNotify = ref<boolean>(false)
+const showMessage = ref<boolean>(false)
 const timeLeft = ref<number>(0);
 const options = ref([
     {
@@ -43,28 +46,18 @@ const handleSelect = async (key: string) => {
     }
 }
 
-const optionsNoty = ref([
-    {
-        label: '3 Mensajes',
-        key: '1',
-        icon: renderIcon("profile")
-    },
-    {
-        label: '2 Llamadas',
-        key: '2',
-        icon: renderIcon("profile")
-    },
-    {
-        label: '1 Mensajes',
-        key: '3',
-        icon: renderIcon("profile")
-    },
-])
+
+storeCal.fetchNotifications()
 
 const offset = [-5, 2]
 
 watch(notify, () => {
-    timeLeft.value = 4;
+    if (notify.value.type === 'notify') {
+        storeCal.fetchNotifications()
+        showNotify.value = true;
+    } else {
+        timeLeft.value = 4;
+    }
 });
 
 setInterval(async () => {
@@ -74,8 +67,9 @@ setInterval(async () => {
 }, 1000);
 
 watch(timeLeft, (newTimeLeft) => {
-    showNoty.value = newTimeLeft === 0 ? false : true;
+    showMessage.value = newTimeLeft === 0 ? false : true;
 });
+
 </script>
 
 <template>
@@ -91,20 +85,57 @@ watch(timeLeft, (newTimeLeft) => {
         </div>
 
         <div class="flex items-center gap-1">
-            <n-dropdown trigger="click" :show-arrow="true" :options="optionsNoty" @select="handleSelect">
-                <button class=" hover:bg-slate-200/60 dark:hover:bg-gray-800 rounded-md p-2">
-                    <n-badge dot type="success" :offset="offset">
-                        <j-icon name="bell" class="opacity-60" />
-                    </n-badge>
-                </button>
-            </n-dropdown>
+            <n-popover placement="bottom" style="max-height: 300px; width: 280px; border-radius: 8px;"
+                content-style="padding: 0;" trigger="click" scrollable>
+                <template #trigger>
+                    <button class=" hover:bg-slate-200/60 dark:hover:bg-gray-800 rounded-md p-2"
+                        @click="showNotify = false">
+                        <n-badge dot :type="showNotify ? 'success' : 'white'" :offset="offset">
+                            <j-icon name="bell" class="opacity-60" />
+                        </n-badge>
+                    </button>
+                </template>
+
+                <div v-for="(item, index) in storeCal.notify" :key="index" class="group">
+                    <div class="flex flex-col py-1 group-hover:bg-slate-100/70 dark:group-hover:bg-gray-700/40 px-2">
+                        <div class="flex items-center gap-1">
+                            <j-icon w="w-[20px]" name="calendar" />
+                            <strong> {{ item.title }}
+                            </strong>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs">
+                            <div class="flex items-center gap-1">
+                                <span>
+                                    {{ item.message }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 my-1">
+                            <div class="flex items-center gap-1 text-xs">
+                                <j-icon w="w-[16px]" name="clock" />
+                                <span>
+                                    {{ item.createdAt }}
+                                </span>
+                            </div>
+
+                            <n-tag :bordered="false" :type="item.status === 'Finalizado' ? 'success' : 'warning'"
+                                size="x-small" class="text-xs">
+                                {{ item.status }}
+                            </n-tag>
+                        </div>
+
+                        <hr class="border-spacing-1 border-gray-200 dark:border-slate-700 mt-1" />
+                    </div>
+                </div>
+            </n-popover>
 
             <n-dropdown trigger="click" :show-arrow="true" :options="options" @select="handleSelect">
                 <div class="flex items-center gap-2 cursor-pointer select-none">
                     <div class="opacity-70 bg-slate-200/60 dark:bg-gray-800 rounded-md p-1.5">
                         <j-icon name="profile" />
                     </div>
-                    <div class="flex items-center">
+                    <div class="flex items-center gap-1">
                         <div class="grid grid-cols-1 items-center -space-y-1  -mt-1">
                             <div class="text-sm font-medium">
                                 {{ user.name }}
@@ -123,11 +154,12 @@ watch(timeLeft, (newTimeLeft) => {
                 </div>
             </n-dropdown>
         </div>
-        <div v-if="showNoty"
+
+        <div v-if="showMessage"
             class="fixed right-1/3 top-2 z-50 bg-white dark:bg-slate-700 p-2 w-56 h-10 rounded-md drop-shadow-md">
             <div class="flex items-center center gap-2">
                 <j-icon w="w-[18px]" name="check" />
-                <span>Mensaje Enviado {{ 1 + ' de ' + 100 }}</span>
+                <span>Mensaje Enviado con exito.</span>
             </div>
         </div>
     </div>
