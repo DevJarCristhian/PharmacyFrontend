@@ -1,8 +1,7 @@
 import { ref } from "vue";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
-// const socket = io("https://backendwha-production.up.railway.app");
+const socket = io(import.meta.env.VITE_API_URL);
 
 export default function useWhatsappJob() {
   const notify = ref<{ type: string; time: string }>({

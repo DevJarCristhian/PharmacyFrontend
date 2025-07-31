@@ -1,8 +1,7 @@
 import { io } from "socket.io-client";
 import { ref } from "vue";
 
-// const socket = io("https://localhost:5000");
-const socket = io("http://localhost:5000");
+const socket = io(import.meta.env.VITE_API_URL);
 
 export default function mySocket() {
   const responseQR = ref<string>("");

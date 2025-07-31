@@ -1,7 +1,5 @@
 import axios from "axios";
-const apiBaseUrl = import.meta.env.VITE_API_URL;
-// const apiBaseUrl = "https://backendcrm.up.railway.app/api/";
-// const apiBaseUrl = "https://backendwha-production.up.railway.app/api/";
+const apiBaseUrl = import.meta.env.VITE_API_URL + "/api/";
 
 const api = axios.create({
   baseURL: apiBaseUrl,
