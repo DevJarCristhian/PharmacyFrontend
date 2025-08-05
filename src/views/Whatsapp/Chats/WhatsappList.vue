@@ -19,10 +19,9 @@ const chats = ref<any>();
 const URLIMG = ref<any>(null)
 const showSend = ref<boolean>(false)
 const loadingImg = ref<boolean>(false)
-const dateNow = ref<string>(new Date().toISOString())
+const loadingM = ref<boolean>(false)
 const contactValues = ref<GetMessageDefault>({} as GetMessageDefault);
 const optionPatients = ref<any>([]);
-const searchPatient = ref<any>("");
 const valuesSend = ref<StoreMessage>({
     number: '',
     message: '',
@@ -30,6 +29,18 @@ const valuesSend = ref<StoreMessage>({
     mediaType: 'chat',
     file: null
 })
+const params = ref<{
+    search: string;
+    page: number;
+    perPage: number;
+}>({
+    search: '',
+    page: 1,
+    perPage: 20
+});
+const pagination = ref<{ total: number, lastPage: number }>(
+    { total: 0, lastPage: 1 }
+)
 
 onMounted(() => {
     getChats();
@@ -40,11 +51,16 @@ watch(newMessage, () => {
     addNewMessage(newMessage.value);
 })
 
-const getChat = (chat: GetMessageDefault) => {
+const getChat = async (chat: GetMessageDefault) => {
     contactValues.value = chat;
     valuesSend.value.contactId = chat.contactId;
     valuesSend.value.number = chat.number;
     valuesSend.value.mediaType = "chat";
+
+    const response = await whatsappServices.getChat(chat.contactId);
+    // console.log(response);
+    contactValues.value.messages = response
+
     // console.log(chat);
     setTimeout(() => {
         scrollbarContent.value?.scrollTo({ top: innerContent.value?.scrollHeight });
@@ -86,9 +102,20 @@ const addNewMessage = (message: any) => {
 }
 
 const getChats = async () => {
-    const response = await whatsappServices.getMessages()
-    chats.value = response
-    console.log(response);
+    const response = await whatsappServices.getMessages(params.value);
+    chats.value = response.data
+    pagination.value.total = response.total
+    pagination.value.lastPage = response.last_page
+    // console.log(response);
+}
+
+const loadingMore = async () => {
+    params.value.page += 1
+    loadingM.value = true;
+    const response = await whatsappServices.getMessages(params.value);
+    // console.log(response);
+    chats.value = chats.value.concat(response.data)
+    loadingM.value = false;
 }
 
 const getContacts = async () => {
@@ -121,14 +148,20 @@ const sendMessage = async (values: StoreMessage) => {
 
         const response = await whatsappServices.sendMessage(valuesSend.value)
         console.log(response);
-        addMessage(values, values.file ? true : false);
-        valuesSend.value.message = '';
+        if (response !== 'error') {
+            addMessage(values, values.file ? true : false);
+            valuesSend.value.message = '';
 
-        setTimeout(() => {
-            scrollbarContent.value?.scrollTo({ top: innerContent.value?.scrollHeight });
+            setTimeout(() => {
+                scrollbarContent.value?.scrollTo({ top: innerContent.value?.scrollHeight });
+                clearImage();
+                loadingImg.value = false;
+            }, 200)
+        } else {
+            message.warning("Error al enviar el mensaje.");
             clearImage();
             loadingImg.value = false;
-        }, 200)
+        }
     }
 }
 
@@ -155,11 +188,10 @@ const clearImage = () => {
 
         <div class="flex border dark:border-slate-700 rounded-lg">
             <div class="md:w-96">
-                <div class="w-full grid h-14 px-4 mt-2">
+                <div class="w-full grid h-14 px-4">
                     <div class="flex justify-between items-center gap-2">
-                        <!-- @update:value="patientSearch" -->
-                        <n-auto-complete placeholder="Buscar" v-model:value="searchPatient" clearable
-                            :options="optionPatients">
+                        <n-auto-complete placeholder="Buscar" v-model:value="params.search" clearable
+                            :options="optionPatients" @keydown.enter="getChats()">
                             <template #prefix>
                                 <n-icon>
                                     <j-icon w="w-[14px]" name="search" />
@@ -174,22 +206,21 @@ const clearImage = () => {
                     </div>
                 </div>
 
-                <n-tabs type="segment" animated>
-                    <n-tab-pane name="chats" tab="Chats" class="scrollbar overflow-y-auto h-[calc(86vh-5.7rem)] -mt-2">
-                        <Message v-for="item in chats" :key="item.id" :message="item.lastMessage" :fromMe="item.fromMe"
-                            :count="item.fromMe == 1 ? undefined : item.messages.length"
-                            :timestamp="item.lastMessageDate" :avatar="item.profilePicUrl" :name="item.name"
-                            :mediaType="item.mediaType" @click="getChat(item)" />
-                        <!-- <pre>{{ JSON.stringify(valuesSend, null, 2) }}</pre> -->
-                    </n-tab-pane>
+                <n-scrollbar ref="scrollbarChats">
+                    <Message v-for="item in chats" :key="item.id" :message="item.lastMessage" :fromMe="item.fromMe"
+                        :count="item.fromMe == 1 ? undefined : 1" :timestamp="item.lastMessageDate"
+                        :avatar="item.profilePicUrl" :name="item.name" :mediaType="item.mediaType"
+                        @click="getChat(item)" />
 
-                    <n-tab-pane name="newMessages" tab="Nuevos (1)"
-                        class="scrollbar overflow-y-auto h-[calc(86vh-5.7rem)]  -mt-2">
-                        <Message message="Hola buenas tardes" :count="3" :timestamp="dateNow" :fromMe="1"
-                            avatar="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                            name="+51 923 453 643" :status="false" />
-                    </n-tab-pane>
-                </n-tabs>
+
+                    <div class="flex items-center justify-center w-full h-8 px-3">
+                        <n-button v-if="pagination.total > 2 && pagination.lastPage !== params.page" :loading="loadingM"
+                            size="small" secondary @click="loadingMore" round>
+                            Mostrar más
+                        </n-button>
+                    </div>
+                </n-scrollbar>
+                <!-- <pre>{{ JSON.stringify(valuesSend, null, 2) }}</pre> -->
             </div>
         </div>
 
@@ -203,16 +234,16 @@ const clearImage = () => {
                             <j-icon v-else w="w-[41px]" name="userDefault" />
 
                             <div class="flex flex-col -space-y-1">
-                                <span class="text-lg">{{ contactValues.name }}</span>
+                                <span class="text-lg font-medium">{{ contactValues.name }}</span>
                                 <!-- <span class="text-xs opacity-85">Online</span> -->
                             </div>
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <div
+                            <!-- <div
                                 class="flex items-center justify-center cursor-pointer transition-transform duration-300 ease-in-out transform active:scale-90 hover:bg-gray-200/80 dark:hover:bg-zinc-800/80 h-8 w-8 rounded-lg">
                                 <j-icon w="w-[20px]" name="search" />
-                            </div>
+                            </div> -->
 
                             <div
                                 class="flex items-center justify-center cursor-pointer transition-transform duration-300 ease-in-out transform active:scale-90 hover:bg-gray-200/80 dark:hover:bg-zinc-800/80 h-8 w-8 rounded-lg">
@@ -287,8 +318,7 @@ const clearImage = () => {
     width: 100%;
     height: 100%;
     background-image: url('../../../assets/wbackground.png');
-    background-size: cover;
-    background-position: center;
-    /* background-repeat: no-repeat; */
+    background-repeat: repeat;
+    background-size: 450px;
 }
 </style>

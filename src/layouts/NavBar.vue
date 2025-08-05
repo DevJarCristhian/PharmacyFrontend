@@ -10,7 +10,7 @@ import { renderIcon } from '../utils/Functions';
 import useWhatsappJob from '../utils/websocket/useWhatsappJob';
 import { useCalendarStore } from '../views/Calendar/actions/useCalendarStore';
 
-const { notify } = useWhatsappJob();
+const { notify, timeTest } = useWhatsappJob();
 const { toggleDarkMode, theme } = useDarkMode();
 const { user } = toRefs(authStores())
 
@@ -49,6 +49,10 @@ const handleSelect = async (key: string) => {
 
 storeCal.fetchNotifications()
 
+setTimeout(() => {
+    storeCal.fetchActiveWhastapp()
+}, 300);
+
 const offset = [-5, 2]
 
 watch(notify, () => {
@@ -82,6 +86,20 @@ watch(timeLeft, (newTimeLeft) => {
             <span class="">
                 <img width="120px" src="../assets/logo.webp" alt="">
             </span>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <span class="text-sm opacity-70  bg-slate-400/10 dark:bg-gray-700/20 rounded-md px-3 py-1">
+                Test de Hora: <strong>{{ timeTest.time }}</strong>
+            </span>
+
+            <n-tag round :bordered="false" :type="storeCal.activeWhatsapp === 'Conectado' ? 'success' : 'error'"
+                size="small">
+                Whatsapp
+                <template #icon>
+                    <j-icon w="w-[17px]" :name="storeCal.activeWhatsapp === 'Conectado' ? 'check' : 'error'" />
+                </template>
+            </n-tag>
         </div>
 
         <div class="flex items-center gap-1">

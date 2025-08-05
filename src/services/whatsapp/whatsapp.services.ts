@@ -7,9 +7,22 @@ import type {
 
 const prefix = "connection/";
 
+interface Params {
+  search: string;
+  page: number;
+  perPage: number;
+}
+
 class whatsappServices {
-  async getMessages() {
-    const { data } = await api.get(`${prefix}messages`);
+  async getMessages(params: Params) {
+    const { data } = await api.get(`${prefix}messages`, {
+      params: params
+    });
+    return data;
+  }
+
+  async getChat(contactId: number) {
+    const { data } = await api.get(`${prefix}messages/${contactId}`);
     return data;
   }
 
@@ -62,6 +75,11 @@ class whatsappServices {
 
   async sendManyMessage(values: StoreManyMessage) {
     const { data } = await api.post(`ws/send-many-message`, values);
+    return data;
+  }
+
+  async getActiveWhatsapp() {
+    const { data } = await api.get(`${prefix}messages/active`);
     return data;
   }
 

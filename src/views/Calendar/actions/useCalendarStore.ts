@@ -36,6 +36,7 @@ export const useCalendarStore = defineStore("calendar", {
     selectedCalendars: <any>[],
     listEvents: <Event[]>[],
     notify: <iNotify[]>[],
+    activeWhatsapp: 'Desconectado',
   }),
   actions: {
     async fetchCategories() {
@@ -68,6 +69,11 @@ export const useCalendarStore = defineStore("calendar", {
       const { data } = await calendarServices.getNotifications();
       // console.log(data);
       this.notify = data;
+    },
+    async fetchActiveWhastapp() {
+      const { data } = await calendarServices.getActiveWhatsapp();
+      // console.log(data);
+      this.activeWhatsapp = data;
     },
   },
   getters: {

@@ -27,6 +27,11 @@ class calendarServices {
     const data = await api.get(`${prefix}calendar/notifications`);
     return data;
   }
+
+  async getActiveWhatsapp() {
+    const data = await api.get(`connection/active`);
+    return data;
+  }
 }
 
 export default new calendarServices();
