@@ -2,7 +2,7 @@
 import { defineAsyncComponent, nextTick, onMounted, ref, h, watch } from 'vue';
 import patientServices from '../../../services/people/patient.services.ts';
 import { Get, Params } from '../../../services/interfaces/people/patient.interfaces.ts';
-import { DropdownOption, NTag } from 'naive-ui';
+import { NTag } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, formatDateLa, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';

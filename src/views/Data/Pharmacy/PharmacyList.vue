@@ -2,7 +2,6 @@
 import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
 import pharmacyServices from '../../../services/data/pharmacy.services';
 import { Get, Params } from '../../../services/interfaces/data/pharmacy.interfaces';
-import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';

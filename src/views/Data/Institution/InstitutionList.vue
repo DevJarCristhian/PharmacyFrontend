@@ -2,7 +2,6 @@
 import { defineAsyncComponent, nextTick, onMounted, ref, watch } from 'vue';
 import institutionServices from '../../../services/data/institution.services';
 import { Get, Params } from '../../../services/interfaces/data/institution.interfaces';
-import { DropdownOption } from 'naive-ui';
 import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, formatDateLa, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
@@ -21,7 +20,6 @@ const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
 const showModal = ref<boolean>(false)
 const showDropdown = ref<boolean>(false)
-const verifyValue = ref<boolean>(false)
 const x = ref<number>(0)
 const y = ref<number>(0)
 const params = ref<Params>({
