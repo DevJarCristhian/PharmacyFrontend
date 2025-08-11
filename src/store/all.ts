@@ -23,14 +23,14 @@ export const allStore = defineStore("all", {
   actions: {
     setCategories(data: any) {
       const mappings: { [key: string]: string } = {
-        Genero: "gender",
+        "Genero": "gender",
         "ETAPA DE VENTAS": "saleStage",
         "MOTIVOS DE COMPRA": "reasonBuy",
-        AREAS: "areas",
+        "AREAS": "areas",
         "Motivo de Anulacion": "reasonAnulation",
-        Diagnostico: "diagnosis",
+        "Diagnostico": "diagnosis",
         "Tiempo de Tratamiento": "tratmentTime",
-        Continuidad: "continuation",
+        "Continuidad": "continuation",
         "Dosis Recomendada": "doseRecommended",
         "Estado del Paciente": "patientStatus",
         "Tipo de Paciente": "patientType",

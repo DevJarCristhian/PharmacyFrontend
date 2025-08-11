@@ -21,6 +21,7 @@ const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
 const showModal = ref<boolean>(false)
 const showDropdown = ref<boolean>(false)
+const verifyValue = ref<boolean>(false)
 const x = ref<number>(0)
 const y = ref<number>(0)
 const params = ref<Params>({
@@ -106,7 +107,7 @@ const columns = ref([
 ])
 
 
-const options: DropdownOption[] = [
+const options = ref([
     {
         label: 'Mostrar',
         key: 'show',
@@ -118,12 +119,7 @@ const options: DropdownOption[] = [
         key: 'name',
         icon: renderIcon("copy")
     },
-    {
-        label: 'Copiar Dirección',
-        key: 'address',
-        icon: renderIcon("copy")
-    },
-]
+])
 
 const rowProps = (row: any) => {
     return {
@@ -142,6 +138,15 @@ const rowProps = (row: any) => {
 
 const setValues = (item: Get) => {
     institutionData.value = item
+    if (item.address) {
+        options.value[2] = {
+            label: 'Copiar Dirección',
+            key: 'address',
+            icon: renderIcon('copy')
+        }
+    } else {
+        options.value = options.value.filter(option => option.key !== 'address');
+    }
 }
 
 const openModal = (key: string) => {

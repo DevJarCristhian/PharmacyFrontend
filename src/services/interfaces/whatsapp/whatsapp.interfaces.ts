@@ -10,6 +10,7 @@ export interface ParamsPatient {
   birthDate?: string | null;
   startDate?: string | null;
   endDate?: string | null;
+  incriptionDate?: string | null;
 }
 
 export interface GetPatient {

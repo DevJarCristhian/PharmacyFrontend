@@ -112,7 +112,7 @@ const columns = ref([
 ])
 
 
-const options: DropdownOption[] = [
+const options = ref([
     {
         label: 'Mostrar',
         key: 'show',
@@ -124,7 +124,7 @@ const options: DropdownOption[] = [
         key: 'name',
         icon: renderIcon("copy")
     },
-]
+])
 
 const rowProps = (row: Get) => {
     return {
@@ -143,14 +143,25 @@ const rowProps = (row: Get) => {
 
 const setValues = (item: Get) => {
     pharmacyData.value = item
+    if (item.address) {
+        options.value[2] = {
+            label: 'Copiar Email',
+            key: 'mail',
+            icon: renderIcon('copy')
+        }
+    } else {
+        options.value = options.value.filter(option => option.key !== 'mail');
+    }
 }
 
 const openModal = (key: string) => {
     showDropdown.value = false
     if (key === 'show') {
         showModal.value = true
-    } else {
+    } else if (key === 'name') {
         navigator.clipboard.writeText(pharmacyData.value.branch);
+    } else {
+        navigator.clipboard.writeText(pharmacyData.value.email);
     }
 }
 

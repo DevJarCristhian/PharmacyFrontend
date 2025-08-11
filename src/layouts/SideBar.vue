@@ -37,18 +37,35 @@ expandKey();
 
 const renderMenuIcon = (option: any) => {
     if (!!option.i) {
-        return h(JIcon, { name: option.i, });
+        return h(JIcon, {
+            name: option.i,
+            class: 'menu-icon'
+        });
     }
     return null;
 };
 
 const renderMenuLabel = (option: any) => {
     if (!!option.href) {
-        return h(RouterLink, { to: option.href }, () =>
-            h("span", { style: "width:100%", }, { default: () => option.label })
+        return h(RouterLink,
+            {
+                to: option.href,
+                class: 'menu-link-wrapper'
+            },
+            () => h("div",
+                {
+                    class: "menu-label-content",
+                },
+                option.label
+            )
         );
     }
-    return option.label;
+    return h("div",
+        {
+            class: "menu-label-content",
+        },
+        option.label
+    );
 };
 </script>
 
@@ -72,4 +89,72 @@ const renderMenuLabel = (option: any) => {
     </n-drawer>
 </template>
 
-<style scoped></style>
+<style scoped>
+.menu-label-content {
+    @apply relative transition-all duration-300 ease-out;
+}
+
+.menu-icon {
+    @apply transition-all duration-300 ease-out;
+}
+
+:deep(.n-menu-item-content) {
+    @apply transition-all duration-300;
+}
+
+:deep(.n-menu-item-content:hover) {
+
+    .menu-label-content,
+    .menu-icon {
+        @apply translate-x-2;
+    }
+}
+
+:deep(.n-menu-item-content-header:hover) {
+
+    .menu-label-content,
+    .menu-icon {
+        @apply translate-x-2;
+    }
+}
+
+/* Deshabilitar el efecto cuando el sidebar está colapsado */
+.w-16 :deep(.n-menu-item-content:hover) {
+
+    .menu-label-content,
+    .menu-icon {
+        @apply translate-x-0;
+    }
+}
+
+/* Mejora la transición del color */
+:deep(.n-menu-item-content) {
+    @apply transition-colors duration-300 ease-in-out;
+}
+
+
+/* Disable effects when sidebar is collapsed */
+.w-16 :deep(.n-menu-item-content:hover) {
+
+    .menu-label-content,
+    .menu-icon {
+        @apply translate-x-0;
+    }
+}
+
+/* Add subtle ripple effect */
+:deep(.n-menu-item-content::before) {
+    content: '';
+    @apply absolute bg-[#FFD100FF]/0 transition-all duration-300 ease-out;
+}
+
+:deep(.n-menu-item-content:hover::before) {
+    @apply bg-[#FFD100FF]/5;
+}
+
+/* Smooth transition for all interactive elements */
+:deep(.n-menu-item-content),
+:deep(.n-menu-item-content *) {
+    @apply transition-all duration-300 ease-out;
+}
+</style>

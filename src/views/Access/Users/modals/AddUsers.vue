@@ -53,13 +53,18 @@ const handleSubmit = async () => {
     formRef.value?.validate(async (errors) => {
         if (!errors) {
             loading.value = true
-            const response = formData.value.id ?
-                await usersServices.update(formData.value.id, formData.value) : await usersServices.store(formData.value)
-            console.log(response)
-            emit('refresh')
-            loading.value = false
-            closeModal()
-            message.success(formData.value.id ? 'Usuario Actualizado' : 'Usuario Creado')
+            const response = formData.value.id ? await usersServices.update(formData.value.id, formData.value) : await usersServices.store(formData.value)
+
+            if (response === false) {
+                message.info('El correo ya esta en uso')
+                loading.value = false
+                return
+            } else {
+                emit('refresh')
+                loading.value = false
+                closeModal()
+                message.success(formData.value.id ? 'Usuario Actualizado' : 'Usuario Creado')
+            }
         } else {
             message.error('Campos Requeridos')
         }
@@ -73,7 +78,7 @@ const closeModal = () => {
 </script>
 <template>
     <n-modal :show="show" :on-close="closeModal" @esc="closeModal()" preset="card" :mask-closable="false"
-        :title="formData.id ? 'Editar Usuario' : 'Crear Usuario'" close-on-esc style="width: 500px;"
+        :title="formData.id ? 'Modificar Usuario' : 'Crear Usuario'" close-on-esc style="width: 500px;"
         :auto-focus="false">
 
         <n-form ref="formRef" :model="formData" :rules="rules" label-placement="left" label-width="120"
@@ -90,19 +95,16 @@ const closeModal = () => {
                 <n-select v-model:value="formData.roleId" :options="roles" placeholder="Seleccione" />
             </n-form-item>
 
-            <n-form-item label="Contraseña" :path="formData.id ? '' : 'password'">
+            <n-form-item v-if="!formData.id" label="Contraseña" :path="formData.id ? '' : 'password'">
                 <n-input v-model:value="formData.password" type="password" placeholder="Ingrese Contraseña"
                     show-password-on="click" />
-            </n-form-item>
-
-            <n-form-item label="Whatsapp">
-                <n-select v-model:value="formData.whatsappId" :options="roles" clearable placeholder="Seleccione" />
             </n-form-item>
 
             <n-form-item label="Estado">
                 <n-switch :disabled="formData.id ? false : true" v-model:value="formData.status" />
             </n-form-item>
-            <!-- <pre>{{ JSON.stringify(items, null, 2) }}</pre> -->
+
+            <!-- <pre>{{ JSON.stringify(formData, null, 2) }}</pre> -->
         </n-form>
         <template #footer>
             <div class="flex gap-2 justify-end">

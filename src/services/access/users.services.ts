@@ -17,6 +17,11 @@ class usersServices {
     const { data: response } = await api.put(`${prefix}${id}`, data);
     return response;
   }
+  async updatePassword(id: number, password: string) {
+    const { data } = await api.put(`${prefix}password/${id}`, { password });
+    return data;
+  }
+
   async getRoles() {
     const { data } = await api.get(`${prefix}roles`);
     return data;

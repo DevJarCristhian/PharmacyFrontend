@@ -47,14 +47,14 @@ export const useCalendarStore = defineStore("calendar", {
     async fetchEvents(startDate: string, endDate: string) {
       let st = startDate.split("T");
       let et = endDate.split("T");
-      console.log(st[0], et[0]);
-      // console.log(startDate, endDate);
 
-      // params.categories = this.selectedCalendars.length === this.availableCalendars.length ? [] : this.selectedCalendars
-      // params.startDate = DateTime.fromISO(startDate).toFormat("yyyy-LL-dd HH:mm")
-      // params.endDate = DateTime.fromISO(endDate).toFormat("yyyy-LL-dd HH:mm")
-      const { data } = await calendarServices.get();
-      console.log(data);
+      const params = {
+        startDate: st[0],
+        endDate: et[0],
+      };
+
+      const { data } = await calendarServices.get(params);
+      // console.log(data);
 
       this.listEvents = data;
 

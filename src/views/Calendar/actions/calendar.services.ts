@@ -5,8 +5,8 @@ import type { Store } from "./calendar.interfaces";
 const prefix = "calendar/";
 
 class calendarServices {
-  async get() {
-    const { data } = await api.get(`${prefix}`);
+  async get(params: { startDate: string, endDate: string }) {
+    const { data } = await api.get(`${prefix}`, { params });
     return data;
   }
   async store(data: Store) {

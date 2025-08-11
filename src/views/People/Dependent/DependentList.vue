@@ -192,7 +192,7 @@ const options: DropdownOption[] = [
         icon: renderIcon("copy"),
     },
     {
-        label: "Copiar Doocumento",
+        label: "Copiar Documento",
         key: "document",
         icon: renderIcon("copy"),
     },

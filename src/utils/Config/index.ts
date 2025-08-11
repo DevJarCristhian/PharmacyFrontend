@@ -7,15 +7,28 @@ const light = {
     primaryColorHover: "#FCD939FF",
     primaryColorPressed: "#D7B100FF",
     primaryColorSuppl: "#937E1FFF",
+    borderRadius: "8px",
   },
   Menu: {
+    itemColorActive: "#FFD100FF",
+    itemColorActiveHover: "#FFD100FF",
+    itemTextColorActive: "#FFFFFF",
+    itemTextColorActiveHover: "#FFFFFF",
+    itemIconColorActive: "#FFFFFF",
+    itemIconColorActiveHover: "#FFFFFF",
+
+    itemColorActiveCollapsed: "#FFD100FF",
+    itemColorActiveHoverCollapsed: "#FFD100FF",
+
     itemTextColor: "#606060",
-    itemTextColorHover: "#FFD100FF",
     itemIconColor: "#606060",
-    itemIconColorHover: "#FFD100FF",
+
     itemIconColorCollapsed: "#606060",
-    arrowColorHover: "#FFD100FF",
     arrowColor: "#606060",
+
+    // itemTextColorHover: "#FFD100FF",
+    // itemIconColorHover: "#FFD100FF",
+    // arrowColorHover: "#FFD100FF",
   },
   Tooltip: {
     color: "#FFFFFF",
@@ -36,6 +49,7 @@ const dark = {
     cardColor: "#1f2839",
     tableColor: "#1f2839",
     popoverColor: "#1f2839",
+    borderRadius: "8px",
   },
   Dropdown: {
     color: "#1f2839",

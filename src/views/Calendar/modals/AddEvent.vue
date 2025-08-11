@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineAsyncComponent, onMounted, onUpdated, ref, watch } from 'vue'
+import { defineAsyncComponent, onMounted, onUpdated, ref } from 'vue'
 import calendarServices from '../actions/calendar.services'
 import { useMessage, type FormInst, type FormRules } from 'naive-ui'
 import { useCalendarStore } from '../actions/useCalendarStore';
@@ -8,7 +8,6 @@ import whatsappServices from '../../../services/whatsapp/whatsapp.services.ts';
 import { PatientSend, GetPatient } from '../actions/calendar.interfaces.ts';
 
 const patientModal = defineAsyncComponent(() => import('./ListPatients.vue'))
-
 
 const props = defineProps({
     show: Boolean,
@@ -53,24 +52,32 @@ onMounted(() => {
 onUpdated(async () => {
     if (props.show == true) {
         event.value = props.event as Event;
-    }
-})
+        patientSend.value = [];
 
-watch(() => props.event, () => {
-    if (event.value.extendedProps.calendar === 'Programación' && event.value.id) {
-        setTimeout(async () => {
-            await getPatients(event.value.id)
-        }, 500)
+        if (event.value.extendedProps.calendar === 'Programación' && event.value.id) {
+            setTimeout(async () => {
+                await getPatients(event.value.id)
+            }, 250)
+        }
     }
 })
 
 const handleSubmit = async () => {
-    formRef.value?.validate(async (errors) => {
-        // if (formData.value.contentType === 2 && !formData.value.file) {
-        //     message.info('Necesitas subir una Imagen')
-        //     return
-        // }
+    if (event.value.extendedProps.calendar === 'Programación') {
+        const dateNowString = new Date().toISOString().substr(0, 10);
 
+        if (event.value.extendedProps.istart < dateNowString) {
+            message.warning("La fecha de inicio no puede ser menor a la fecha actual.");
+            return;
+        }
+
+        if (patientSend.value.length === 0) {
+            message.warning("Debe agregar al menos un paciente para Programación.");
+            return;
+        }
+    }
+
+    formRef.value?.validate(async (errors) => {
         let response: any;
         try {
             if (!errors) {
@@ -141,9 +148,8 @@ const updateEvent = async (event: Event) => {
 const getPatients = async (id: number) => {
     const response = await calendarServices.getPatientCalendarId(id)
     patientSend.value = response
-    console.log(response);
+    // console.log(response);
 }
-
 
 const closeModal = () => {
     emit("close");
@@ -222,17 +228,17 @@ const deletePatient = (id: string) => {
                         <n-select size="small" filterable v-model:value="event.extendedProps.templateId"
                             :options="messageOptions" placeholder="Seleccione Plantilla" />
 
-                        <n-button size="small" type="primary" :loading="loading" @click="showSend = true">
+                        <n-button :disabled="!event.extendedProps.templateId" size="small" type="primary"
+                            :loading="loading" @click="showSend = true">
                             <j-icon w="w-[20px]" name="add" />
                             Agregar
                         </n-button>
                     </div>
 
                     <n-scrollbar style="max-height: 415px; min-height: 415px;"
-                        class="bg-gray-50/40 dark:bg-gray-900/40 rounded-md">
-                        <div v-if="patientSend.length > 0" v-for="item in patientSend" :key="item.id" class="flex justify-between px-2 py-1 hover:bg-gray-100/70
-                     dark:hover:bg-gray-900/60 cursor-pointer border-b border-gray-200 dark:border-gray-700
-                    group">
+                        class="bg-gray-50 dark:bg-gray-900/40 rounded-md">
+                        <div v-if="patientSend.length > 0" v-for="item in patientSend" :key="item.id" class="flex justify-between items-center px-2 py-1 hover:bg-gray-100/70
+                     dark:hover:bg-gray-900/60 cursor-pointer border-b border-gray-200 dark:border-gray-700 group">
                             <div>
                                 <strong>{{ item.namePatient }}</strong>
                                 <div class="text-sm text-gray-500 dark:text-gray-400 flex gap-1 items-center -mt-1">
@@ -246,13 +252,12 @@ const deletePatient = (id: string) => {
                         </div>
 
                         <div v-else class="flex flex-col gap-1 mt-24 items-center justify-center opacity-70">
-                            <span>Filtre y seleccione</span>
-                            <span>los pacientes para</span>
-                            <span>enviar el mensaje.</span>
-                            <j-icon w="w-[40px] opacity-70" name="comunication" />
+                            <span>Seleccione la plantilla</span>
+                            <span>y presione agregar para</span>
+                            <span>seleccionar los pacientes.</span>
+                            <j-icon w="w-[40px] opacity-70" name="people" />
                         </div>
                     </n-scrollbar>
-
 
                 </div>
             </n-gi>

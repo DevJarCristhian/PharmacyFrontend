@@ -6,12 +6,15 @@ import Message from './components/Message.vue';
 import useSocket from '../../../utils/websocket/useWebsocket';
 import whatsappServices from '../../../services/whatsapp/whatsapp.services';
 import { GetMessageDefault, StoreMessage } from '../../../services/interfaces/whatsapp/whatsapp.interfaces';
+import { useCalendarStore } from '../../../views/Calendar/actions/useCalendarStore';
+
 import dayjs from 'dayjs';
 const { newMessage } = useSocket();
 
 const sendModal = defineAsyncComponent(() => import('./components/SendMessage.vue'))
 
 const message = useMessage()
+const storeCal = useCalendarStore()
 const scrollbarContent = ref<InstanceType<typeof NScrollbar> | null>(null);
 const innerContent = ref<HTMLElement | null>(null);
 const contacts = ref<any>([])
@@ -22,6 +25,7 @@ const loadingImg = ref<boolean>(false)
 const loadingM = ref<boolean>(false)
 const contactValues = ref<GetMessageDefault>({} as GetMessageDefault);
 const optionPatients = ref<any>([]);
+
 const valuesSend = ref<StoreMessage>({
     number: '',
     message: '',
@@ -199,7 +203,8 @@ const clearImage = () => {
                             </template>
                         </n-auto-complete>
 
-                        <n-button size="small" type="primary" @click="showSend = true">
+                        <n-button size="small" type="primary"
+                            :disabled="storeCal.activeWhatsapp === 'Conectado' ? false : true" @click="showSend = true">
                             <j-icon w="w-[20px]" name="people" />
                             Campaña
                         </n-button>
@@ -275,31 +280,37 @@ const clearImage = () => {
                         <n-image width="192" :src="URLIMG" preview-disabled />
                     </div>
 
-                    <n-upload v-if="!URLIMG" @before-upload="beforeUpload" :max="1" :show-file-list="false"
-                        class="w-11">
-                        <n-button secondary circle size="large">
+                    <div v-if="storeCal.activeWhatsapp === 'Conectado'">
+                        <n-upload v-if="!URLIMG" @before-upload="beforeUpload" :max="1" :show-file-list="false"
+                            class="w-11">
+                            <n-button secondary circle size="large">
+                                <template #icon>
+                                    <n-icon><j-icon w="w-[20px]" name="img" /></n-icon>
+                                </template>
+                            </n-button>
+                        </n-upload>
+
+                        <n-button v-else tertiary type="error" circle size="large" @click="clearImage">
                             <template #icon>
-                                <n-icon><j-icon w="w-[20px]" name="img" /></n-icon>
+                                <n-icon><j-icon w="w-[20px]" name="delete" /></n-icon>
                             </template>
                         </n-button>
-                    </n-upload>
-
-                    <n-button v-else tertiary type="error" circle size="large" @click="clearImage">
-                        <template #icon>
-                            <n-icon><j-icon w="w-[20px]" name="delete" /></n-icon>
-                        </template>
-                    </n-button>
+                    </div>
 
                     <n-input placeholder="Escribe el mensaje" v-model:value="valuesSend.message"
-                        @keydown.enter="sendMessage(valuesSend)" />
+                        @keydown.enter="sendMessage(valuesSend)"
+                        :disabled="storeCal.activeWhatsapp === 'Conectado' ? false : true" />
 
-                    <div v-if="valuesSend.message.trim() !== '' || URLIMG" @click="sendMessage(valuesSend)"
-                        class="flex items-center justify-center cursor-pointer transition-transform duration-300 ease-in-out transform active:scale-90 bg-gray-200/50 dark:bg-zinc-800/80 text-yellow-400 h-10 w-14 rounded-lg">
-                        <j-icon w="w-[20px]" name="send" />
+                    <div v-if="storeCal.activeWhatsapp === 'Conectado'">
+                        <div v-if="valuesSend.message.trim() !== '' || URLIMG" @click="sendMessage(valuesSend)"
+                            class="flex items-center justify-center cursor-pointer transition-transform duration-300 ease-in-out transform active:scale-90 bg-gray-200/50 dark:bg-zinc-800/80 text-yellow-400 h-10 w-14 rounded-lg">
+                            <j-icon w="w-[20px]" name="send" />
+                        </div>
+                        <div v-else class="flex items-center justify-center h-10 w-14 opacity-45">
+                            <j-icon w="w-[20px]" name="sendiabled" />
+                        </div>
                     </div>
-                    <div v-else class="flex items-center justify-center h-10 w-14 opacity-45">
-                        <j-icon w="w-[20px]" name="sendiabled" />
-                    </div>
+
                 </div>
             </div>
 

@@ -1,4 +1,3 @@
-// import { useConfigStore } from '@core/stores/config'
 import type {
   CalendarApi,
   CalendarOptions,
@@ -14,10 +13,6 @@ import type { Event, NewEvent } from "./types";
 import { useCalendarStore } from "./useCalendarStore";
 import { onMounted, ref, Ref, watch } from "vue";
 import dayjs from "dayjs";
-// import es from 'dayjs/locale/es'
-// import localeData from 'dayjs/plugin/localeData'
-// dayjs.extend(localeData);
-// dayjs.locale(es);
 
 export const blankEvent: Event | NewEvent = {
   title: "",
@@ -128,7 +123,7 @@ export const useCalendar = (
             ...e,
             start: new Date(e.start),
             end: new Date(e.end),
-            id: String(e.id),
+            // id: String(e.id),
           }))
         );
       })
@@ -262,7 +257,7 @@ export const useCalendar = (
       let event = arg.event;
       let customHtml = ` 
             <div style="white-space: nowrap;  overflow: hidden; text-overflow: ellipsis; cursor: pointer; color: #000"> 
-            <span>${event.extendedProps.timeStart} ${event.title}</span>
+            <span> ${event.extendedProps.status === 'Finalizado' ? '✅' : ''} ${event.extendedProps.timeStart} ${event.title}</span>
             </div> `;
       return { html: customHtml };
     },
@@ -304,8 +299,11 @@ export const useCalendar = (
 
         event.value = {
           ...blankEvent,
-          start: dayjs(info.date).format("YYYY-MM-DD"),
-          end: dayjs(info.date).format("YYYY-MM-DD"),
+          extendedProps: {
+            ...blankEvent.extendedProps,
+            istart: dayjs(info.date).format("YYYY-MM-DD"),
+            iend: dayjs(info.date).format("YYYY-MM-DD"),
+          }
         };
 
         isEventHandlerSidebarActive.value = true;
@@ -349,14 +347,6 @@ export const useCalendar = (
   const jumpToDate = (currentDate: string) => {
     calendarApi.value?.gotoDate(new Date(currentDate));
   };
-
-  //   watch(
-  //     // () => configStore.isAppRTL,
-  //     val => {
-  //       calendarApi.value?.setOption('direction', val ? 'rtl' : 'ltr')
-  //     },
-  //     { immediate: true },
-  //   )
 
   return {
     refCalendar,

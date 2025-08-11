@@ -2,19 +2,15 @@
 import { defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
 import usersServices from '../../../services/access/users.services';
 import { Get, Params, Store } from './../../../services/interfaces/access/users.interfaces';
-import { NButton, NTag } from 'naive-ui';
+import { NButton, NTag, NDropdown } from 'naive-ui';
 import dayjs from 'dayjs';
 import JIcon from '../../../components/JIcon.vue';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
-import { downloadExcel } from '../../../utils/Functions';
+import { downloadExcel, renderIcon } from '../../../utils/Functions';
 
 const add = defineAsyncComponent(() => import('./modals/AddUsers.vue'))
-
-// import 'dayjs/locale/es' 
-// dayjs.locale('es')
-// const ddd = dayjs()
-// console.log(ddd.format('dddd D  MMMM')) // jueves 2 de enero
+const change = defineAsyncComponent(() => import('./modals/ChangePassword.vue'))
 
 const props = defineProps<{
     path: string
@@ -26,6 +22,7 @@ const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
 const showModal = ref<boolean>(false)
+const showModalPass = ref<boolean>(false)
 const params = ref<Params>({
     page: 1,
     perPage: 25,
@@ -78,6 +75,13 @@ const getUsers = async () => {
     loading.value = false
 }
 
+const setValuesUserChange = (item: Get) => {
+    userData.value.id = item.id
+    userData.value.name = item.name
+    userData.value.email = item.email
+    showModalPass.value = true
+}
+
 const userReset = () => {
     userData.value = {
         name: '',
@@ -93,6 +97,7 @@ const setItems = (item: Get) => {
     userData.value.name = item.name
     userData.value.email = item.email
     userData.value.roleId = item.role.id
+    userData.value.password = undefined
     userData.value.status = item.status
     showModal.value = true
 }
@@ -111,6 +116,19 @@ const options = ref([
         label: 'Inactivo',
         key: 'inactive'
     },
+])
+
+const optionsMenu = ref([
+    {
+        label: "Modificar",
+        key: 'edit',
+        icon: renderIcon("edit", "w-3")
+    },
+    {
+        label: 'Contraseña',
+        key: 'pass',
+        icon: renderIcon("refresh", "w-3")
+    }
 ])
 
 
@@ -179,21 +197,34 @@ const columns = ref([
         render(row: any) {
             if (!actions?.value?.includes('update')) { return; }
             return h(
-                NButton,
+                NDropdown,
                 {
-                    size: 'small',
-                    strong: true,
-                    quaternary: true,
-                    onClick: () => {
-                        setItems(row)
+                    trigger: "click",
+                    options: optionsMenu.value,
+                    onSelect: (key: string) => {
+                        if (key === 'edit') {
+                            setItems(row)
+                        }
+                        if (key === 'pass') {
+                            setValuesUserChange(row)
+                        }
                     }
                 },
                 {
-                    default: () => h(JIcon, { name: 'edit', w: 'w-4' })
+                    default: () =>
+                        h(
+                            NButton,
+                            {
+                                size: 'small',
+                                strong: true,
+                                quaternary: true,
+                            },
+                            { default: () => '⋮' }
+                        )
                 }
             )
         }
-    }
+    },
 ])
 
 const exportToExcel = async () => {
@@ -208,6 +239,9 @@ const exportToExcel = async () => {
     <div>
         <add :show="showModal" :items="userData" @close="showModal = !showModal"
             @refresh="pagination.onUpdatePage(1)" />
+
+        <change :show="showModalPass" :items="userData" @close="showModalPass = !showModalPass" />
+
         <div class="bg-white dark:bg-[#1E2838] shadow min-h-12 rounded mb-4 font-semibold p-2 px-3">
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">

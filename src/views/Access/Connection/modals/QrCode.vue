@@ -1,26 +1,14 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
-import { type FormInst } from 'naive-ui'
-import mySocket from '../../../../utils/websocket/myWebsocket';
-
-defineProps({
+const props = defineProps({
     show: Boolean,
     id: Number,
+    qrConnetion: String
 });
 
-const emit = defineEmits(['close', 'refresh']);
-
-const formRef = ref<FormInst | null>(null)
-const { responseQR, responseReady } = mySocket();
-
-watch(responseReady, () => {
-    emit("refresh");
-    closeModal();
-})
+const emit = defineEmits(['close']);
 
 const closeModal = () => {
     emit("close");
-    formRef.value?.restoreValidation()
 };
 </script>
 <template>
@@ -44,7 +32,7 @@ const closeModal = () => {
             </div>
 
             <div class="bg-white  w-48 h-48">
-                <n-qr-code :value="responseQR" :size="170" />
+                <n-qr-code :value="props.qrConnetion" :size="170" />
             </div>
         </div>
     </n-modal>

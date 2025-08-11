@@ -17,7 +17,6 @@ export interface Get {
   password?: string;
   role: Role;
   status: boolean;
-  whatsappId?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -29,5 +28,4 @@ export interface Store {
   password?: string | null;
   roleId: number | null;
   status: boolean;
-  whatsappId?: number;
 }

@@ -20,6 +20,9 @@ const rules: FormRules = {
     name: [
         { required: true, message: "El nombre es Requerido", trigger: "blur" }
     ],
+    battery: [
+        { required: true, message: "El numero es Requerido", trigger: "blur" }
+    ],
 }
 
 onUpdated(() => {
@@ -52,12 +55,16 @@ const closeModal = () => {
 </script>
 <template>
     <n-modal :show="show" :on-close="closeModal" @esc="closeModal()" preset="card" :mask-closable="false"
-        :title="formData.id ? 'Editar Conexión' : 'Crear Conexión'" close-on-esc style="width: 500px;"
+        :title="formData.id ? 'Modificar Conexión' : 'Crear Conexión'" close-on-esc style="width: 400px;"
         :auto-focus="false">
 
         <n-form ref="formRef" :model="formData" :rules="rules" class="flex flex-col gap-1">
-            <n-form-item label="Nombre" path="name">
-                <n-input v-model:value="formData.name" placeholder="Ingrese nombre" />
+            <n-form-item label="Descripción" path="name">
+                <n-input v-model:value="formData.name" placeholder="Escribe aqui" />
+            </n-form-item>
+
+            <n-form-item label="Numero" path="battery">
+                <n-input type="number" v-model:value="formData.battery" placeholder="Ingrese numero" />
             </n-form-item>
 
             <!-- <pre>{{ JSON.stringify(formData, null, 2) }}</pre> -->

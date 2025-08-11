@@ -7,10 +7,10 @@ import { useRouter } from 'vue-router';
 import authServices from '../services/auth.services';
 import { authStores } from '../store/auth';
 import { renderIcon } from '../utils/Functions';
-import useWhatsappJob from '../utils/websocket/useWhatsappJob';
+import useSocket from '../utils/websocket/useWebsocket';
 import { useCalendarStore } from '../views/Calendar/actions/useCalendarStore';
 
-const { notify, timeTest } = useWhatsappJob();
+const { responseStatus, notify } = useSocket();
 const { toggleDarkMode, theme } = useDarkMode();
 const { user } = toRefs(authStores())
 
@@ -55,6 +55,12 @@ setTimeout(() => {
 
 const offset = [-5, 2]
 
+watch(responseStatus, () => {
+    setTimeout(() => {
+        storeCal.fetchActiveWhastapp()
+    }, 2000);
+});
+
 watch(notify, () => {
     if (notify.value.type === 'notify') {
         storeCal.fetchNotifications()
@@ -89,64 +95,76 @@ watch(timeLeft, (newTimeLeft) => {
         </div>
 
         <div class="flex items-center gap-2">
-            <span class="text-sm opacity-70  bg-slate-400/10 dark:bg-gray-700/20 rounded-md px-3 py-1">
+            <!-- <span class="text-sm opacity-70  bg-slate-400/10 dark:bg-gray-700/20 rounded-md px-3 py-1">
                 Test de Hora: <strong>{{ timeTest.time }}</strong>
-            </span>
-
-            <n-tag round :bordered="false" :type="storeCal.activeWhatsapp === 'Conectado' ? 'success' : 'error'"
-                size="small">
-                Whatsapp
-                <template #icon>
-                    <j-icon w="w-[17px]" :name="storeCal.activeWhatsapp === 'Conectado' ? 'check' : 'error'" />
-                </template>
-            </n-tag>
+            </span> -->
         </div>
 
         <div class="flex items-center gap-1">
-            <n-popover placement="bottom" style="max-height: 300px; width: 280px; border-radius: 8px;"
-                content-style="padding: 0;" trigger="click" scrollable>
-                <template #trigger>
-                    <button class=" hover:bg-slate-200/60 dark:hover:bg-gray-800 rounded-md p-2"
-                        @click="showNotify = false">
-                        <n-badge dot :type="showNotify ? 'success' : 'white'" :offset="offset">
-                            <j-icon name="bell" class="opacity-60" />
-                        </n-badge>
-                    </button>
-                </template>
-
-                <div v-for="(item, index) in storeCal.notify" :key="index" class="group">
-                    <div class="flex flex-col py-1 group-hover:bg-slate-100/70 dark:group-hover:bg-gray-700/40 px-2">
-                        <div class="flex items-center gap-1">
-                            <j-icon w="w-[20px]" name="calendar" />
-                            <strong> {{ item.title }}
-                            </strong>
+            <div class="flex items-center gap-2">
+                <n-tag round :bordered="false" :type="storeCal.activeWhatsapp === 'Conectado' ? 'success' : 'error'">
+                    <div class="flex items-center gap-1 group">
+                        <div>
+                            <j-icon w="w-[20px]" name="comunication" />
                         </div>
 
-                        <div class="flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-1">
-                                <span>
-                                    {{ item.message }}
-                                </span>
-                            </div>
+                        <div class="hidden group-hover:block text-xs select-none font-semibold">
+                            {{ storeCal.activeWhatsapp }}
                         </div>
-                        <div class="flex items-center justify-between gap-2 my-1">
-                            <div class="flex items-center gap-1 text-xs">
-                                <j-icon w="w-[16px]" name="clock" />
-                                <span>
-                                    {{ item.createdAt }}
-                                </span>
-                            </div>
-
-                            <n-tag :bordered="false" :type="item.status === 'Finalizado' ? 'success' : 'warning'"
-                                size="x-small" class="text-xs">
-                                {{ item.status }}
-                            </n-tag>
-                        </div>
-
-                        <hr class="border-spacing-1 border-gray-200 dark:border-slate-700 mt-1" />
                     </div>
-                </div>
-            </n-popover>
+                </n-tag>
+
+                <n-popover placement="bottom" style="max-height: 300px; width: 280px; border-radius: 8px;"
+                    content-style="padding: 0;" trigger="click" scrollable>
+                    <template #trigger>
+                        <button class=" hover:bg-slate-200/60 dark:hover:bg-gray-800 rounded-md p-2"
+                            @click="showNotify = false">
+                            <n-badge dot :type="showNotify ? 'success' : 'white'" :offset="offset">
+                                <j-icon name="bell" class="opacity-60" />
+                            </n-badge>
+                        </button>
+                    </template>
+
+                    <div v-if="storeCal.notify.length > 0" v-for="(item, index) in storeCal.notify" :key="index"
+                        class="group">
+                        <div
+                            class="flex flex-col py-1 group-hover:bg-slate-100/70 dark:group-hover:bg-gray-700/40 px-2">
+                            <div class="flex items-center gap-1">
+                                <j-icon w="w-[20px]" name="calendar" />
+                                <strong> {{ item.title }}
+                                </strong>
+                            </div>
+
+                            <div class="flex items-center justify-between text-xs">
+                                <div class="flex items-center gap-1">
+                                    <span>
+                                        {{ item.message }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between gap-2 my-1">
+                                <div class="flex items-center gap-1 text-xs">
+                                    <j-icon w="w-[16px]" name="clock" />
+                                    <span>
+                                        {{ item.createdAt }}
+                                    </span>
+                                </div>
+
+                                <n-tag :bordered="false" :type="item.status === 'Finalizado' ? 'success' : 'warning'"
+                                    size="x-small" class="text-xs">
+                                    {{ item.status }}
+                                </n-tag>
+                            </div>
+
+                            <hr class="border-spacing-1 border-gray-200 dark:border-slate-700 mt-1" />
+                        </div>
+                    </div>
+
+                    <div v-else class="flex items-center justify-center p-2 h-32">
+                        <span class="opacity-55 text-sm">Sin Notificaciones</span>
+                    </div>
+                </n-popover>
+            </div>
 
             <n-dropdown trigger="click" :show-arrow="true" :options="options" @select="handleSelect">
                 <div class="flex items-center gap-2 cursor-pointer select-none">

@@ -48,8 +48,7 @@ const login = async (e: MouseEvent) => {
       }
     }
     else {
-      console.log(errors)
-      message.error('Invalid')
+      message.warning('Ingresa tus credenciales correctamente')
     }
   })
 }
@@ -69,52 +68,108 @@ const rules = {
 </script>
 
 <template>
-  <div class="flex h-screen w-screen">
-    <div
-      class="flex justify-center items-center sm:w-2/4 w-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-600">
-      <div class="grid gap-3 w-full px-4 md:px-[20%]">
-        <div class="flex justify-center">
-          <img width="50px" src="../assets/short.webp" alt="">
+  <div
+    class="min-h-screen bg-gradient-to-br from-[#FFD100FF]/10 via-white to-[#FFD100FF]/20 dark:from-gray-900 dark:via-[#343844]/5 dark:to-gray-900 flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-4xl">
+      <!-- Glass Card Effect -->
+      <div class="backdrop-blur-lg md:bg-white/90 dark:bg-gray-900/80 rounded-3xl overflow-hidden md:shadow-lg ">
+        <div class="grid md:grid-cols-2">
+          <div class="p-8 lg:p-12">
+            <div class="max-w-sm mx-auto">
+              <div class="flex justify-center mb-3 animate-fade-in">
+                <img class="h-16 w-auto transform transition-all duration-500 hover:scale-110 hover:rotate-3"
+                  src="../assets/short.webp" alt="Logo">
+              </div>
+
+              <div class="text-center mb-10">
+                <h2
+                  class="text-3xl font-bold bg-gradient-to-r from-[#FFD100FF] to-[#FCD939FF] bg-clip-text text-transparent">
+                  Bienvenido
+                </h2>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">
+                  Ingresa a tu cuenta para continuar
+                </p>
+              </div>
+
+              <n-form ref="formRef" :rules="rules" v-model:model="form" class="space-y-6">
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium -mb-7 text-gray-700 dark:text-gray-300">
+                    Correo Electrónico
+                  </label>
+                  <n-form-item path="email">
+                    <n-input v-model:value="form.email" size="large" placeholder="correo@ejemplo.com"
+                      @keydown.enter="login" class="rounded-xl">
+                      <template #prefix>
+                        <j-icon name="profile" w="w-5" class="text-[#FFD100FF]" />
+                      </template>
+                    </n-input>
+                  </n-form-item>
+                </div>
+
+                <!-- Password Input -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium -mb-7 text-gray-700 dark:text-gray-300">
+                    Contraseña
+                  </label>
+                  <n-form-item path="password">
+                    <n-input v-model:value="form.password" size="large" type="password"
+                      placeholder="Ingrese su contraseña" show-password-on="click" @keydown.enter="login"
+                      class="rounded-xl">
+                      <template #prefix>
+                        <j-icon name="pass" w="w-5" class="text-[#FFD100FF]" />
+                      </template>
+                    </n-input>
+                  </n-form-item>
+                </div>
+
+                <n-button type="primary" :loading="loading"
+                  class="w-full py-5 mt-6 text-base font-semibold rounded-xl bg-[#FFD100FF] hover:bg-[#FCD939FF] transition-all duration-300 transform hover:scale-[1.02] hover:shadow-sm"
+                  @click="login">
+                  <span class="flex items-center justify-center space-x-2">
+                    {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+                  </span>
+                </n-button>
+              </n-form>
+            </div>
+          </div>
+
+          <div class="hidden md:block bg-gradient-to-br from-[#ffe058] to-[#fadb99]">
+            <div class="h-full flex items-center justify-center p-12">
+              <div class="relative animate-fade-in">
+                <img
+                  class="relative max-w-xs w-full transform transition-all duration-700 hover:scale-105 hover:rotate-1"
+                  src="../assets/logo.webp" alt="Logo">
+              </div>
+            </div>
+          </div>
         </div>
-        <span class="text-xl text-center font-semibold">Iniciar Sesion</span>
-        <span class="text-md opacity-70 text-center -mt-3 mb-4">Bienvenido al Sistema</span>
-
-        <n-form ref="formRef" :rules="rules" v-model:model="form">
-          <span> Correo </span>
-          <n-grid :cols="1">
-            <n-form-item-gi path="mail" class="-mt-5">
-              <n-input v-model:value="form.email" size="large" placeholder="correo@ejemplo.com" @keydown.enter="login">
-                <template #prefix>
-                  <j-icon name="profile" w="w-5" />
-                </template>
-              </n-input>
-            </n-form-item-gi>
-          </n-grid>
-
-          <span> Contraseña </span>
-          <n-grid :cols="1">
-            <n-form-item-gi path="password" class="-mt-5">
-              <n-input v-model:value="form.password" size="large" type="password" placeholder="ingrese contraseña"
-                show-password-on="click" @keydown.enter="login">
-                <template #prefix>
-                  <j-icon name="pass" w="w-5" />
-                </template>
-              </n-input>
-            </n-form-item-gi>
-          </n-grid>
-          <n-form-item>
-            <n-button type="primary" :loading="loading" class="w-full -mt-5 h-10" @click="login">Iniciar
-              Sesion</n-button>
-          </n-form-item>
-        </n-form>
-      </div>
-    </div>
-    <div class="w-full hidden sm:block bg-white dark:bg-gray-900">
-      <div class="flex justify-center items-center h-full">
-        <img width="300px" src="../assets/logo.webp" alt="">
       </div>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.n-input {
+  @apply transition-all duration-300 bg-white/50 dark:bg-gray-800/50;
+}
+
+.n-input:hover {
+  @apply shadow-lg shadow-[#FFD100FF]/10 dark:shadow-[#FFD100FF]/5;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+</style>

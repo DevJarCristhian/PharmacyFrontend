@@ -163,7 +163,7 @@ const columns = ref([
 ])
 
 
-const options: DropdownOption[] = [
+const options = ref([
     {
         label: 'Complementar',
         key: 'show',
@@ -179,12 +179,7 @@ const options: DropdownOption[] = [
         key: 'phone',
         icon: renderIcon("copy")
     },
-    {
-        label: 'Copiar Correo',
-        key: 'email',
-        icon: renderIcon("copy")
-    },
-]
+])
 
 const rowProps = (row: any) => {
     return {
@@ -203,6 +198,15 @@ const rowProps = (row: any) => {
 
 const setValues = (item: Get) => {
     patientData.value = item
+    if (item.email) {
+        options.value[3] = {
+            label: 'Copiar Email',
+            key: 'email',
+            icon: renderIcon('copy')
+        }
+    } else {
+        options.value = options.value.filter(option => option.key !== 'email');
+    }
 }
 
 const openModal = (key: string) => {

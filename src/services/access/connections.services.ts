@@ -30,6 +30,11 @@ class connectionsServices {
     const { data: response } = await api.put(`${prefix}${id}`, data);
     return response;
   }
+
+  async disconnectWhatsapp() {
+    const { data: response } = await api.post(`ws/disconnect/`);
+    return response;
+  }
 }
 
 export default new connectionsServices();

@@ -164,25 +164,30 @@ const genderOptions = [
         <!-- <n-collapse-transition :show="showFilter" class="mb-3"> -->
         <n-spin :show="loading">
             <div class="flex gap-2 alifn-center items-center mb-3">
-
-                <n-input style="width: 280px" size="small" placeholder="Buscar" v-model:value="params.search"
+                <n-input style="width: 170px" size="small" placeholder="Buscar" v-model:value="params.search"
                     @keydown.enter="getPatients()">
                     <template #prefix>
                         <j-icon w="w-[14px]" name="search" />
                     </template>
                 </n-input>
 
-                <div>
-                    <n-date-picker size="small" type="date" value-format="yyyy-MM-dd HH:mm" placeholder="Cumpleaños"
-                        v-model:formatted-value="params.birthDate" :actions="null" clearable />
-                </div>
+                <n-date-picker style="width: 130px" size="small" type="date" value-format="yyyy-MM-dd"
+                    placeholder="Inscripción" v-model:formatted-value="params.incriptionDate" :actions="null"
+                    clearable />
 
-                <n-select style="width: 230px" size="small" v-model:value="params.gender" :options="genderOptions"
+                <n-date-picker style="width: 130px" size="small" type="date" value-format="MM-dd"
+                    placeholder="Cumpleaños" v-model:formatted-value="params.birthDate" :actions="null" clearable />
+
+                <n-select style="width: 100px" size="small" v-model:value="params.gender" :options="genderOptions"
                     placeholder="Genero" clearable />
 
                 <n-button type="primary" size="small" @click="getPatients()">
                     <j-icon w="w-[14px]" name="search" />
                 </n-button>
+
+                <div v-if="patientData.length > 0">
+                    Resultados: <span class="font-semibold">{{ patientData.length }}</span>
+                </div>
             </div>
             <!-- </n-collapse-transition> -->
 

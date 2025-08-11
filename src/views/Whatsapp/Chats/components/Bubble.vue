@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, computed } from 'vue';
+import { computed } from 'vue';
 import Check from './Check.vue';
 import { formatDateLarge } from '../../../../utils/Functions';
 
