@@ -70,7 +70,7 @@ const renderMenuLabel = (option: any) => {
 </script>
 
 <template>
-    <div class="bg-white dark:bg-gray-900 dark:border-r select-none dark:border-gray-800/80 drop-shadow h-full hidden md:block"
+    <div class="side-container bg-white dark:bg-gray-900 dark:border-r select-none dark:border-gray-800/80 drop-shadow h-full hidden md:block"
         :class="{ 'w-44': !collapsed, 'w-16': collapsed }">
         <n-menu :render-label="renderMenuLabel" :render-icon="renderMenuIcon" :collapsed="collapsed"
             :collapsed-width="64" :collapsed-icon-size="22" :options="menus" accordion v-model:value="selectedKeys"
@@ -156,5 +156,21 @@ const renderMenuLabel = (option: any) => {
 :deep(.n-menu-item-content),
 :deep(.n-menu-item-content *) {
     @apply transition-all duration-300 ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.side-container {
+    animation: slideIn 0.2s ease-out;
 }
 </style>

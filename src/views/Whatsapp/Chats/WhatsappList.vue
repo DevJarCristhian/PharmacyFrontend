@@ -191,27 +191,29 @@ const clearImage = () => {
         <sendModal :show="showSend" @close="showSend = !showSend" @refresh="getChats(), getContacts()" />
 
         <div class="flex border dark:border-slate-700 rounded-lg">
-            <div class="md:w-96">
-                <div class="w-full grid h-14 px-4">
-                    <div class="flex justify-between items-center gap-2">
-                        <n-auto-complete placeholder="Buscar" v-model:value="params.search" clearable
-                            :options="optionPatients" @keydown.enter="getChats()">
-                            <template #prefix>
-                                <n-icon>
-                                    <j-icon w="w-[14px]" name="search" />
-                                </n-icon>
-                            </template>
-                        </n-auto-complete>
+            <div class="md:w-96 relative">
+                <div class="w-full grid min-h-14 px-4">
+                    <div class="flex flex-wrap justify-between items-center gap-2">
+                        <div class="hidden sm:block">
+                            <n-auto-complete placeholder="Buscar" v-model:value="params.search" clearable
+                                :options="optionPatients" @keydown.enter="getChats()" style="min-width:245px;">
+                                <template #prefix>
+                                    <n-icon>
+                                        <j-icon w="w-[14px]" name="search" />
+                                    </n-icon>
+                                </template>
+                            </n-auto-complete>
+                        </div>
 
                         <n-button size="small" type="primary"
                             :disabled="storeCal.activeWhatsapp === 'Conectado' ? false : true" @click="showSend = true">
                             <j-icon w="w-[20px]" name="people" />
-                            Campaña
+                            <span class="hidden sm:block">Campaña</span>
                         </n-button>
                     </div>
                 </div>
 
-                <n-scrollbar ref="scrollbarChats">
+                <n-scrollbar ref="scrollbarChats" class="pb-4 message-container">
                     <Message v-for="item in chats" :key="item.id" :message="item.lastMessage" :fromMe="item.fromMe"
                         :count="item.fromMe == 1 ? undefined : 1" :timestamp="item.lastMessageDate"
                         :avatar="item.profilePicUrl" :name="item.name" :mediaType="item.mediaType"
@@ -260,7 +262,6 @@ const clearImage = () => {
                                 </svg>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
@@ -324,12 +325,28 @@ const clearImage = () => {
     </div>
 </template>
 
-<style>
+<style scoped>
 .background-div {
     width: 100%;
     height: 100%;
     background-image: url('../../../assets/wbackground.png');
     background-repeat: repeat;
     background-size: 450px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.message-container {
+    animation: slideIn 0.2s ease-out;
 }
 </style>

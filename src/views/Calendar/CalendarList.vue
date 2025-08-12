@@ -58,7 +58,7 @@ const searchData = () => {
         <detail :show="isDetailActive" @close="isDetailActive = !isDetailActive" @refresh="refetchEvents"
             :event="event as Event" @open-edit="isEventHandlerSidebarActive = true" />
 
-        <div>
+        <div class="list-container">
             <div class="w-1/5 p-2 gap-2" style="width: auto;">
                 <n-button block type="primary" class="shadow mb-4" @click="openNew">
                     <j-icon w="w-[25px]" name="add" />
@@ -250,5 +250,23 @@ const searchData = () => {
 
 .fc-scroller::-webkit-scrollbar-thumb {
     @apply bg-amber-200 dark:bg-amber-700 rounded-full hover:bg-amber-300 dark:hover:bg-amber-600;
+}
+</style>
+
+<style scoped>
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.list-container {
+    animation: slideIn 0.2s ease-out;
 }
 </style>

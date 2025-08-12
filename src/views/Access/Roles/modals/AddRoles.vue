@@ -52,6 +52,10 @@ const getPermissions = async () => {
 const handleSubmit = async () => {
     formRef.value?.validate(async (errors) => {
         if (!errors) {
+            if (formData.value.permissions.length === 0) {
+                message.warning('Debe seleccionar al menos un permiso');
+                return;
+            }
             loading.value = true
             formData.value.id ?
                 await rolesServices.update(formData.value.id, formData.value) : await rolesServices.store(formData.value)
@@ -61,7 +65,7 @@ const handleSubmit = async () => {
             closeModal()
             message.success(formData.value.id ? 'Rol Actualizado' : 'Rol Creado')
         } else {
-            message.error('Campos Requeridos')
+            message.warning('Campos Requeridos')
         }
     })
 }
