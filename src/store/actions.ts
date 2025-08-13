@@ -1,10 +1,7 @@
 import { defineStore } from "pinia";
 
 export const globalActions = defineStore("globalActions", {
-  state: () => ({ collapsed: true, toggleDark: false }),
-  getters: {
-    getCollapsed: (state) => (state.collapsed = !state.collapsed),
-  },
+  state: () => ({ collapsed: false, toggleDark: false }),
   actions: {
     setCollapsed() {
       this.collapsed = !this.collapsed;

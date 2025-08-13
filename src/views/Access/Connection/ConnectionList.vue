@@ -304,7 +304,6 @@ const closeModal = () => {
             </div>
         </div>
 
-        {{ storeCal.activeWhatsapp }}
         <n-data-table remote striped :columns="columns" :loading="loading" :data="data" :pagination="pagination"
             size="small" min-height="70vh" max-height="70vh" :scroll-x="1000">
         </n-data-table>

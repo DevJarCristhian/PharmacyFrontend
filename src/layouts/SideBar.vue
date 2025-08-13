@@ -23,6 +23,7 @@ onMounted(() => {
 
 watch(routes, () => {
     menus.value = routes.value;
+    // collapsed.value = isMobile.value ? false : true;
 });
 
 const updateMobileStatus = () => { isMobile.value = window.innerWidth < 768; };

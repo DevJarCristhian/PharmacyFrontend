@@ -15,36 +15,46 @@ const form = ref<{ email: string, password: string }>({
   password: '',
 })
 
+const routeByPermission = (permissions: any[]): string => {
+  if (!permissions || permissions.length === 0) return '/dashboard';
+  const hasDashboard = permissions.some(p => p.name === 'dashboard');
+  return hasDashboard ? '/dashboard' : `/${permissions[0].name}`;
+};
+
 const login = async (e: MouseEvent) => {
   e.preventDefault()
   formRef.value?.validate(async (errors) => {
     if (!errors) {
+      let route = '/dashboard'
+      let access = false
+
       try {
         loading.value = true
+
         const response = await authServices.login(form.value)
         // console.log("here", response);
         if (response.token) {
           localStorage.setItem('token', response.token)
           localStorage.removeItem("tokenRemoved");
-          message.success('Bienvenido al Sistema')
+
           await store.getUser()
-          setTimeout(() => {
-            if (store.user.permissions) {
-              if (store.user.permissions.find(e => e.name === 'dashboard')) {
-                router.push('/dashboard')
-              } else {
-                router.push(`/${store.user.permissions[0].name}`)
-              }
-            }
-          }, 300)
+
+          const userPermissions = store.user?.permissions || [];
+          route = routeByPermission(userPermissions);
+          access = true;
+
         }
       } catch (error) {
-        console.log(error);
         message.error("Usuario o contraseña incorrectos.")
       } finally {
         setTimeout(() => {
+          if (access) {
+            router.push(route)
+            message.success('Bienvenido al Sistema')
+          }
+
           loading.value = false
-        }, 400)
+        }, 500)
       }
     }
     else {
@@ -71,12 +81,12 @@ const rules = {
   <div
     class="min-h-screen bg-gradient-to-br from-[#FFD100FF]/10 via-white to-[#FFD100FF]/20 dark:from-gray-900 dark:via-[#343844]/5 dark:to-gray-900 flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-4xl">
-      <!-- Glass Card Effect -->
+
       <div class="backdrop-blur-lg md:bg-white/90 dark:bg-gray-900/80 rounded-3xl overflow-hidden md:shadow-lg ">
         <div class="grid md:grid-cols-2">
-          <div class="p-8 lg:p-12">
+          <div class="p-8 lg:p-12 animate-fade-in">
             <div class="max-w-sm mx-auto">
-              <div class="flex justify-center mb-3 animate-fade-in">
+              <div class="flex justify-center mb-3">
                 <img class="h-16 w-auto transform transition-all duration-500 hover:scale-110 hover:rotate-3"
                   src="../assets/short.webp" alt="Logo">
               </div>
