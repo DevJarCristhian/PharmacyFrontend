@@ -48,7 +48,7 @@ const pagination = ref({
     pageCount: 1,
     pageSize: 50,
     total: 0,
-    pageSlot: 4,
+    pageSlot: 5,
     prefix() {
         return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`;
     },

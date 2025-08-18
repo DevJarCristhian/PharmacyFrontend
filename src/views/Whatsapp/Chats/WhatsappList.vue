@@ -213,7 +213,7 @@ const clearImage = () => {
                     </div>
                 </div>
 
-                <n-scrollbar ref="scrollbarChats" class="pb-4 message-container">
+                <n-scrollbar ref="scrollbarChats" class="pb-4">
                     <Message v-for="item in chats" :key="item.id" :message="item.lastMessage" :fromMe="item.fromMe"
                         :count="item.fromMe == 1 ? undefined : 1" :timestamp="item.lastMessageDate"
                         :avatar="item.profilePicUrl" :name="item.name" :mediaType="item.mediaType"
@@ -332,21 +332,5 @@ const clearImage = () => {
     background-image: url('../../../assets/wbackground.png');
     background-repeat: repeat;
     background-size: 450px;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.message-container {
-    animation: slideIn 0.2s ease-out;
 }
 </style>

@@ -55,7 +55,7 @@ const pagination = ref({
     pageCount: 1,
     pageSize: 50,
     total: 0,
-    pageSlot: 4,
+    pageSlot: 5,
     prefix() {
         return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`
     },
@@ -83,7 +83,7 @@ const getOpportunity = async () => {
     loading.value = true
     const response = await opportunityServices.get(params.value)
     data.value = response.data
-    // console.log(response.data)
+    // console.log(response)
     pagination.value.pageCount = response.last_page
     pagination.value.total = response.total
     loading.value = false
@@ -252,6 +252,7 @@ const selectProduct = async (value: any) => {
     params.value.productId = patt;
 };
 
+
 const pharmacySearch = async (search: string) => {
     if (search !== null && search.length > 1) {
         optionPharmacies.value = [];
@@ -354,7 +355,7 @@ const clearFilters = () => {
 
                             <div>
                                 <div class="mb-1">Fecha Emisión</div>
-                                <n-date-picker size="small" type="date" value-format="yyyy-MM-dd HH:mm"
+                                <n-date-picker size="small" type="date" value-format="yyyy-MM-dd"
                                     placeholder="Seleccione" v-model:formatted-value="params.emissionDate"
                                     :actions="null" clearable />
                             </div>
@@ -362,7 +363,7 @@ const clearFilters = () => {
                             <div class="flex items-center gap-2">
                                 <div>
                                     <div class="mb-1">Fecha Inicio</div>
-                                    <n-date-picker size="small" type="date" value-format="yyyy-MM-dd HH:mm"
+                                    <n-date-picker size="small" type="date" value-format="yyyy-MM-dd"
                                         placeholder="Inicio" v-model:formatted-value="params.startDate" :actions="null"
                                         clearable />
                                 </div>

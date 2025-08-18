@@ -9,14 +9,17 @@ import { authStores } from '../store/auth';
 import { renderIcon } from '../utils/Functions';
 import useSocket from '../utils/websocket/useWebsocket';
 import { useCalendarStore } from '../views/Calendar/actions/useCalendarStore';
+import { useMessage } from 'naive-ui';
 
-const { responseStatus, notify } = useSocket();
+const { responseStatus, notify, newMessage } = useSocket();
 const { toggleDarkMode, theme } = useDarkMode();
 const { user } = toRefs(authStores())
 
 const storeCal = useCalendarStore()
 const store = globalActions();
 const router = useRouter();
+const message = useMessage()
+
 const showNotify = ref<boolean>(false)
 const showMessage = ref<boolean>(false)
 const timeLeft = ref<number>(0);
@@ -46,7 +49,6 @@ const handleSelect = async (key: string) => {
     }
 }
 
-
 storeCal.fetchNotifications()
 
 setTimeout(() => {
@@ -54,6 +56,10 @@ setTimeout(() => {
 }, 300);
 
 const offset = [-5, 2]
+
+watch(newMessage, () => {
+    message.success('Nuevo Mensaje');
+})
 
 watch(responseStatus, () => {
     setTimeout(() => {
