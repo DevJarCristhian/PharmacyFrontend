@@ -41,7 +41,8 @@ const formData = ref<Update>({
     "patientStatus": null,
     "patientType": null,
     "contactName": "",
-    "description": ""
+    "description": "",
+    "phone": ""
 } as Update)
 
 onMounted(() => {
@@ -69,6 +70,7 @@ const getPatient = async () => {
     formData.value.patientType = response.data.patientType
     formData.value.contactName = response.data.contactName
     formData.value.description = response.data.description
+    formData.value.phone = props.items.phone
 }
 
 const getCategories = async () => {
@@ -102,6 +104,7 @@ const closeModal = () => {
     formRef.value?.restoreValidation()
 };
 
+const onlyAllowNumber = (value) => !value || /^\d+$/.test(value);
 </script>
 <template>
     <n-modal :show="show" :on-close="closeModal" @esc="closeModal()" preset="card" :mask-closable="false"
@@ -129,7 +132,8 @@ const closeModal = () => {
                         </n-form-item-gi>
 
                         <n-form-item-gi span="4" label="Telefono">
-                            <n-input v-model:value="items.phone" readonly placeholder="" />
+                            <n-input v-model:value="formData.phone" placeholder="Escribir aqui." maxlength="20"
+                                show-count :allow-input="onlyAllowNumber" />
                         </n-form-item-gi>
                     </n-grid>
 

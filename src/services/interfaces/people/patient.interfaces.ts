@@ -53,4 +53,5 @@ export interface Update {
   patientType: number | null;
   contactName: string;
   description: string;
+  phone: string;
 }
