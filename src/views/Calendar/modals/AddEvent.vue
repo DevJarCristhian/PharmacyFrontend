@@ -64,12 +64,12 @@ onUpdated(async () => {
 
 const handleSubmit = async () => {
     if (event.value.extendedProps.calendar === 'Programación') {
-        const dateNowString = new Date().toISOString().substr(0, 10);
+        // const dateNowString = new Date().toISOString().substr(0, 10);
 
-        if (event.value.extendedProps.istart < dateNowString) {
-            message.warning("La fecha de inicio no puede ser menor a la fecha actual.");
-            return;
-        }
+        // if (event.value.extendedProps.istart < dateNowString) {
+        //     message.warning("La fecha de inicio no puede ser menor a la fecha actual.");
+        //     return;
+        // }
 
         if (patientSend.value.length === 0) {
             message.warning("Debe agregar al menos un paciente para Programación.");
