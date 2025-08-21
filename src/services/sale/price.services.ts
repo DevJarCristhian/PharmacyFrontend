@@ -16,6 +16,11 @@ class priceServices {
     });
     return data;
   }
+
+  async update(id: string, data: { price: string, chainId: string }) {
+    const { data: response } = await api.put(`${prefix}${id}`, data);
+    return response;
+  }
 }
 
 export default new priceServices();

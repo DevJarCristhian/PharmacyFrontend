@@ -1,6 +1,7 @@
 export interface Params {
   page: number;
   perPage: number;
+  country?: number | null;
   search?: string | null;
   gender?: number | null;
   department?: number | null;

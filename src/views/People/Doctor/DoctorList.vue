@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick, onMounted, ref, watch } from "vue";
+import { defineAsyncComponent, nextTick, onMounted, ref, toRefs, watch } from "vue";
 import doctorServices from "../../../services/people/doctor.services";
 import {
     Get,
@@ -10,6 +10,7 @@ import JIcon from "../../../components/JIcon.vue";
 import { downloadExcel, formatDateLa, renderIcon } from "../../../utils/Functions";
 import { authStores } from "../../../store/auth";
 import { validateActions } from "../../../utils/Config/validate";
+import { allStore } from "../../../store/all";
 
 const add = defineAsyncComponent(() => import('./modals/ShowDoctor.vue'))
 
@@ -19,6 +20,7 @@ const props = defineProps<{
 
 const auth = authStores();
 const actions = ref<string[]>();
+const { countries } = toRefs(allStore())
 const data = ref<Get[]>([]);
 const optionDeparment = ref<any>([]);
 const optionCity = ref<any>([]);
@@ -31,6 +33,7 @@ const y = ref<number>(0);
 const params = ref<Params>({
     page: 1,
     perPage: 50,
+    country: 0,
     search: null,
     department: null,
     city: null,
@@ -231,6 +234,7 @@ const clearFilters = () => {
     params.value.endDate = null;
     searchV.value.searchDep = null;
     searchV.value.searchcity = null;
+    params.value.country = 0;
     params.value.page = 1;
     pagination.value.page = 1;
     getDoctor();
@@ -257,7 +261,12 @@ const clearFilters = () => {
                             </div>
                         </template>
 
-                        <div class="grid" style="width: 250px; height: 230px;">
+                        <div class="grid" style="width: 250px; height: 270px;">
+                            <div>
+                                <div class="mb-1">Pais</div>
+                                <n-select size="small" v-model:value="params.country" :options="countries"
+                                    placeholder="Seleccione" />
+                            </div>
                             <div>
                                 <div class="mb-1">Departamento</div>
                                 <n-auto-complete size="small" placeholder="Buscar" v-model:value="searchV.searchDep"

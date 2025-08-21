@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from "vue";
+import { defineAsyncComponent, h, nextTick, onMounted, ref, toRefs, watch } from "vue";
 import dependentServices from "../../../services/people/dependent.services";
 import {
     Get,
@@ -15,6 +15,7 @@ import {
 } from "../../../utils/Functions";
 import { authStores } from "../../../store/auth";
 import { validateActions } from "../../../utils/Config/validate";
+import { allStore } from "../../../store/all";
 
 const add = defineAsyncComponent(() => import("./modals/ShowDependent.vue"));
 
@@ -24,6 +25,7 @@ const props = defineProps<{
 
 const auth = authStores();
 const actions = ref<string[]>();
+const { countries } = toRefs(allStore())
 const data = ref<Get[]>([]);
 const optionDeparment = ref<any>([]);
 const loading = ref<boolean>(false);
@@ -35,6 +37,7 @@ const y = ref<number>(0);
 const params = ref<Params>({
     page: 1,
     perPage: 50,
+    country: 0,
     search: null,
     gender: null,
     department: null,
@@ -279,6 +282,7 @@ const genderOptions = [
         value: 2,
     },
 ]
+
 </script>
 
 <template>
@@ -301,7 +305,13 @@ const genderOptions = [
                                 </div>
                             </template>
 
-                            <div class="grid" style="width: 250px; height: 290px;">
+                            <div class="grid" style="width: 250px; height: 320px;">
+                                <div>
+                                    <div class="mb-1">Pais</div>
+                                    <n-select size="small" v-model:value="params.country" :options="countries"
+                                        placeholder="Seleccione" />
+                                </div>
+
                                 <div>
                                     <div class="mb-1">Genero</div>
                                     <n-select size="small" v-model:value="params.gender" :options="genderOptions"

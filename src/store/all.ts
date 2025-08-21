@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import dataServices from "../services/data/data.services";
 
 interface DefaultSelect {
   label: string;
@@ -19,6 +20,7 @@ export const allStore = defineStore("all", {
     patientStatus: [] as DefaultSelect[],
     patientType: [] as DefaultSelect[],
     maritalStatus: [] as DefaultSelect[],
+    countries: [] as DefaultSelect[],
   }),
   actions: {
     setCategories(data: any) {
@@ -44,5 +46,17 @@ export const allStore = defineStore("all", {
         }
       });
     },
+    async fetchCountries() {
+      let data = await dataServices.getCountries()
+      data.unshift({ label: 'Todos', value: 0 })
+      this.countries = data
+    },
+  },
+  getters: {
+    async getCountries(): Promise<DefaultSelect[]> {
+      const store = this as unknown as ReturnType<typeof allStore>;
+      if (store.countries.length === 0) { await store.fetchCountries(); }
+      return [];
+    }
   },
 });

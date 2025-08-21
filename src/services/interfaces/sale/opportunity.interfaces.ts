@@ -1,6 +1,7 @@
 export interface Params {
   page: number;
   perPage: number;
+  country?: number | null;
   search?: string | null;
   emissionDate?: string | null;
   patientId?: string | null;
@@ -16,6 +17,7 @@ export interface Get {
   documentNumber: string;
   patientFullName: string;
   farmacyName: string;
+  countryName: string;
   productName: string;
   invoiceSerie: string;
   invoiceNumber: string;

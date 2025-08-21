@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from 'vue';
+import { defineAsyncComponent, h, nextTick, onMounted, ref, toRefs, watch } from 'vue';
 import opportunityServices from '../../../services/sale/opportunity.services';
 import { Get, Params } from '../../../services/interfaces/sale/opportunity.interfaces';
 import { DropdownOption, NTooltip } from 'naive-ui';
@@ -7,6 +7,7 @@ import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, formatDateLa, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
+import { allStore } from '../../../store/all';
 
 const add = defineAsyncComponent(() => import('./modals/ShowOpportunity.vue'))
 
@@ -16,6 +17,7 @@ const props = defineProps<{
 
 const auth = authStores()
 const actions = ref<string[]>()
+const { countries } = toRefs(allStore())
 const data = ref<Get[]>([])
 const optionPatients = ref<any>([]);
 const optionProducts = ref<any>([]);
@@ -30,6 +32,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
+    country: 0,
     search: null,
     emissionDate: null,
     patientId: null,
@@ -91,14 +94,14 @@ const getOpportunity = async () => {
 
 const columns = ref([
     {
-        title: 'Documento',
+        title: 'Operación',
         key: 'invoiceSerie',
         width: 100,
         align: 'left',
         render(row: any) {
             return h('div', { style: 'text-align: left;' }, [
-                h('div', { style: 'font-weight: bold;' }, row.invoiceSerie),
-                h('div', row.invoiceNumber)
+                h('div', { style: 'font-weight: bold;' }, row.invoiceNumber),
+                h('div', row.invoiceSerie)
             ]);
         }
     },
@@ -155,6 +158,11 @@ const columns = ref([
             tooltip: true
         },
         width: 150,
+    },
+    {
+        title: 'Pais',
+        key: 'countryName',
+        width: 90,
     },
     {
         title: 'F. Actualización',
@@ -272,6 +280,7 @@ const selectPharmacy = async (value: any) => {
 
 const clearFilters = () => {
     params.value.search = null
+    params.value.country = 0
     params.value.emissionDate = null
     params.value.patientId = null
     params.value.productId = null
@@ -307,7 +316,13 @@ const clearFilters = () => {
                             </div>
                         </template>
 
-                        <div class="grid" style="width: 250px; height: 350px;">
+                        <div class="grid" style="width: 250px; height: 380px;">
+                            <div>
+                                <div class="mb-1">Pais</div>
+                                <n-select size="small" v-model:value="params.country" :options="countries"
+                                    placeholder="Seleccione" />
+                            </div>
+
                             <div>
                                 <div class="mb-1">Paciente</div>
                                 <n-auto-complete size="small" placeholder="Buscar" v-model:value="searchV.searchP"

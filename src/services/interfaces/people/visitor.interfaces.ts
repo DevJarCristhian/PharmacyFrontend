@@ -2,6 +2,7 @@ export interface Params {
   page: number;
   perPage: number;
   search?: string | null;
+  country?: number | null;
 }
 
 export interface Get {

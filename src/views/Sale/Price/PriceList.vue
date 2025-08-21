@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, h, nextTick, onMounted, ref, watch } from 'vue';
+import { defineAsyncComponent, h, nextTick, onMounted, ref, toRefs, watch } from 'vue';
 import priceServices from '../../../services/sale/price.services';
 import { Get, Params } from '../../../services/interfaces/sale/price.interfaces';
 import { DropdownOption, NTag } from 'naive-ui';
@@ -7,6 +7,7 @@ import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
+import { allStore } from '../../../store/all';
 
 const add = defineAsyncComponent(() => import('./modals/ShowPrice.vue'))
 
@@ -16,6 +17,7 @@ const props = defineProps<{
 
 const auth = authStores()
 const actions = ref<string[]>()
+const { countries } = toRefs(allStore())
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
@@ -26,6 +28,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
+    country: 0,
     search: null,
 })
 const priceData = ref<Get>({} as Get)
@@ -128,7 +131,7 @@ const columns = ref([
 
 const options: DropdownOption[] = [
     {
-        label: 'Mostrar',
+        label: 'Complementar',
         key: 'show',
         icon: renderIcon("show")
 
@@ -178,6 +181,7 @@ const clearFilters = () => {
     params.value.page = 1
     params.value.search = null
     pagination.value.page = 1
+    params.value.country = 0
     getPrice()
 }
 </script>
@@ -190,7 +194,17 @@ const clearFilters = () => {
             <div class="flex flex-wrap justify-between gap-1 items-center">
                 <div class="flex items-center gap-4">
                     <span class="text-lg -mt-1">Precios</span>
+
+                    <n-popselect v-model:value="params.country" :options="countries"
+                        @update:value="pagination.onUpdatePage(1)">
+                        <div class="flex items-center gap-1 cursor-pointer select-none opacity-60 hover:opacity-100">
+                            <j-icon w="w-[16px]" name="filter" />
+                            <span>{{countries.find(c => c.value == params.country)?.label}}</span>
+                            <j-icon w="w-[14px]" name="down" />
+                        </div>
+                    </n-popselect>
                 </div>
+
                 <div class="flex flex-wrap items-center gap-2">
                     <n-button v-if="actions?.includes('export')" :loading="loadingExport" size="small"
                         @click="exportToExcel" quaternary class="group" icon-placement="right">

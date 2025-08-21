@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick, onMounted, ref, h, watch } from 'vue';
+import { defineAsyncComponent, nextTick, onMounted, ref, h, watch, toRefs } from 'vue';
 import patientServices from '../../../services/people/patient.services.ts';
 import { Get, Params } from '../../../services/interfaces/people/patient.interfaces.ts';
 import { NTag } from 'naive-ui';
@@ -7,6 +7,7 @@ import JIcon from '../../../components/JIcon.vue';
 import { downloadExcel, formatDateLa, renderIcon } from '../../../utils/Functions';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
+import { allStore } from '../../../store/all.ts';
 
 const add = defineAsyncComponent(() => import('./modals/ShowPatient.vue'))
 const props = defineProps<{
@@ -15,6 +16,7 @@ const props = defineProps<{
 
 const auth = authStores()
 const actions = ref<string[]>()
+const { countries } = toRefs(allStore())
 const data = ref<Get[]>([])
 const optionDeparment = ref<any>([]);
 const loading = ref<boolean>(false)
@@ -26,6 +28,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
+    country: 0,
     search: null,
     gender: null,
     department: null,
@@ -257,6 +260,7 @@ const clearFilters = () => {
     params.value.endDate = null
     searchV.value.searchDep = null
     params.value.page = 1
+    params.value.country = 0
     pagination.value.page = 1
     getPatient()
 }
@@ -292,11 +296,11 @@ const genderOptions = [
                             </div>
                         </template>
 
-                        <div class="grid" style="width: 250px; height: 290px;">
+                        <div class="grid" style="width: 250px; height: 320px;">
                             <div>
-                                <div class="mb-1">Genero</div>
-                                <n-select size="small" v-model:value="params.gender" :options="genderOptions"
-                                    placeholder="Seleccione" clearable />
+                                <div class="mb-1">Pais</div>
+                                <n-select size="small" v-model:value="params.country" :options="countries"
+                                    placeholder="Seleccione" />
                             </div>
 
                             <div>
@@ -310,6 +314,12 @@ const genderOptions = [
                                         </n-icon>
                                     </template>
                                 </n-auto-complete>
+                            </div>
+
+                            <div>
+                                <div class="mb-1">Genero</div>
+                                <n-select size="small" v-model:value="params.gender" :options="genderOptions"
+                                    placeholder="Seleccione" clearable />
                             </div>
 
                             <div>
