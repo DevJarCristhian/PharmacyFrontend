@@ -97,7 +97,7 @@ const closeModal = () => {
             </n-form-item>
 
             <n-form-item label="Pais">
-                <n-select v-model:value="formData.countryId" :options="countries.filter((item) => item.value != 0)"
+                <n-select v-model:value="formData.countryId" :options="countries"
                     placeholder="Seleccione" clearable />
             </n-form-item>
 
