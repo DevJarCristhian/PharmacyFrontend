@@ -13,7 +13,7 @@ const add = defineAsyncComponent(() => import('./modals/ShowPrice.vue'))
 
 const props = defineProps<{
     path: string
-}>();
+}>()
 
 const auth = authStores()
 const actions = ref<string[]>()
@@ -28,7 +28,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    country: 0,
+    country: auth.user.countryId,
     search: null,
 })
 const priceData = ref<Get>({} as Get)
@@ -55,11 +55,11 @@ onMounted(() => {
 
 const getActions = () => {
     if (auth.user.permissions) {
-        actions.value = validateActions(auth.user.permissions, props.path);
+        actions.value = validateActions(auth.user.permissions, props.path)
     }
 }
 
-watch(() => auth.user.permissions, getActions);
+watch(() => auth.user.permissions, getActions)
 
 const getPrice = async () => {
     loading.value = true
@@ -181,7 +181,7 @@ const clearFilters = () => {
     params.value.page = 1
     params.value.search = null
     pagination.value.page = 1
-    params.value.country = 0
+    params.value.country = auth.user.countryId
     getPrice()
 }
 </script>

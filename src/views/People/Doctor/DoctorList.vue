@@ -18,29 +18,29 @@ const props = defineProps<{
     path: string;
 }>();
 
-const auth = authStores();
-const actions = ref<string[]>();
+const auth = authStores()
+const actions = ref<string[]>()
 const { countries } = toRefs(allStore())
-const data = ref<Get[]>([]);
-const optionDeparment = ref<any>([]);
-const optionCity = ref<any>([]);
-const loading = ref<boolean>(false);
-const loadingExport = ref<boolean>(false);
-const showModal = ref<boolean>(false);
-const showDropdown = ref<boolean>(false);
-const x = ref<number>(0);
-const y = ref<number>(0);
+const data = ref<Get[]>([])
+const optionDeparment = ref<any>([])
+const optionCity = ref<any>([])
+const loading = ref<boolean>(false)
+const loadingExport = ref<boolean>(false)
+const showModal = ref<boolean>(false)
+const showDropdown = ref<boolean>(false)
+const x = ref<number>(0)
+const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    country: 0,
+    country: auth.user.countryId,
     search: null,
     department: null,
     city: null,
     startDate: null,
     endDate: null,
-});
-const doctorData = ref<Get>({} as Get);
+})
+const doctorData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -48,14 +48,14 @@ const pagination = ref({
     total: 0,
     pageSlot: 5,
     prefix() {
-        return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`;
+        return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`
     },
     onUpdatePage(page: any) {
-        params.value.page = page;
-        pagination.value.page = page;
-        getDoctor();
+        params.value.page = page
+        pagination.value.page = page
+        getDoctor()
     },
-});
+})
 const searchV = ref<{
     searchcity: string | null,
     searchDep: string | null,
@@ -65,26 +65,26 @@ const searchV = ref<{
 })
 
 onMounted(() => {
-    getDoctor();
-    getActions();
-});
+    getDoctor()
+    getActions()
+})
 
 const getActions = () => {
     if (auth.user.permissions) {
-        actions.value = validateActions(auth.user.permissions, props.path);
+        actions.value = validateActions(auth.user.permissions, props.path)
     }
-};
+}
 
-watch(() => auth.user.permissions, getActions);
+watch(() => auth.user.permissions, getActions)
 
 const getDoctor = async () => {
-    loading.value = true;
-    const response = await doctorServices.get(params.value);
-    data.value = response.data;
-    // console.log(response.data);
-    pagination.value.pageCount = response.last_page;
-    pagination.value.total = response.total;
-    loading.value = false;
+    loading.value = true
+    const response = await doctorServices.get(params.value)
+    data.value = response.data
+    // console.log(response.data)
+    pagination.value.pageCount = response.last_page
+    pagination.value.total = response.total
+    loading.value = false
 };
 
 const columns = ref([
@@ -212,32 +212,32 @@ const selectDepartment = async (value: any) => {
 
 const citySearch = async (search: string) => {
     if (search !== null && search.length > 1) {
-        optionCity.value = [];
+        optionCity.value = []
         const response = await doctorServices.getCity(search)
-        optionCity.value = response;
+        optionCity.value = response
     } else if (search == "") {
-        searchV.value.searchcity = null;
-        params.value.city = null;
+        searchV.value.searchcity = null
+        params.value.city = null
     }
-};
+}
 
 const selectCity = async (value: any) => {
     const patt = await optionCity.value.find((v: any) => v.value == value).value
-    params.value.city = patt;
-};
+    params.value.city = patt
+}
 
 const clearFilters = () => {
-    params.value.search = null;
-    params.value.department = null;
-    params.value.city = null;
-    params.value.startDate = null;
-    params.value.endDate = null;
-    searchV.value.searchDep = null;
-    searchV.value.searchcity = null;
-    params.value.country = 0;
-    params.value.page = 1;
-    pagination.value.page = 1;
-    getDoctor();
+    params.value.search = null
+    params.value.department = null
+    params.value.city = null
+    params.value.startDate = null
+    params.value.endDate = null
+    searchV.value.searchDep = null
+    searchV.value.searchcity = null
+    params.value.country = auth.user.countryId
+    params.value.page = 1
+    pagination.value.page = 1
+    getDoctor()
 }
 
 </script>

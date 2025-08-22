@@ -29,7 +29,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    country: 0,
+    country: auth.user.countryId,
     search: null,
 })
 const chainData = ref<Get>({} as Get)
@@ -149,7 +149,7 @@ const clearFilters = () => {
     params.value.page = 1
     params.value.search = null
     pagination.value.page = 1
-    params.value.country = 0
+    params.value.country = auth.user.countryId
     getChain()
 }
 </script>

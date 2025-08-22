@@ -235,7 +235,7 @@ const deletePatient = (id: string) => {
                         </n-button>
                     </div>
 
-                    <n-scrollbar style="max-height: 415px; min-height: 415px;"
+                    <n-scrollbar style="max-height: 405px; min-height: 405px;"
                         class="bg-gray-50 dark:bg-gray-900/40 rounded-md">
                         <div v-if="patientSend.length > 0" v-for="item in patientSend" :key="item.id" class="flex justify-between items-center px-2 py-1 hover:bg-gray-100/70
                      dark:hover:bg-gray-900/60 cursor-pointer border-b border-gray-200 dark:border-gray-700 group">
@@ -259,6 +259,9 @@ const deletePatient = (id: string) => {
                         </div>
                     </n-scrollbar>
 
+                    <span class="flex items-center justify-end mx-4 opacity-70 text-sm">
+                        Cantidad: {{ patientSend.length }}
+                    </span>
                 </div>
             </n-gi>
         </n-grid>

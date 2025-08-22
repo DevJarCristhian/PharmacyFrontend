@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, h, onMounted, ref, watch } from 'vue';
+import { defineAsyncComponent, h, onMounted, ref, toRefs, watch } from 'vue';
 import usersServices from '../../../services/access/users.services';
 import { Get, Params, Store } from './../../../services/interfaces/access/users.interfaces';
 import { NButton, NTag, NDropdown } from 'naive-ui';
@@ -8,6 +8,7 @@ import JIcon from '../../../components/JIcon.vue';
 import { authStores } from '../../../store/auth';
 import { validateActions } from '../../../utils/Config/validate';
 import { downloadExcel, renderIcon } from '../../../utils/Functions';
+import { allStore } from '../../../store/all';
 
 const add = defineAsyncComponent(() => import('./modals/AddUsers.vue'))
 const change = defineAsyncComponent(() => import('./modals/ChangePassword.vue'))
@@ -18,6 +19,7 @@ const props = defineProps<{
 
 const auth = authStores()
 const actions = ref<string[]>()
+const { countries } = toRefs(allStore())
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
@@ -34,7 +36,8 @@ const userData = ref<Store>({
     email: '',
     password: null,
     roleId: null,
-    status: true
+    status: true,
+    countryId: null
 })
 const pagination = ref({
     page: 1,
@@ -87,7 +90,8 @@ const userReset = () => {
         name: '',
         email: '',
         roleId: null,
-        status: true
+        status: true,
+        countryId: null
     }
     showModal.value = true
 }
@@ -99,6 +103,7 @@ const setItems = (item: Get) => {
     userData.value.roleId = item.role.id
     userData.value.password = undefined
     userData.value.status = item.status
+    userData.value.countryId = item.countryId
     showModal.value = true
 }
 
@@ -155,6 +160,13 @@ const columns = ref([
         key: 'role',
         render(row: any,) {
             return row.role.description
+        }
+    },
+    {
+        title: 'Pais',
+        key: 'countryId',
+        render(row: any,) {
+            return countries.value.find(country => country.value === row.countryId)?.label
         }
     },
     {
@@ -237,7 +249,7 @@ const exportToExcel = async () => {
 
 <template>
     <div>
-        <add :show="showModal" :items="userData" @close="showModal = !showModal"
+        <add :show="showModal" :items="userData" :countries="countries" @close="showModal = !showModal"
             @refresh="pagination.onUpdatePage(1)" />
 
         <change :show="showModalPass" :items="userData" @close="showModalPass = !showModalPass" />

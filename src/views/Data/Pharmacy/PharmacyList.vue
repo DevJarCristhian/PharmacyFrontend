@@ -27,7 +27,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    country: 0,
+    country: auth.user.countryId,
     search: null
 })
 const pharmacyData = ref<Get>({} as Get)
@@ -177,6 +177,7 @@ const exportToExcel = async () => {
 const clearFilters = () => {
     params.value.page = 1
     params.value.search = null
+    params.value.country = auth.user.countryId
     pagination.value.page = 1
     getPharmacy()
 }

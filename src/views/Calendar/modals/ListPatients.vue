@@ -169,19 +169,15 @@ const genderOptions = [
                 <n-button type="primary" size="small" @click="getPatients()">
                     <j-icon w="w-[14px]" name="search" />
                 </n-button>
-
-                <div v-if="patientData.length > 0">
-                    Resultados: <span class="font-semibold">{{ patientData.length }}</span>
-                </div>
             </div>
             <!-- </n-collapse-transition> -->
 
             <div class="grid grid-cols-2 gap-2 items-center">
                 <div class="flex flex-col">
                     <n-scrollbar style="max-height: 415px; min-height: 415px;"
-                        class="bg-gray-50/40 dark:bg-gray-900/40 rounded-md">
+                        class="bg-gray-50/80 dark:bg-gray-900/40 rounded-md">
                         <div v-for="item in patientData" :key="item.id" @click="checkValues(item.id)"
-                            class="px-2 py-1.5 hover:bg-gray-100/70 dark:hover:bg-gray-900/60 cursor-pointer border-b border-gray-200 dark:border-gray-700">
+                            class="px-2 py-1.5 select-none hover:bg-gray-100/70 dark:hover:bg-gray-900/60 cursor-pointer border-b border-gray-200 dark:border-gray-700">
                             <div class="flex items-center gap-2 text-xs">
                                 <div class="flex items-center gap-2">
                                     <n-checkbox size="small" v-model:checked="item.selected" />
@@ -206,25 +202,20 @@ const genderOptions = [
                         <div class="flex items-center">
                             <n-checkbox :disabled="patientData.length == 0" v-model:checked="checkAll"
                                 label="Seleccionar todos" @update:checked="selectAll" />
-
-                            <n-tag v-if="patientSend.length > 0" :bordered="false" type="success" size="small">
-                                {{ patientSend.length }}
-                            </n-tag>
                         </div>
 
-                        <n-button v-if="patientSend.length > 0" size="small" @click="clearValues()" quaternary>
-                            <j-icon w="w-4 text-red-400" name="delete" />
-                            Limpiar
-                        </n-button>
+                        <div v-if="patientData.length > 0">
+                            Resultados: <span class="font-semibold">{{ patientData.length }}</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="flex flex-col  min-w-full">
                     <n-scrollbar style="max-height: 415px; min-height: 415px;"
-                        class="bg-gray-50/40 dark:bg-gray-900/40 rounded-md">
-                        <div v-if="patientSend.length > 0" v-for="item in patientSend" :key="item.id" class="flex justify-between p-2 hover:bg-gray-100/70
-                     dark:hover:bg-gray-900/60 cursor-pointer border-b border-gray-200 dark:border-gray-700
-                    group">
+                        class="bg-gray-50/80 dark:bg-gray-900/40 rounded-md">
+                        <div v-if="patientSend.length > 0" v-for="item in patientSend" :key="item.id"
+                            class="flex justify-between p-2 hover:bg-gray-100/70
+                     dark:hover:bg-gray-900/60 cursor-pointer border-b border-gray-200 dark:border-gray-700 select-none group">
                             <div>
                                 <div class="flex items-center gap-2">
                                     <span class="font-semibold text-xs">{{ item.name }}
@@ -253,11 +244,24 @@ const genderOptions = [
                         </div>
                     </n-scrollbar>
 
-                    <div class="flex gap-2 justify-end mt-3">
-                        <n-button size="small" type="primary" :loading="loading" @click="setPatients()">
-                            <j-icon w="w-[20px]" name="add" />
-                            Agregar Pacientes
-                        </n-button>
+                    <div class="flex gap-2 justify-between mt-3">
+                        <div class="flex items-center gap-2">
+                            <n-button v-if="patientSend.length > 0" size="small" @click="clearValues()" quaternary>
+                                <j-icon w="w-4 text-red-400" name="delete" />
+                                Limpiar
+                            </n-button>
+
+                            <n-tag v-if="patientSend.length > 0" :bordered="false" type="success" size="small">
+                                {{ patientSend.length }}
+                            </n-tag>
+                        </div>
+
+                        <div class="flex items-center justify-end w-full">
+                            <n-button size="small" type="primary" :loading="loading" @click="setPatients()">
+                                <j-icon w="w-[20px]" name="add" />
+                                Agregar Pacientes
+                            </n-button>
+                        </div>
                     </div>
                 </div>
             </div>

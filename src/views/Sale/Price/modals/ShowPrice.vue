@@ -7,9 +7,9 @@ import { FormRules, useMessage, type FormInst } from 'naive-ui'
 const props = defineProps({
     show: Boolean,
     items: Object as () => Get,
-});
+})
 
-const emit = defineEmits(['close', 'refresh']);
+const emit = defineEmits(['close', 'refresh'])
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
@@ -18,7 +18,7 @@ const formPrice = ref<{ price: string }>({ price: '0' })
 const loading = ref<boolean>(false)
 
 watch(props, (newVal) => {
-    items.value = newVal.items as Get;
+    items.value = newVal.items as Get
     formPrice.value.price = items.value.price.toString()
 })
 
@@ -43,7 +43,7 @@ const updatePrice = async () => {
                 message.warning('Precio Requerido')
             }
         } catch (error) {
-            console.log(error);
+            console.log(error)
         } finally {
             loading.value = false
         }
@@ -51,7 +51,7 @@ const updatePrice = async () => {
 }
 
 const closeModal = () => {
-    emit("close");
+    emit("close")
 };
 
 </script>

@@ -28,7 +28,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    country: 0,
+    country: auth.user.countryId,
     search: null,
     gender: null,
     department: null,
@@ -260,7 +260,7 @@ const clearFilters = () => {
     params.value.endDate = null
     searchV.value.searchDep = null
     params.value.page = 1
-    params.value.country = 0
+    params.value.country = auth.user.countryId
     pagination.value.page = 1
     getPatient()
 }

@@ -7,6 +7,7 @@ import { useMessage, type FormInst, type FormRules } from 'naive-ui'
 const props = defineProps({
     show: Boolean,
     items: Object as () => Store,
+    countries: Object as () => { label: string, value: number }[],
 });
 
 const emit = defineEmits(['close', 'refresh']);
@@ -93,6 +94,11 @@ const closeModal = () => {
 
             <n-form-item label="Rol" path="roleId">
                 <n-select v-model:value="formData.roleId" :options="roles" placeholder="Seleccione" />
+            </n-form-item>
+
+            <n-form-item label="Pais">
+                <n-select v-model:value="formData.countryId" :options="countries.filter((item) => item.value != 0)"
+                    placeholder="Seleccione" clearable />
             </n-form-item>
 
             <n-form-item v-if="!formData.id" label="Contraseña" :path="formData.id ? '' : 'password'">

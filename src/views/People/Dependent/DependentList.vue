@@ -20,32 +20,32 @@ import { allStore } from "../../../store/all";
 const add = defineAsyncComponent(() => import("./modals/ShowDependent.vue"));
 
 const props = defineProps<{
-    path: string;
-}>();
+    path: string
+}>()
 
-const auth = authStores();
-const actions = ref<string[]>();
+const auth = authStores()
+const actions = ref<string[]>()
 const { countries } = toRefs(allStore())
-const data = ref<Get[]>([]);
-const optionDeparment = ref<any>([]);
-const loading = ref<boolean>(false);
-const loadingExport = ref<boolean>(false);
-const showModal = ref<boolean>(false);
-const showDropdown = ref<boolean>(false);
-const x = ref<number>(0);
-const y = ref<number>(0);
+const data = ref<Get[]>([])
+const optionDeparment = ref<any>([])
+const loading = ref<boolean>(false)
+const loadingExport = ref<boolean>(false)
+const showModal = ref<boolean>(false)
+const showDropdown = ref<boolean>(false)
+const x = ref<number>(0)
+const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    country: 0,
+    country: auth.user.countryId,
     search: null,
     gender: null,
     department: null,
     birthDate: null,
     startDate: null,
     endDate: null,
-});
-const dependentData = ref<Get>({} as Get);
+})
+const dependentData = ref<Get>({} as Get)
 const pagination = ref({
     page: 1,
     pageCount: 1,
@@ -53,14 +53,14 @@ const pagination = ref({
     total: 0,
     pageSlot: 5,
     prefix() {
-        return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`;
+        return `${pagination.value.total} Items de ${pagination.value.pageCount} paginas`
     },
     onUpdatePage(page: any) {
-        params.value.page = page;
-        pagination.value.page = page;
-        getDependent();
+        params.value.page = page
+        pagination.value.page = page
+        getDependent()
     },
-});
+})
 const searchV = ref<{
     searchDep: string | null,
 }>({
@@ -68,26 +68,26 @@ const searchV = ref<{
 })
 
 onMounted(() => {
-    getDependent();
-    getActions();
-});
+    getDependent()
+    getActions()
+})
 
 const getActions = () => {
     if (auth.user.permissions) {
-        actions.value = validateActions(auth.user.permissions, props.path);
+        actions.value = validateActions(auth.user.permissions, props.path)
     }
-};
+}
 
-watch(() => auth.user.permissions, getActions);
+watch(() => auth.user.permissions, getActions)
 
 const getDependent = async () => {
-    loading.value = true;
-    const response = await dependentServices.get(params.value);
-    // console.log(response.data);
-    data.value = response.data;
-    pagination.value.pageCount = response.last_page;
-    pagination.value.total = response.total;
-    loading.value = false;
+    loading.value = true
+    const response = await dependentServices.get(params.value)
+    // console.log(response.data)
+    data.value = response.data
+    pagination.value.pageCount = response.last_page
+    pagination.value.total = response.total
+    loading.value = false
 };
 
 const columns = ref([
@@ -217,47 +217,47 @@ const rowProps = (row: any) => {
 };
 
 const setValues = (item: Get) => {
-    dependentData.value = item;
-};
+    dependentData.value = item
+}
 
 const openModal = (key: string) => {
-    showDropdown.value = false;
+    showDropdown.value = false
     if (key === "show") {
-        showModal.value = true;
+        showModal.value = true
     }
     if (key === "name") {
-        navigator.clipboard.writeText(dependentData.value.fullName);
+        navigator.clipboard.writeText(dependentData.value.fullName)
     }
     if (key === "phone") {
-        navigator.clipboard.writeText(dependentData.value.phone);
+        navigator.clipboard.writeText(dependentData.value.phone)
     }
     if (key === "document") {
-        navigator.clipboard.writeText(dependentData.value.documentNumber);
+        navigator.clipboard.writeText(dependentData.value.documentNumber)
     }
-};
+}
 
 const exportToExcel = async () => {
-    loadingExport.value = true;
-    const data = await dependentServices.exportToExcel(params.value);
-    await downloadExcel(data, "Lista Dependientes");
-    loadingExport.value = false;
-};
+    loadingExport.value = true
+    const data = await dependentServices.exportToExcel(params.value)
+    await downloadExcel(data, "Lista Dependientes")
+    loadingExport.value = false
+}
 
 const deparmentSearch = async (search: string) => {
     if (search !== null && search.length > 1) {
-        optionDeparment.value = [];
+        optionDeparment.value = []
         const response = await dependentServices.getDepartment(search)
-        optionDeparment.value = response;
+        optionDeparment.value = response
     } else if (search == "") {
-        searchV.value.searchDep = null;
-        params.value.department = null;
+        searchV.value.searchDep = null
+        params.value.department = null
     }
-};
+}
 
 const selectDepartment = async (value: any) => {
     const patt = await optionDeparment.value.find((v: any) => v.value == value).value
-    params.value.department = patt;
-};
+    params.value.department = patt
+}
 
 const clearFilters = () => {
     params.value.search = null
@@ -268,6 +268,7 @@ const clearFilters = () => {
     params.value.endDate = null
     searchV.value.searchDep = null
     params.value.page = 1
+    params.value.country = auth.user.countryId
     pagination.value.page = 1
     getDependent()
 }

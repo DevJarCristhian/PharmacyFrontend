@@ -19,9 +19,9 @@ const auth = authStores()
 const actions = ref<string[]>()
 const { countries } = toRefs(allStore())
 const data = ref<Get[]>([])
-const optionPatients = ref<any>([]);
-const optionProducts = ref<any>([]);
-const optionPharmacies = ref<any>([]);
+const optionPatients = ref<any>([])
+const optionProducts = ref<any>([])
+const optionPharmacies = ref<any>([])
 
 const loading = ref<boolean>(false)
 const loadingExport = ref<boolean>(false)
@@ -32,7 +32,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    country: 0,
+    country: auth.user.countryId,
     search: null,
     emissionDate: null,
     patientId: null,
@@ -245,13 +245,13 @@ const selectPatient = async (value: any) => {
 
 const productSearch = async (search: string) => {
     if (search !== null && search.length > 1) {
-        optionProducts.value = [];
+        optionProducts.value = []
         const response = await opportunityServices.getProduct(search)
-        optionProducts.value = response;
+        optionProducts.value = response
     }
     if (search == "") {
-        searchV.value.searchPro = null;
-        params.value.productId = null;
+        searchV.value.searchPro = null
+        params.value.productId = null
     }
 };
 
@@ -263,24 +263,24 @@ const selectProduct = async (value: any) => {
 
 const pharmacySearch = async (search: string) => {
     if (search !== null && search.length > 1) {
-        optionPharmacies.value = [];
+        optionPharmacies.value = []
         const response = await opportunityServices.getPharmacy(search)
-        optionPharmacies.value = response;
+        optionPharmacies.value = response
     }
     if (search == "") {
-        searchV.value.searchPhar = null;
-        params.value.pharmacyId = null;
+        searchV.value.searchPhar = null
+        params.value.pharmacyId = null
     }
 };
 
 const selectPharmacy = async (value: any) => {
     const patt = await optionPharmacies.value.find((v: any) => v.value == value).value
-    params.value.pharmacyId = patt;
-};
+    params.value.pharmacyId = patt
+}
 
 const clearFilters = () => {
     params.value.search = null
-    params.value.country = 0
+    params.value.country = auth.user.countryId
     params.value.emissionDate = null
     params.value.patientId = null
     params.value.productId = null

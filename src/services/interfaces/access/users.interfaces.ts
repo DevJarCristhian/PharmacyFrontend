@@ -16,6 +16,7 @@ export interface Get {
   email: string;
   password?: string;
   role: Role;
+  countryId?: number | null;
   status: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -28,4 +29,5 @@ export interface Store {
   password?: string | null;
   roleId: number | null;
   status: boolean;
+  countryId?: number | null;
 }

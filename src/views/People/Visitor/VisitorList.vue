@@ -13,14 +13,14 @@ const add = defineAsyncComponent(() => import('./modals/ShowVisor.vue'))
 
 const props = defineProps<{
     path: string;
-}>();
+}>()
 
-const auth = authStores();
-const actions = ref<string[]>();
+const auth = authStores()
+const actions = ref<string[]>()
 const { countries } = toRefs(allStore())
 const data = ref<Get[]>([])
 const loading = ref<boolean>(false)
-const loadingExport = ref<boolean>(false);
+const loadingExport = ref<boolean>(false)
 const showModal = ref<boolean>(false)
 const showDropdown = ref<boolean>(false)
 const x = ref<number>(0)
@@ -28,7 +28,7 @@ const y = ref<number>(0)
 const params = ref<Params>({
     page: 1,
     perPage: 50,
-    country: 0,
+    country: auth.user.countryId,
     search: null
 })
 const visitorData = ref<Get>({} as Get)
@@ -55,17 +55,17 @@ onMounted(() => {
 
 const getActions = () => {
     if (auth.user.permissions) {
-        actions.value = validateActions(auth.user.permissions, props.path);
+        actions.value = validateActions(auth.user.permissions, props.path)
     }
 }
 
-watch(() => auth.user.permissions, getActions);
+watch(() => auth.user.permissions, getActions)
 
 const getVisitor = async () => {
     loading.value = true
     const response = await visitorServices.get(params.value)
     data.value = response.data
-    // console.log(response.data);
+    // console.log(response.data)
     pagination.value.pageCount = response.last_page
     pagination.value.total = response.total
     loading.value = false
@@ -144,22 +144,22 @@ const openModal = (key: string) => {
     if (key === 'show') {
         showModal.value = true
     } else {
-        navigator.clipboard.writeText(visitorData.value.name);
+        navigator.clipboard.writeText(visitorData.value.name)
     }
 }
 
 const exportToExcel = async () => {
-    loadingExport.value = true;
-    const data = await visitorServices.exportToExcel(params.value);
-    await downloadExcel(data, "Lista Visitadores");
-    loadingExport.value = false;
+    loadingExport.value = true
+    const data = await visitorServices.exportToExcel(params.value)
+    await downloadExcel(data, "Lista Visitadores")
+    loadingExport.value = false
 }
 
 const clearFilters = () => {
     params.value.page = 1
     params.value.search = null
-    params.value.country = 0
-    pagination.value.page = 1;
+    params.value.country = auth.user.countryId
+    pagination.value.page = 1
     getVisitor()
 }
 </script>
