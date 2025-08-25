@@ -75,7 +75,7 @@ const getPatient = async () => {
 
 const getCategories = async () => {
     const response = await patientServices.getCategories()
-    console.log(response.data);
+    // console.log(response.data);
 
     setTimeout(() => {
         store.setCategories(response.data)
