@@ -39,10 +39,8 @@ api.interceptors.response.use(
       // useGlobalStores.setShowLoading(false);
     }
 
-    if (status == 401 && !localStorage.getItem("tokenRemoved")) {
+    if (status == 401) {
       localStorage.removeItem("token");
-      localStorage.setItem("tokenRemoved", "true");
-
       window.location.href = "/login";
     }
 

@@ -5,11 +5,30 @@ export interface login {
 }
 
 const prefix = "/auth";
+const apiBaseUrl = import.meta.env.VITE_API_URL + "/api/auth";
 
 class authServices {
   async login(params: login) {
-    const { data } = await api.post(`${prefix}/login`, params);
-    return data;
+    try {
+      const response = await fetch(`${apiBaseUrl}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        console.error("Login failed:", response.statusText);
+        return null;
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Network error during login:", error);
+      return null;
+    }
   }
 
   async getUser() {

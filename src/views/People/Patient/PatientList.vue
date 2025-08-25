@@ -214,16 +214,14 @@ const setValues = (item: Get) => {
 
 const openModal = (key: string) => {
     showDropdown.value = false
+
     if (key === 'show') {
         showModal.value = true
-    }
-    if (key === 'name') {
+    } else if (key === 'name') {
         navigator.clipboard.writeText(patientData.value.fullName);
-    }
-    if (key === 'phone') {
+    } else if (key === 'phone') {
         navigator.clipboard.writeText(patientData.value.phone);
-    }
-    if (key === 'email') {
+    } else if (key === 'email') {
         navigator.clipboard.writeText(patientData.value.email);
     }
 }

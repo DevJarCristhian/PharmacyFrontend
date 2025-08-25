@@ -33,7 +33,7 @@ onMounted(async () => {
             .flatMap(route => route.children || [])
             .find(child => child.name === route.name);
 
-        router.push(verify ? verify.path : '/dd');
+        router.push(verify ? verify.path : '/not-found');
     } else {
         router.push('/login');
     }
